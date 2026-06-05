@@ -3,6 +3,8 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   BookOpen, GraduationCap, LayoutDashboard, Link2, LogOut,
   School, ShieldCheck, Tag, Users, Menu, Bell, Search, X,
+  FileText, Sparkles, Layers, ClipboardList, Headphones, NotebookPen,
+  CalendarCheck, Send,
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import { authApi } from '../../api'
@@ -16,6 +18,7 @@ const navGroups = [
     label: 'Overview',
     items: [
       { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/today',     icon: CalendarCheck,   label: 'Today'     },
     ],
   },
   {
@@ -32,6 +35,18 @@ const navGroups = [
     items: [
       { to: '/articles',   icon: BookOpen, label: 'Study Feed'  },
       { to: '/categories', icon: Tag,      label: 'Categories'  },
+    ],
+  },
+  {
+    label: 'AI Learning',
+    items: [
+      { to: '/materials',    icon: FileText,       label: 'Materials'    },
+      { to: '/tutor',        icon: Sparkles,       label: 'Tutor Me'     },
+      { to: '/flashcards',   icon: Layers,         label: 'Flashcards'   },
+      { to: '/quizzes',      icon: ClipboardList,  label: 'Quizzes'      },
+      { to: '/recite',       icon: Headphones,     label: 'Recitation'   },
+      { to: '/lesson-plans', icon: NotebookPen,    label: 'Lesson Plans' },
+      { to: '/deliveries',   icon: Send,           label: 'Deliveries'   },
     ],
   },
 ]

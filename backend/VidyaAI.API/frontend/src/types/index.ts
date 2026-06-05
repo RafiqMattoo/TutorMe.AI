@@ -95,3 +95,132 @@ export interface AuthState {
   user: User | null; token: string | null
   login: (res: LoginResponse) => void; logout: () => void
 }
+
+// ── MATERIALS / TUTOR ─────────────────────────────────────────────
+export type MaterialStatus = 'Processing' | 'Ready' | 'Failed'
+export type ChatRole = 'User' | 'Assistant' | 'System'
+
+export interface Material {
+  id: string; title: string; fileName: string; fileUrl: string; contentType: string
+  fileSize: number; pageCount: number; status: MaterialStatus; errorMessage?: string
+  uploadedById: string; uploadedByName: string
+  schoolId?: string; categoryId?: string; categoryName?: string
+  chunkCount: number; createdAt: string
+}
+
+export interface ChunkCitation {
+  chunkId: string; pageNumber?: number; snippet: string
+}
+
+export interface ChatMessage {
+  id: string; role: ChatRole; content: string
+  citations: ChunkCitation[]; createdAt: string
+}
+
+export interface ChatSession {
+  id: string; title: string; materialId?: string; materialTitle?: string
+  messageCount: number; createdAt: string
+}
+
+export interface AskTutorResponse {
+  sessionId: string; message: ChatMessage
+}
+
+// One frame in the streamed (SSE) tutor response.
+export interface TutorStreamEvent {
+  type: 'meta' | 'token' | 'done' | 'error'
+  sessionId?: string
+  delta?: string
+  citations?: ChunkCitation[]
+  messageId?: string
+}
+
+// ── FLASHCARDS ────────────────────────────────────────────────────
+export interface Flashcard {
+  id: string; orderIndex: number; front: string; back: string
+}
+
+export interface FlashcardSetSummary {
+  id: string; title: string; description?: string; cardCount: number
+  materialId?: string; materialTitle?: string
+  createdByName: string; createdAt: string
+}
+
+export interface FlashcardSet extends FlashcardSetSummary {
+  cards: Flashcard[]
+}
+
+// ── QUIZZES ──────────────────────────────────────────────────────
+export type QuizDifficulty = 'Easy' | 'Medium' | 'Hard'
+
+export interface QuizQuestion {
+  id: string; orderIndex: number; questionText: string
+  options: string[]; correctIndex?: number; explanation?: string
+}
+
+export interface QuizSummary {
+  id: string; title: string; questionCount: number; difficulty: QuizDifficulty
+  materialId?: string; materialTitle?: string
+  attemptCount: number; createdByName: string; createdAt: string
+}
+
+export interface Quiz extends Omit<QuizSummary, 'attemptCount'> {
+  description?: string; questions: QuizQuestion[]
+}
+
+export interface QuizQuestionResult {
+  questionId: string; questionText: string; options: string[]
+  correctIndex: number; selectedIndex?: number; isCorrect: boolean; explanation?: string
+}
+
+export interface QuizAttemptResult {
+  id: string; quizId: string; score: number; totalQuestions: number
+  completedAt: string; questions: QuizQuestionResult[]
+}
+
+// ── MATERIAL CHUNKS / RECITATION ──────────────────────────────────
+export interface MaterialChunk {
+  id: string; chunkIndex: number; pageNumber?: number; content: string
+}
+
+// ── LESSON PLANS ──────────────────────────────────────────────────
+export interface LessonPlanSummary {
+  id: string; title: string; subject?: string; gradeLevel?: string
+  durationMinutes: number; materialId?: string; materialTitle?: string
+  createdByName: string; createdAt: string
+}
+
+export interface LessonPlan extends LessonPlanSummary {
+  contentMarkdown: string
+}
+
+// ── DELIVERIES (Delivered Today) ──────────────────────────────────
+export interface Delivery {
+  id: string
+  title: string
+  instructions?: string
+  scheduledDate: string          // YYYY-MM-DD (DateOnly)
+  gradeLevel?: string
+  materialId?: string
+  materialTitle?: string
+  materialStatus?: MaterialStatus
+  materialFileUrl?: string
+  quizId?: string
+  quizTitle?: string
+  quizQuestionCount?: number
+  flashcardSetId?: string
+  flashcardSetTitle?: string
+  flashcardCardCount?: number
+  createdByName: string
+  createdAt: string
+}
+
+export interface CreateDeliveryRequest {
+  title: string
+  instructions?: string
+  scheduledDate: string          // YYYY-MM-DD
+  gradeLevel?: string
+  materialId?: string
+  quizId?: string
+  flashcardSetId?: string
+}

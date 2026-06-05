@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VidyaAI.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VidyaAI.Infrastructure.Data;
 namespace VidyaAI.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506191358_AddRagAndStudyTables")]
+    partial class AddRagAndStudyTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +189,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(8134),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5720),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Technology",
@@ -195,7 +198,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(8139),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5724),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Science",
@@ -204,7 +207,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(8144),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5727),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "General Knowledge",
@@ -356,66 +359,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.ToTable("CommentLikes");
                 });
 
-            modelBuilder.Entity("VidyaAI.Domain.Entities.Delivery", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("FlashcardSetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("GradeLevel")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("MaterialId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("QuizId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateOnly>("ScheduledDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid?>("SchoolId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("FlashcardSetId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.HasIndex("QuizId");
-
-                    b.HasIndex("SchoolId", "ScheduledDate");
-
-                    b.ToTable("Deliveries");
-                });
-
             modelBuilder.Entity("VidyaAI.Domain.Entities.Flashcard", b =>
                 {
                     b.Property<Guid>("Id")
@@ -499,61 +442,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("SchoolId");
 
                     b.ToTable("FlashcardSets");
-                });
-
-            modelBuilder.Entity("VidyaAI.Domain.Entities.LessonPlan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContentMarkdown")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("GradeLevel")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("MaterialId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SchoolId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("MaterialId");
-
-                    b.HasIndex("SchoolId");
-
-                    b.ToTable("LessonPlans");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Like", b =>
@@ -925,7 +813,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9805),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6534),
                             Description = "Global platform owner with full operational control.",
                             DisplayName = "Super Admin",
                             IsActive = true,
@@ -936,7 +824,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9810),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6539),
                             Description = "Manages one school, its users, content, and operations.",
                             DisplayName = "School Admin",
                             IsActive = true,
@@ -947,7 +835,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9813),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6543),
                             Description = "Creates learning content and supports study workflows.",
                             DisplayName = "Teacher",
                             IsActive = true,
@@ -958,7 +846,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9817),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6547),
                             Description = "Learner workspace for study materials and practice.",
                             DisplayName = "Student",
                             IsActive = true,
@@ -969,7 +857,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9824),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6551),
                             Description = "Guardian view into school learning content.",
                             DisplayName = "Parent",
                             IsActive = true,
@@ -1035,7 +923,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9258),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6177),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "SuperAdmin",
@@ -1049,7 +937,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9305),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6191),
                             IsDeleted = false,
                             Module = "Schools",
                             Role = "SuperAdmin",
@@ -1063,7 +951,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9329),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6205),
                             IsDeleted = false,
                             Module = "Users",
                             Role = "SuperAdmin",
@@ -1077,7 +965,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9349),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6213),
                             IsDeleted = false,
                             Module = "Roles",
                             Role = "SuperAdmin",
@@ -1091,7 +979,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9396),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6271),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "SuperAdmin",
@@ -1105,7 +993,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9410),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6283),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "SuperAdmin",
@@ -1119,7 +1007,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9421),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6293),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "SchoolAdmin",
@@ -1133,7 +1021,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9432),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6302),
                             IsDeleted = false,
                             Module = "Users",
                             Role = "SchoolAdmin",
@@ -1147,7 +1035,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9445),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6310),
                             IsDeleted = false,
                             Module = "Roles",
                             Role = "SchoolAdmin",
@@ -1161,7 +1049,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9460),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6321),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "SchoolAdmin",
@@ -1175,7 +1063,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9470),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6333),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "SchoolAdmin",
@@ -1189,7 +1077,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9479),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6341),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Teacher",
@@ -1203,7 +1091,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9488),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6349),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Teacher",
@@ -1217,7 +1105,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9496),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6357),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Teacher",
@@ -1231,7 +1119,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9504),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6365),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Student",
@@ -1245,7 +1133,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9548),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6373),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Student",
@@ -1259,7 +1147,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9561),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6381),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Student",
@@ -1273,7 +1161,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9571),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6390),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Parent",
@@ -1287,7 +1175,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9579),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6401),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Parent",
@@ -1301,7 +1189,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(9588),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(6409),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Parent",
@@ -1384,14 +1272,14 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000002"),
                             Board = "CBSE",
                             City = "Srinagar",
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7005),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5295),
                             Email = "demo@codestrix.com",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "CodeStrix Demo School",
                             Plan = "Pro",
                             State = "J&K",
-                            SubscriptionExpiresAt = new DateTime(2027, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(6918),
+                            SubscriptionExpiresAt = new DateTime(2027, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5229),
                             SubscriptionStatus = "Active",
                             Type = "Private"
                         });
@@ -1472,7 +1360,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7949),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5625),
                             Email = "admin@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Super",
@@ -1486,7 +1374,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000006"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7960),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5630),
                             Email = "schooladmin@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Aaliya",
@@ -1500,7 +1388,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000007"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7968),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5652),
                             Email = "teacher@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Rohan",
@@ -1514,7 +1402,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000008"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7975),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5658),
                             Email = "student@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Zoya",
@@ -1528,7 +1416,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000009"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 679, DateTimeKind.Utc).AddTicks(7982),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(5662),
                             Email = "parent@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Imran",
@@ -1620,8 +1508,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(626),
-                            EnrolledAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(626),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7280),
+                            EnrolledAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7279),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "SuperAdmin",
@@ -1632,8 +1520,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(671),
-                            EnrolledAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(670),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7312),
+                            EnrolledAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7312),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "SchoolAdmin",
@@ -1644,8 +1532,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(682),
-                            EnrolledAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(681),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7324),
+                            EnrolledAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7323),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Teacher",
@@ -1656,8 +1544,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(692),
-                            EnrolledAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(692),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7333),
+                            EnrolledAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7332),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Student",
@@ -1668,8 +1556,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(701),
-                            EnrolledAt = new DateTime(2026, 6, 5, 6, 2, 27, 680, DateTimeKind.Utc).AddTicks(700),
+                            CreatedAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7341),
+                            EnrolledAt = new DateTime(2026, 5, 6, 19, 13, 55, 519, DateTimeKind.Utc).AddTicks(7341),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Parent",
@@ -1797,45 +1685,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VidyaAI.Domain.Entities.Delivery", b =>
-                {
-                    b.HasOne("VidyaAI.Domain.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("VidyaAI.Domain.Entities.FlashcardSet", "FlashcardSet")
-                        .WithMany()
-                        .HasForeignKey("FlashcardSetId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("VidyaAI.Domain.Entities.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("VidyaAI.Domain.Entities.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("VidyaAI.Domain.Entities.School", "School")
-                        .WithMany()
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("FlashcardSet");
-
-                    b.Navigation("Material");
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("School");
-                });
-
             modelBuilder.Entity("VidyaAI.Domain.Entities.Flashcard", b =>
                 {
                     b.HasOne("VidyaAI.Domain.Entities.FlashcardSet", "Set")
@@ -1848,31 +1697,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.FlashcardSet", b =>
-                {
-                    b.HasOne("VidyaAI.Domain.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("VidyaAI.Domain.Entities.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("VidyaAI.Domain.Entities.School", "School")
-                        .WithMany()
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Material");
-
-                    b.Navigation("School");
-                });
-
-            modelBuilder.Entity("VidyaAI.Domain.Entities.LessonPlan", b =>
                 {
                     b.HasOne("VidyaAI.Domain.Entities.User", "CreatedBy")
                         .WithMany()

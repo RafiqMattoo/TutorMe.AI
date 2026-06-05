@@ -21,6 +21,17 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<RoleDefinition> RoleDefinitions => Set<RoleDefinition>();
     public DbSet<UserSchoolEnrollment> UserSchoolEnrollments => Set<UserSchoolEnrollment>();
+    public DbSet<Material> Materials => Set<Material>();
+    public DbSet<MaterialChunk> MaterialChunks => Set<MaterialChunk>();
+    public DbSet<ChatSession> ChatSessions => Set<ChatSession>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<FlashcardSet> FlashcardSets => Set<FlashcardSet>();
+    public DbSet<Flashcard> Flashcards => Set<Flashcard>();
+    public DbSet<Quiz> Quizzes => Set<Quiz>();
+    public DbSet<QuizQuestion> QuizQuestions => Set<QuizQuestion>();
+    public DbSet<QuizAttempt> QuizAttempts => Set<QuizAttempt>();
+    public DbSet<LessonPlan> LessonPlans => Set<LessonPlan>();
+    public DbSet<Delivery> Deliveries => Set<Delivery>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -169,6 +180,166 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.HasKey(x => x.Id);
             e.Property(x => x.Type).HasConversion<string>();
             e.HasIndex(x => new { x.UserId, x.IsRead });
+        });
+
+        // ── MATERIAL ──────────────────────────────────────────────
+        modelBuilder.Entity<Material>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            e.Property(x => x.FileName).HasMaxLength(300).IsRequired();
+            e.Property(x => x.FileUrl).HasMaxLength(1000).IsRequired();
+            e.Property(x => x.ContentType).HasMaxLength(100);
+            e.Property(x => x.Status).HasConversion<string>();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.UploadedById);
+            e.HasOne(x => x.UploadedBy).WithMany()
+                .HasForeignKey(x => x.UploadedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.School).WithMany()
+                .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.Category).WithMany()
+                .HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ── MATERIAL CHUNK (vector) ───────────────────────────────
+        modelBuilder.Entity<MaterialChunk>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Content).IsRequired();
+            e.Property(x => x.Embedding).HasColumnType("real[]");
+            e.HasIndex(x => x.MaterialId);
+            e.HasIndex(x => new { x.MaterialId, x.ChunkIndex }).IsUnique();
+            e.HasOne(x => x.Material).WithMany(x => x.Chunks)
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── CHAT SESSION ──────────────────────────────────────────
+        modelBuilder.Entity<ChatSession>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.UserId);
+            e.HasOne(x => x.User).WithMany()
+                .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Material).WithMany(m => m.ChatSessions)
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ── CHAT MESSAGE ──────────────────────────────────────────
+        modelBuilder.Entity<ChatMessage>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Content).IsRequired();
+            e.Property(x => x.Role).HasConversion<string>();
+            e.HasIndex(x => x.SessionId);
+            e.HasOne(x => x.Session).WithMany(s => s.Messages)
+                .HasForeignKey(x => x.SessionId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── FLASHCARD SET ─────────────────────────────────────────
+        modelBuilder.Entity<FlashcardSet>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.MaterialId);
+            e.HasOne(x => x.Material).WithMany()
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.CreatedBy).WithMany()
+                .HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.School).WithMany()
+                .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Flashcard>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Front).IsRequired();
+            e.Property(x => x.Back).IsRequired();
+            e.HasIndex(x => x.SetId);
+            e.HasOne(x => x.Set).WithMany(s => s.Cards)
+                .HasForeignKey(x => x.SetId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── QUIZ ──────────────────────────────────────────────────
+        modelBuilder.Entity<Quiz>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            e.Property(x => x.Difficulty).HasConversion<string>();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.MaterialId);
+            e.HasOne(x => x.Material).WithMany()
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.CreatedBy).WithMany()
+                .HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.School).WithMany()
+                .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<QuizQuestion>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.QuestionText).IsRequired();
+            e.Property(x => x.OptionsJson).HasColumnType("jsonb").IsRequired();
+            e.HasIndex(x => x.QuizId);
+            e.HasOne(x => x.Quiz).WithMany(q => q.Questions)
+                .HasForeignKey(x => x.QuizId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<QuizAttempt>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.AnswersJson).HasColumnType("jsonb").IsRequired();
+            e.HasIndex(x => x.QuizId);
+            e.HasIndex(x => x.UserId);
+            e.HasOne(x => x.Quiz).WithMany(q => q.Attempts)
+                .HasForeignKey(x => x.QuizId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.User).WithMany()
+                .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── LESSON PLAN ───────────────────────────────────────────
+        modelBuilder.Entity<LessonPlan>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            e.Property(x => x.Subject).HasMaxLength(150);
+            e.Property(x => x.GradeLevel).HasMaxLength(80);
+            e.Property(x => x.ContentMarkdown).IsRequired();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.MaterialId);
+            e.HasOne(x => x.Material).WithMany()
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.CreatedBy).WithMany()
+                .HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.School).WithMany()
+                .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ── DELIVERY ──────────────────────────────────────────────
+        modelBuilder.Entity<Delivery>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            e.Property(x => x.GradeLevel).HasMaxLength(80);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => new { x.SchoolId, x.ScheduledDate });
+            e.HasOne(x => x.Material).WithMany()
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.Quiz).WithMany()
+                .HasForeignKey(x => x.QuizId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.FlashcardSet).WithMany()
+                .HasForeignKey(x => x.FlashcardSetId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.CreatedBy).WithMany()
+                .HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.School).WithMany()
+                .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
         });
 
         // ── SEED DATA ─────────────────────────────────────────────

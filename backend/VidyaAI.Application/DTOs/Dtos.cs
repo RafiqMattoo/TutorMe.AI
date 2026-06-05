@@ -148,3 +148,110 @@ public record AnnouncementDto(
     DateTime? ExpiresAt, string SchoolName, string CreatedByName, DateTime CreatedAt);
 
 public record CreateAnnouncementRequest(string Title, string Content, Guid SchoolId, DateTime? ExpiresAt);
+
+// ── MATERIAL ─────────────────────────────────────────────────────
+public record MaterialDto(
+    Guid Id, string Title, string FileName, string FileUrl, string ContentType,
+    long FileSize, int PageCount, MaterialStatus Status, string? ErrorMessage,
+    Guid UploadedById, string UploadedByName,
+    Guid? SchoolId, Guid? CategoryId, string? CategoryName,
+    int ChunkCount, DateTime CreatedAt);
+
+public record MaterialChunkDto(Guid Id, int ChunkIndex, int? PageNumber, string Content);
+
+// ── TUTOR / CHAT ─────────────────────────────────────────────────
+public record ChatSessionDto(
+    Guid Id, string Title, Guid? MaterialId, string? MaterialTitle,
+    int MessageCount, DateTime CreatedAt);
+
+public record ChunkCitationDto(Guid ChunkId, int? PageNumber, string Snippet);
+
+public record ChatMessageDto(
+    Guid Id, ChatRole Role, string Content,
+    IReadOnlyList<ChunkCitationDto> Citations, DateTime CreatedAt);
+
+public record AskTutorRequest(Guid? SessionId, Guid? MaterialId, string Question);
+
+public record AskTutorResponse(Guid SessionId, ChatMessageDto Message);
+
+// One event in the streamed (SSE) tutor response.
+//   Type "meta"  → SessionId set (sent first).
+//   Type "token" → Delta carries the next piece of text.
+//   Type "done"  → SessionId, Citations and MessageId finalise the message.
+public record TutorStreamEvent(
+    string Type, Guid? SessionId, string? Delta,
+    IReadOnlyList<ChunkCitationDto>? Citations, Guid? MessageId);
+
+// ── FLASHCARDS ───────────────────────────────────────────────────
+public record FlashcardDto(Guid Id, int OrderIndex, string Front, string Back);
+
+public record FlashcardSetDto(
+    Guid Id, string Title, string? Description, int CardCount,
+    Guid? MaterialId, string? MaterialTitle,
+    string CreatedByName, DateTime CreatedAt,
+    IReadOnlyList<FlashcardDto> Cards);
+
+public record FlashcardSetSummaryDto(
+    Guid Id, string Title, string? Description, int CardCount,
+    Guid? MaterialId, string? MaterialTitle,
+    string CreatedByName, DateTime CreatedAt);
+
+public record GenerateFlashcardsRequest(Guid MaterialId, string? Title, int Count);
+
+// ── QUIZZES ──────────────────────────────────────────────────────
+public record QuizQuestionDto(
+    Guid Id, int OrderIndex, string QuestionText,
+    IReadOnlyList<string> Options, int? CorrectIndex, string? Explanation);
+
+public record QuizDto(
+    Guid Id, string Title, string? Description, int QuestionCount,
+    QuizDifficulty Difficulty,
+    Guid? MaterialId, string? MaterialTitle,
+    string CreatedByName, DateTime CreatedAt,
+    IReadOnlyList<QuizQuestionDto> Questions);
+
+public record QuizSummaryDto(
+    Guid Id, string Title, int QuestionCount, QuizDifficulty Difficulty,
+    Guid? MaterialId, string? MaterialTitle, int AttemptCount,
+    string CreatedByName, DateTime CreatedAt);
+
+public record GenerateQuizRequest(Guid MaterialId, string? Title, int Count, QuizDifficulty Difficulty);
+
+public record SubmitQuizAttemptRequest(IReadOnlyDictionary<Guid, int> Answers);
+
+public record QuizAttemptResultDto(
+    Guid Id, Guid QuizId, int Score, int TotalQuestions,
+    DateTime CompletedAt,
+    IReadOnlyList<QuizQuestionResultDto> Questions);
+
+public record QuizQuestionResultDto(
+    Guid QuestionId, string QuestionText, IReadOnlyList<string> Options,
+    int CorrectIndex, int? SelectedIndex, bool IsCorrect, string? Explanation);
+
+// ── LESSON PLANS ─────────────────────────────────────────────────
+public record LessonPlanDto(
+    Guid Id, string Title, string? Subject, string? GradeLevel,
+    int DurationMinutes, string ContentMarkdown,
+    Guid? MaterialId, string? MaterialTitle,
+    string CreatedByName, DateTime CreatedAt);
+
+public record LessonPlanSummaryDto(
+    Guid Id, string Title, string? Subject, string? GradeLevel,
+    int DurationMinutes, Guid? MaterialId, string? MaterialTitle,
+    string CreatedByName, DateTime CreatedAt);
+
+public record GenerateLessonPlanRequest(
+    Guid MaterialId, string? Title, string? Subject, string? GradeLevel, int DurationMinutes);
+
+// ── DELIVERIES (Delivered Today) ──────────────────────────────────
+public record DeliveryDto(
+    Guid Id, string Title, string? Instructions,
+    DateOnly ScheduledDate, string? GradeLevel,
+    Guid? MaterialId, string? MaterialTitle, string? MaterialStatus, string? MaterialFileUrl,
+    Guid? QuizId, string? QuizTitle, int? QuizQuestionCount,
+    Guid? FlashcardSetId, string? FlashcardSetTitle, int? FlashcardCardCount,
+    string CreatedByName, DateTime CreatedAt);
+
+public record CreateDeliveryRequest(
+    string Title, string? Instructions, DateOnly ScheduledDate, string? GradeLevel,
+    Guid? MaterialId, Guid? QuizId, Guid? FlashcardSetId);

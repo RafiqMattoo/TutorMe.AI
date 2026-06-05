@@ -52,6 +52,31 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 builder.Services.AddScoped<VidyaAI.Infrastructure.Services.CategoryService>();
 
+// ── RAG / Tutor wiring ────────────────────────────────────────────
+builder.Services.AddSingleton<IPdfTextExtractor, PdfTextExtractor>();
+builder.Services.AddSingleton<ITextChunker, TextChunker>();
+builder.Services.AddScoped<IStorageService, LocalFileStorageService>();
+// AI provider is config-driven (AI:Provider = "ollama" | "gemini"). Both
+// implement IEmbeddingService + ILlmChatService, so the rest of the pipeline is
+// provider-agnostic. "ollama" keeps all book content local; "gemini" uses the
+// free cloud tier. Switching providers requires re-embedding existing materials
+// (different models produce incompatible vectors).
+var aiProvider = (builder.Configuration["AI:Provider"] ?? "gemini").Trim().ToLowerInvariant();
+if (aiProvider == "ollama")
+{
+    // Local LLM generation can be slow (model load + CPU inference) — allow more time.
+    builder.Services.AddHttpClient<OllamaAiService>(c => c.Timeout = TimeSpan.FromSeconds(300));
+    builder.Services.AddScoped<IEmbeddingService>(sp => sp.GetRequiredService<OllamaAiService>());
+    builder.Services.AddScoped<ILlmChatService>(sp => sp.GetRequiredService<OllamaAiService>());
+}
+else
+{
+    builder.Services.AddHttpClient<GeminiService>(c => c.Timeout = TimeSpan.FromSeconds(60));
+    builder.Services.AddScoped<IEmbeddingService>(sp => sp.GetRequiredService<GeminiService>());
+    builder.Services.AddScoped<ILlmChatService>(sp => sp.GetRequiredService<GeminiService>());
+}
+Log.Information("AI provider: {Provider}", aiProvider);
+
 builder.Services.AddCors(opt =>
     opt.AddPolicy("AllowFrontend", p =>
         p.WithOrigins(
@@ -88,6 +113,20 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors("AllowFrontend");
+
+// Serve uploaded files (Storage:Root) at Storage:PublicPath (default /files).
+var configuredStorageRoot = builder.Configuration["Storage:Root"];
+var storageRoot = string.IsNullOrWhiteSpace(configuredStorageRoot)
+    ? Path.Combine(AppContext.BaseDirectory, "storage")
+    : configuredStorageRoot;
+Directory.CreateDirectory(storageRoot);
+var publicPath = builder.Configuration["Storage:PublicPath"];
+if (string.IsNullOrWhiteSpace(publicPath)) publicPath = "/files";
+app.UseStaticFiles(new Microsoft.AspNetCore.Builder.StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(storageRoot),
+    RequestPath = publicPath
+});
 
 if (app.Environment.IsDevelopment())
 {
