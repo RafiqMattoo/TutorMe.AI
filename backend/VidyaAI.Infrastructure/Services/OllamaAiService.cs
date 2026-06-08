@@ -21,6 +21,10 @@ public sealed class OllamaAiService(HttpClient http, IConfiguration cfg, ILogger
     private readonly string _baseUrl = (cfg["Ollama:BaseUrl"] ?? "http://localhost:11434").TrimEnd('/');
     private readonly string _embeddingModel = cfg["Ollama:EmbeddingModel"] ?? "nomic-embed-text";
     private readonly string _chatModel = cfg["Ollama:ChatModel"] ?? "llama3.2";
+    // Quiz/flashcard/lesson JSON generation needs strong instruction-following
+    // (return an array of N items). Allow a separate, more capable model than the
+    // chat model — falls back to the chat model if not configured.
+    private readonly string _generationModel = cfg["Ollama:GenerationModel"] ?? cfg["Ollama:ChatModel"] ?? "llama3.2";
     private readonly int _embeddingDims = int.TryParse(cfg["Ollama:EmbeddingDimensions"], out var d) ? d : 768;
     private readonly double _temperature = double.TryParse(cfg["Ollama:Temperature"], out var t) ? t : 0.4;
     private readonly int _maxTokens = int.TryParse(cfg["Ollama:MaxTokens"], out var m) ? m : 2048;
@@ -129,7 +133,7 @@ public sealed class OllamaAiService(HttpClient http, IConfiguration cfg, ILogger
         // format: "json" forces Ollama to emit syntactically valid JSON.
         var req = new
         {
-            model = _chatModel,
+            model = _generationModel,
             messages,
             stream = false,
             format = "json",

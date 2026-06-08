@@ -330,6 +330,10 @@ namespace VidyaAI.Application.Tutor.Commands
             Rules — follow strictly:
             • Answer USING ONLY the information in the CONTEXT. Do NOT use outside or
               prior knowledge.
+            • Do NOT add facts, definitions, descriptions, or background that are not
+              explicitly written in the CONTEXT — not even for well-known names,
+              companies, products, or terms. If the CONTEXT only mentions something
+              by name without describing it, do not describe it from memory.
             • Reply naturally and conversationally, the way a good tutor would speak.
               Do NOT mention "chunks", "sections", "context", "excerpts" or page numbers,
               and never write phrases like "According to Chunk 1" or "as per page 2" —

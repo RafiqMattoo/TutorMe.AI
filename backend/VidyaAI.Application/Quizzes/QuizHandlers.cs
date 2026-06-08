@@ -2,6 +2,7 @@ using System.Text.Json;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using VidyaAI.Application.Common;
 using VidyaAI.Application.Common.Interfaces;
 using VidyaAI.Application.DTOs;
 using VidyaAI.Domain.Entities;
@@ -104,13 +105,18 @@ namespace VidyaAI.Application.Quizzes.Commands
                 You are an expert quiz generator. Produce high-quality multiple-choice questions
                 grounded in the material. Each question has exactly 4 plausible options.
                 Difficulty: {{cmd.Difficulty}}. {{difficultyHint}}
-                Return ONLY a JSON array — no markdown, no commentary.
+                Return a JSON OBJECT of the form {"questions": [ ... ]} — no markdown, no commentary.
                 """;
 
             var userPrompt = $$"""
                 Generate exactly {{count}} multiple-choice questions from the material below.
-                Schema: [{"question": "...", "options": ["A","B","C","D"], "correctIndex": 0, "explanation": "..."}]
-                correctIndex must be 0-3. Provide a brief explanation for each.
+
+                Return a JSON object in EXACTLY this shape, with all {{count}} questions in the array:
+                {"questions": [{"question": "...", "options": ["A","B","C","D"], "correctIndex": 0, "explanation": "..."}]}
+
+                Each question has exactly 4 options; correctIndex is the 0-based index (0-3) of the
+                correct option; include a brief explanation. Do NOT return a single question object —
+                always return the "questions" array containing every question.
 
                 MATERIAL:
                 {{contextBlock}}
@@ -156,17 +162,16 @@ namespace VidyaAI.Application.Quizzes.Commands
             try
             {
                 using var doc = JsonDocument.Parse(json);
-                var root = UnwrapArray(doc.RootElement);
-                if (root.ValueKind != JsonValueKind.Array) return [];
-
                 var list = new List<RawQ>();
-                foreach (var el in root.EnumerateArray())
+                foreach (var el in JsonItems.Extract(doc.RootElement))
                 {
-                    var question = el.TryGetProperty("question", out var q) ? q.GetString() : null;
+                    var question = (el.TryGetProperty("question", out var q) ? q.GetString() : null)
+                        ?? (el.TryGetProperty("text", out var tq) ? tq.GetString() : null);
                     var options = el.TryGetProperty("options", out var o) && o.ValueKind == JsonValueKind.Array
-                        ? o.EnumerateArray().Select(x => x.GetString() ?? string.Empty).ToArray()
+                        ? o.EnumerateArray().Select(x => x.GetString() ?? string.Empty).Where(s => s.Length > 0).ToArray()
                         : Array.Empty<string>();
-                    var correct = el.TryGetProperty("correctIndex", out var ci) && ci.TryGetInt32(out var ciVal) ? ciVal : 0;
+                    var correct = el.TryGetProperty("correctIndex", out var ci) && ci.TryGetInt32(out var ciVal) ? ciVal
+                        : el.TryGetProperty("answerIndex", out var ai) && ai.TryGetInt32(out var aiVal) ? aiVal : 0;
                     var explanation = el.TryGetProperty("explanation", out var ex) ? ex.GetString() : null;
 
                     if (!string.IsNullOrWhiteSpace(question) && options.Length >= 2)
@@ -180,20 +185,6 @@ namespace VidyaAI.Application.Quizzes.Commands
                     json.Length > 200 ? json[..200] : json);
                 return [];
             }
-        }
-
-        // Models in JSON mode often wrap the array in an object, e.g.
-        // {"questions": [...]}, {"quiz": [...]}. Gemini returns a bare array;
-        // local models (gemma/llama) vary the wrapper key. Unwrap to the first
-        // array-valued property regardless of its name.
-        private static JsonElement UnwrapArray(JsonElement root)
-        {
-            if (root.ValueKind == JsonValueKind.Array) return root;
-            if (root.ValueKind == JsonValueKind.Object)
-                foreach (var prop in root.EnumerateObject())
-                    if (prop.Value.ValueKind == JsonValueKind.Array)
-                        return prop.Value;
-            return root;
         }
 
         private sealed record RawQ(string Question, string[] Options, int CorrectIndex, string? Explanation);

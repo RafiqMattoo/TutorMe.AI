@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { CheckCircle2, FileText, Loader2, MessageCircle, Trash2, Upload, XCircle } from 'lucide-react'
+import { CheckCircle2, Download, ExternalLink, FileText, Loader2, MessageCircle, Trash2, Upload, X, XCircle } from 'lucide-react'
 import { materialsApi } from '../../api'
 import { canCreateMaterials, canDeleteStudyContent } from '../../auth/roles'
 import { useAuthStore } from '../../store/authStore'
@@ -25,6 +25,7 @@ const fmtSize = (b: number) => b < 1024 ? `${b} B` : b < 1024*1024 ? `${(b/1024)
 export default function MaterialsPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [viewing, setViewing] = useState<Material | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const qc = useQueryClient()
   const role = useAuthStore(s => s.user?.role)
@@ -101,10 +102,10 @@ export default function MaterialsPage() {
                         className={`text-gray-400 ${m.status === 'Ready' ? 'hover:text-primary' : 'opacity-40 pointer-events-none'} transition-colors`}>
                         <MessageCircle size={14} />
                       </Link>
-                      <a href={m.fileUrl} target="_blank" rel="noreferrer" title="Open PDF"
+                      <button onClick={() => setViewing(m)} title="View PDF"
                         className="text-gray-400 hover:text-primary transition-colors">
                         <FileText size={14} />
-                      </a>
+                      </button>
                       {canDelete && (
                         <button onClick={() => { if (confirm('Delete material?')) del.mutate(m.id) }}
                           className="text-gray-400 hover:text-red-500 transition-colors">
@@ -125,6 +126,47 @@ export default function MaterialsPage() {
           </Table>
           <Pagination page={page} totalPages={data?.totalPages ?? 1} onPage={setPage} />
         </div>
+      </div>
+
+      {viewing && <PdfViewer material={viewing} onClose={() => setViewing(null)} />}
+    </div>
+  )
+}
+
+// ── In-app PDF viewer ────────────────────────────────────────────
+// Uses the browser's native PDF renderer via an <iframe>. No extra
+// dependency. fileUrl is the API-served path (/files/**), proxied in dev.
+function PdfViewer({ material, onClose }: { material: Material; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative flex h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: '1px solid #F1F5F9' }}>
+          <FileText size={16} className="text-primary flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-semibold text-slate-900">{material.title}</div>
+            <div className="truncate text-xs text-slate-400">{material.fileName} · {material.pageCount || '—'} pages</div>
+          </div>
+          <a href={material.fileUrl} target="_blank" rel="noreferrer" title="Open in new tab"
+            className="rounded-xl border border-slate-200 p-2 text-slate-400 transition hover:bg-slate-50 hover:text-primary">
+            <ExternalLink size={15} />
+          </a>
+          <a href={material.fileUrl} download={material.fileName} title="Download"
+            className="rounded-xl border border-slate-200 p-2 text-slate-400 transition hover:bg-slate-50 hover:text-primary">
+            <Download size={15} />
+          </a>
+          <button onClick={onClose} title="Close"
+            className="rounded-xl border border-slate-200 p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600">
+            <X size={16} />
+          </button>
+        </div>
+        {/* PDF */}
+        <iframe
+          src={material.fileUrl}
+          title={material.title}
+          className="h-full w-full flex-1 bg-slate-100"
+        />
       </div>
     </div>
   )

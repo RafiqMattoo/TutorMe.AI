@@ -7,7 +7,10 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': { target: 'http://localhost:61147', changeOrigin: true }
+      '/api': { target: 'http://localhost:61147', changeOrigin: true },
+      // Uploaded PDFs are served by the API at /files/** — proxy so the in-app
+      // PDF viewer (and "Open PDF") work in dev too.
+      '/files': { target: 'http://localhost:61147', changeOrigin: true }
     }
   }
 })

@@ -2,6 +2,7 @@ using System.Text.Json;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using VidyaAI.Application.Common;
 using VidyaAI.Application.Common.Interfaces;
 using VidyaAI.Application.DTOs;
 using VidyaAI.Domain.Entities;
@@ -88,15 +89,32 @@ namespace VidyaAI.Application.Flashcards.Commands
             var contextBlock = TrimToBudget(chunks, MaxContextChars);
 
             var systemPrompt = """
-                You are an expert study-aid generator. Produce concise, high-quality flashcards
+                You are an expert study-aid generator. Produce high-quality flashcards
                 that cover the most important facts and concepts in the material. Avoid duplicates.
-                Each card has a clear question on the front and a complete answer on the back.
-                Return ONLY a JSON array — no markdown, no commentary.
+                Each card has a clear, focused question on the front and a DETAILED, thorough
+                answer on the back. The back should fully explain the concept — include the
+                definition, the key facts, the reasoning or mechanism behind it, and a concrete
+                example or context where helpful — so the learner can understand it from the
+                card alone. Write the back as 3-6 complete sentences (or a short structured
+                explanation), not a single terse phrase.
+                Return a JSON OBJECT of the form {"cards": [ ... ]} — no markdown, no commentary.
                 """;
 
             var userPrompt = $$"""
-                Generate exactly {{count}} flashcards from the material below.
-                Schema: [{"front": "...", "back": "..."}]
+                Generate exactly {{count}} DISTINCT flashcards from the material below.
+
+                Return a JSON object in EXACTLY this shape, with all {{count}} cards in the array:
+                {"cards": [{"front": "question or term", "back": "the detailed answer"}, {"front": "...", "back": "..."}]}
+
+                Requirements for each card:
+                - The "front" is a clear, focused question or term.
+                - The "back" is a DETAILED, self-contained explanation (3-6 complete sentences):
+                  define the concept, give the key facts, explain the reasoning or mechanism,
+                  and add a concrete example or context when it aids understanding.
+                - Do NOT give one-word or one-line answers — be thorough but accurate.
+
+                Do NOT return a single card object — always return the "cards" array containing
+                every card. Base the cards only on the material.
 
                 MATERIAL:
                 {{contextBlock}}
@@ -139,14 +157,12 @@ namespace VidyaAI.Application.Flashcards.Commands
             try
             {
                 using var doc = JsonDocument.Parse(json);
-                var root = UnwrapArray(doc.RootElement);
-                if (root.ValueKind != JsonValueKind.Array) return [];
-
                 var list = new List<RawCard>();
-                foreach (var el in root.EnumerateArray())
+                foreach (var el in JsonItems.Extract(doc.RootElement))
                 {
-                    var front = el.TryGetProperty("front", out var f) ? f.GetString() : null;
-                    var back = el.TryGetProperty("back", out var b) ? b.GetString() : null;
+                    // Accept the requested keys plus the alternates small models tend to use.
+                    var front = Str(el, "front") ?? Str(el, "question") ?? Str(el, "term") ?? Str(el, "q");
+                    var back = Str(el, "back") ?? Str(el, "answer") ?? Str(el, "definition") ?? Str(el, "a");
                     if (!string.IsNullOrWhiteSpace(front) && !string.IsNullOrWhiteSpace(back))
                         list.Add(new RawCard(front!.Trim(), back!.Trim()));
                 }
@@ -160,19 +176,8 @@ namespace VidyaAI.Application.Flashcards.Commands
             }
         }
 
-        // Models in JSON mode often wrap the array in an object, e.g.
-        // {"cards": [...]}, {"flashcards": [...]}. Gemini returns a bare array;
-        // local models (gemma/llama) vary the wrapper key. Unwrap to the first
-        // array-valued property regardless of its name.
-        private static JsonElement UnwrapArray(JsonElement root)
-        {
-            if (root.ValueKind == JsonValueKind.Array) return root;
-            if (root.ValueKind == JsonValueKind.Object)
-                foreach (var prop in root.EnumerateObject())
-                    if (prop.Value.ValueKind == JsonValueKind.Array)
-                        return prop.Value;
-            return root;
-        }
+        private static string? Str(JsonElement el, string name) =>
+            el.ValueKind == JsonValueKind.Object && el.TryGetProperty(name, out var v) ? v.GetString() : null;
 
         private static string TrimToBudget(List<string> chunks, int maxChars)
         {
