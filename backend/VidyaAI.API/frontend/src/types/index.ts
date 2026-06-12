@@ -8,11 +8,39 @@ export type SubscriptionStatus = 'Active' | 'Expired' | 'Cancelled' | 'Trial'
 export type PermissionModule = 'Dashboard' | 'Schools' | 'Users' | 'Roles' | 'Articles' | 'Categories'
 export type EnrollmentStatus = 'Active' | 'Pending' | 'Suspended' | 'Alumni'
 
+export type ApprovalStatus = 'Pending' | 'Approved' | 'Rejected'
+
 export interface User {
   id: string; firstName: string; lastName: string; email: string
   phone?: string; avatarUrl?: string; role: UserRole
   isActive: boolean; emailVerified: boolean; lastLoginAt?: string
   schoolId?: string; schoolName?: string; createdAt: string
+  approvalStatus: ApprovalStatus
+  gradeLevel?: string; rollNumber?: string; dateOfBirth?: string
+  guardianName?: string; guardianPhone?: string
+}
+
+// ── SELF-REGISTRATION & APPROVALS ─────────────────────────────────
+export interface PublicSchool { id: string; name: string; city?: string; state?: string }
+
+export interface PendingSchool {
+  id: string; name: string; city?: string; state?: string
+  type: SchoolType; board: BoardType
+  adminName?: string; adminEmail?: string; createdAt: string
+}
+
+export interface PendingMember {
+  id: string; firstName: string; lastName: string; email: string; role: UserRole
+  schoolId?: string; schoolName?: string; gradeLevel?: string; rollNumber?: string; createdAt: string
+}
+
+export type NotificationType =
+  | 'CommentLiked' | 'NewComment' | 'ArticlePublished' | 'Announcement'
+  | 'ApprovalRequested' | 'ApprovalGranted' | 'ApprovalRejected'
+
+export interface AppNotification {
+  id: string; type: NotificationType; title: string; message: string
+  isRead: boolean; referenceId?: string; createdAt: string
 }
 
 export interface RolePermission {
@@ -37,6 +65,7 @@ export interface School {
   plan: SubscriptionPlan; subscriptionStatus: SubscriptionStatus
   subscriptionExpiresAt?: string; isActive: boolean
   totalUsers: number; totalArticles: number; createdAt: string
+  approvalStatus: ApprovalStatus
 }
 
 export interface Article {
@@ -181,6 +210,53 @@ export interface QuizAttemptResult {
 // ── MATERIAL CHUNKS / RECITATION ──────────────────────────────────
 export interface MaterialChunk {
   id: string; chunkIndex: number; pageNumber?: number; content: string
+}
+
+// ── NARRATION (audio read-along) ──────────────────────────────────
+export type NarrationStatus = 'Processing' | 'Ready' | 'Failed'
+export type NarrationKind = 'Verbatim' | 'Explained' | 'Illustrated'
+
+export interface NarrationSegment {
+  segmentIndex: number; chunkIndex: number; pageNumber?: number
+  text: string; startMs: number; endMs: number; imageUrl?: string
+}
+
+export interface Narration {
+  id: string; materialId: string; kind: NarrationKind; status: NarrationStatus
+  audioUrl?: string; contentType: string; voice?: string
+  durationMs: number; errorMessage?: string
+  segments: NarrationSegment[]; createdAt: string
+}
+
+export interface NarrationVoice { id: string; name: string; language: string }
+
+// ── ACADEMIC STRUCTURE (A1) ───────────────────────────────────────
+export type SchoolStage = 'Foundational' | 'Preparatory' | 'Middle' | 'Secondary'
+
+export interface Term {
+  id: string; academicYearId: string; name: string
+  startDate: string; endDate: string; sortOrder: number
+}
+export interface AcademicYear {
+  id: string; schoolId: string; name: string
+  startDate: string; endDate: string; isCurrent: boolean
+  terms: Term[]; createdAt: string
+}
+export interface SchoolClass {
+  id: string; schoolId: string; name: string; stage: SchoolStage
+  level: number; sectionCount: number; createdAt: string
+}
+export interface Section {
+  id: string; schoolId: string; schoolClassId: string; schoolClassName: string
+  name: string; capacity: number; classTeacherId?: string; classTeacherName?: string; createdAt: string
+}
+export interface Subject {
+  id: string; schoolId: string; name: string; code?: string; mediumOfInstruction?: string
+  isLanguage: boolean; isCoScholastic: boolean; createdAt: string
+}
+export interface House {
+  id: string; schoolId: string; name: string; colorHex?: string
+  houseMasterId?: string; houseMasterName?: string; createdAt: string
 }
 
 // ── LESSON PLANS ──────────────────────────────────────────────────

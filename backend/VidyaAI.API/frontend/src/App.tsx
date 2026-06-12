@@ -2,8 +2,10 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import { useAuthStore } from './store/authStore'
 import AdminLayout from './components/layout/AdminLayout'
 import LoginPage from './pages/auth/LoginPage'
+import RegisterPage from './pages/auth/RegisterPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import SchoolsPage from './pages/schools/SchoolsPage'
+import ApprovalsPage from './pages/approvals/ApprovalsPage'
 import UsersPage from './pages/users/UsersPage'
 import RolesPage from './pages/users/RolesPage'
 import EnrollmentsPage from './pages/users/EnrollmentsPage'
@@ -17,6 +19,9 @@ import StudyFlashcardsPage from './pages/flashcards/StudyFlashcardsPage'
 import QuizzesPage from './pages/quizzes/QuizzesPage'
 import TakeQuizPage from './pages/quizzes/TakeQuizPage'
 import RecitePage from './pages/recite/RecitePage'
+import ExplainerPage from './pages/explainer/ExplainerPage'
+import ScenesPage from './pages/scenes/ScenesPage'
+import AcademicStructurePage from './pages/academics/AcademicStructurePage'
 import LessonPlansPage from './pages/lesson-plans/LessonPlansPage'
 import LessonPlanDetailPage from './pages/lesson-plans/LessonPlanDetailPage'
 import TodayPage from './pages/today/TodayPage'
@@ -39,12 +44,14 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<RoleRoute><DashboardPage /></RoleRoute>} />
           <Route path="today" element={<RoleRoute><TodayPage /></RoleRoute>} />
           <Route path="deliveries" element={<RoleRoute><DeliveriesPage /></RoleRoute>} />
           <Route path="schools" element={<RoleRoute><SchoolsPage /></RoleRoute>} />
+          <Route path="approvals" element={<RoleRoute><ApprovalsPage /></RoleRoute>} />
           <Route path="users" element={<RoleRoute><UsersPage /></RoleRoute>} />
           <Route path="roles" element={<RoleRoute><RolesPage /></RoleRoute>} />
           <Route path="enrollments" element={<RoleRoute><EnrollmentsPage /></RoleRoute>} />
@@ -59,6 +66,9 @@ export default function App() {
           <Route path="quizzes" element={<RoleRoute><QuizzesPage /></RoleRoute>} />
           <Route path="quizzes/:id/take" element={<RoleRoute><TakeQuizPage /></RoleRoute>} />
           <Route path="recite" element={<RoleRoute><RecitePage /></RoleRoute>} />
+          <Route path="explain" element={<RoleRoute><ExplainerPage /></RoleRoute>} />
+          <Route path="scenes" element={<RoleRoute><ScenesPage /></RoleRoute>} />
+          <Route path="academics" element={<RoleRoute><AcademicStructurePage /></RoleRoute>} />
           <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
           <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
         </Route>

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
-import type { Article, ArticleListItem, ArticleStatus, AskTutorResponse, Category, ChatMessage, ChatSession, CreateDeliveryRequest, DashboardStats, Delivery, FlashcardSet, FlashcardSetSummary, LessonPlan, LessonPlanSummary, LoginResponse, Material, MaterialChunk, PagedResult, Quiz, QuizAttemptResult, QuizDifficulty, QuizSummary, RoleDefinition, RolePermission, School, TutorStreamEvent, User, UserSchoolEnrollment } from '../types'
+import type { AcademicYear, AppNotification, Article, ArticleListItem, ArticleStatus, AskTutorResponse, Category, ChatMessage, ChatSession, CreateDeliveryRequest, DashboardStats, Delivery, FlashcardSet, FlashcardSetSummary, House, LessonPlan, LessonPlanSummary, LoginResponse, Material, MaterialChunk, Narration, NarrationKind, NarrationVoice, PagedResult, PendingMember, PendingSchool, PublicSchool, Quiz, QuizAttemptResult, QuizDifficulty, QuizSummary, RoleDefinition, RolePermission, School, SchoolClass, Section, Subject, Term, TutorStreamEvent, User, UserSchoolEnrollment } from '../types'
 
 const api = axios.create({ baseURL: '/api', timeout: 60000 })
 
@@ -34,6 +34,29 @@ export const authApi = {
     api.post<LoginResponse>('/auth/login', { email, password }).then(r => r.data),
   logout: () => api.post('/auth/logout'),
   me: () => api.get('/auth/me').then(r => r.data),
+  // Public self-registration (no auth required).
+  publicSchools: () => api.get<PublicSchool[]>('/auth/schools').then(r => r.data),
+  registerSchool: (data: object) =>
+    api.post<{ message: string }>('/auth/register/school', data).then(r => r.data),
+  registerMember: (data: object) =>
+    api.post<{ message: string }>('/auth/register/member', data).then(r => r.data),
+}
+
+// ── APPROVALS (self-registration review) ──────────────────────────
+export const approvalsApi = {
+  pendingSchools: () => api.get<PendingSchool[]>('/approvals/schools').then(r => r.data),
+  approveSchool: (id: string) => api.post(`/approvals/schools/${id}/approve`),
+  rejectSchool: (id: string) => api.post(`/approvals/schools/${id}/reject`),
+  pendingMembers: () => api.get<PendingMember[]>('/approvals/members').then(r => r.data),
+  approveMember: (id: string) => api.post(`/approvals/members/${id}/approve`),
+  rejectMember: (id: string) => api.post(`/approvals/members/${id}/reject`),
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────
+export const notificationsApi = {
+  getAll: () => api.get<AppNotification[]>('/notifications').then(r => r.data),
+  markRead: (id: string) => api.post(`/notifications/${id}/read`),
+  markAllRead: () => api.post('/notifications/read-all'),
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────
@@ -110,6 +133,51 @@ export const materialsApi = {
     }).then(r => r.data)
   },
   delete: (id: string) => api.delete(`/materials/${id}`),
+}
+
+// ── NARRATION (audio read-along) ──────────────────────────────────
+export const narrationApi = {
+  // Current narration of a kind (Verbatim = recite, Explained = animated explainer).
+  get: (materialId: string, kind: NarrationKind = 'Verbatim') =>
+    api.get<Narration | null>(`/materials/${materialId}/narration`, { params: { kind } }).then(r => r.data),
+  // Kicks off (or restarts) background synthesis; returns the Processing record.
+  generate: (materialId: string, voice?: string, kind: NarrationKind = 'Verbatim') =>
+    api.post<Narration>(`/materials/${materialId}/narration`, { voice, kind }).then(r => r.data),
+  voices: () => api.get<NarrationVoice[]>('/narration/voices').then(r => r.data),
+}
+
+// ── ACADEMIC STRUCTURE (A1) ───────────────────────────────────────
+// schoolId is optional: SchoolAdmins are scoped by their JWT; a SuperAdmin passes one.
+export const academicsApi = {
+  years: (schoolId?: string) => api.get<AcademicYear[]>('/academics/years', { params: { schoolId } }).then(r => r.data),
+  saveYear: (data: object, id?: string) =>
+    (id ? api.put<AcademicYear>(`/academics/years/${id}`, data) : api.post<AcademicYear>('/academics/years', data)).then(r => r.data),
+  deleteYear: (id: string, schoolId?: string) => api.delete(`/academics/years/${id}`, { params: { schoolId } }),
+  saveTerm: (yearId: string, data: object, schoolId?: string) =>
+    api.post<Term>(`/academics/years/${yearId}/terms`, data, { params: { schoolId } }).then(r => r.data),
+  deleteTerm: (id: string, schoolId?: string) => api.delete(`/academics/terms/${id}`, { params: { schoolId } }),
+
+  classes: (schoolId?: string) => api.get<SchoolClass[]>('/academics/classes', { params: { schoolId } }).then(r => r.data),
+  saveClass: (data: object, id?: string) =>
+    (id ? api.put<SchoolClass>(`/academics/classes/${id}`, data) : api.post<SchoolClass>('/academics/classes', data)).then(r => r.data),
+  deleteClass: (id: string, schoolId?: string) => api.delete(`/academics/classes/${id}`, { params: { schoolId } }),
+
+  sections: (schoolId?: string, classId?: string) =>
+    api.get<Section[]>('/academics/sections', { params: { schoolId, classId } }).then(r => r.data),
+  saveSection: (data: object, id?: string, schoolId?: string) =>
+    (id ? api.put<Section>(`/academics/sections/${id}`, data, { params: { schoolId } })
+        : api.post<Section>('/academics/sections', data, { params: { schoolId } })).then(r => r.data),
+  deleteSection: (id: string, schoolId?: string) => api.delete(`/academics/sections/${id}`, { params: { schoolId } }),
+
+  subjects: (schoolId?: string) => api.get<Subject[]>('/academics/subjects', { params: { schoolId } }).then(r => r.data),
+  saveSubject: (data: object, id?: string) =>
+    (id ? api.put<Subject>(`/academics/subjects/${id}`, data) : api.post<Subject>('/academics/subjects', data)).then(r => r.data),
+  deleteSubject: (id: string, schoolId?: string) => api.delete(`/academics/subjects/${id}`, { params: { schoolId } }),
+
+  houses: (schoolId?: string) => api.get<House[]>('/academics/houses', { params: { schoolId } }).then(r => r.data),
+  saveHouse: (data: object, id?: string) =>
+    (id ? api.put<House>(`/academics/houses/${id}`, data) : api.post<House>('/academics/houses', data)).then(r => r.data),
+  deleteHouse: (id: string, schoolId?: string) => api.delete(`/academics/houses/${id}`, { params: { schoolId } }),
 }
 
 // ── TUTOR ─────────────────────────────────────────────────────────

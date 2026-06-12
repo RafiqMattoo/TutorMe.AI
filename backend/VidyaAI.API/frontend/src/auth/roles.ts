@@ -14,7 +14,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Platform command center with every school, user, and content workflow.',
     scope: 'Global platform access',
     accent: 'from-teal-500 to-cyan-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/users', '/roles', '/enrollments', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   SchoolAdmin: {
     label: 'School Admin',
@@ -22,7 +22,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Runs school operations, manages campus users, and keeps publishing moving.',
     scope: 'Own school only',
     accent: 'from-blue-500 to-indigo-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/users', '/roles', '/enrollments', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   Teacher: {
     label: 'Teacher',
@@ -30,7 +30,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Creates learning content, drafts lessons, and tracks classroom engagement.',
     scope: 'Content workspace',
     accent: 'from-emerald-500 to-teal-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   Student: {
     label: 'Student',
@@ -38,7 +38,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'A focused learner view for articles, knowledge drops, and study updates.',
     scope: 'Learning view',
     accent: 'from-amber-500 to-orange-400',
-    allowedRoutes: ['/dashboard', '/today', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite'],
+    allowedRoutes: ['/dashboard', '/today', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes'],
   },
   Parent: {
     label: 'Parent',
@@ -46,7 +46,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Follows school content and sees learning activity through a guardian lens.',
     scope: 'Guardian view',
     accent: 'from-rose-500 to-pink-400',
-    allowedRoutes: ['/dashboard', '/today', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite'],
+    allowedRoutes: ['/dashboard', '/today', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes'],
   },
 }
 

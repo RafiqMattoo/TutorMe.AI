@@ -24,7 +24,11 @@ export default function UsersPage() {
   const qc = useQueryClient()
   const currentUser = useAuthStore(s => s.user)
   const roles = useMemo(() => manageableRoles(currentUser?.role), [currentUser?.role])
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', phone: '', role: roles[0] ?? 'Teacher' })
+  const emptyForm = {
+    firstName: '', lastName: '', email: '', password: '', phone: '', role: (roles[0] ?? 'Teacher') as UserRole,
+    gradeLevel: '', rollNumber: '', dateOfBirth: '', guardianName: '', guardianPhone: '',
+  }
+  const [form, setForm] = useState(emptyForm)
 
   useEffect(() => {
     if (!roles.includes(form.role as UserRole) && roles[0]) setForm(f => ({ ...f, role: roles[0] }))
@@ -41,7 +45,7 @@ export default function UsersPage() {
       qc.invalidateQueries({ queryKey: ['users'] })
       toast.success('User created')
       setModalOpen(false)
-      setForm({ firstName: '', lastName: '', email: '', password: '', phone: '', role: roles[0] ?? 'Teacher' })
+      setForm(emptyForm)
     },
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
@@ -99,6 +103,14 @@ export default function UsersPage() {
                       <div>
                         <div className="text-sm font-bold text-slate-900">{u.firstName} {u.lastName}</div>
                         <div className="text-xs text-slate-400">{u.email}</div>
+                        {u.role === 'Student' && (u.gradeLevel || u.rollNumber || u.guardianName) && (
+                          <div className="mt-0.5 text-[11px] text-slate-500">
+                            {u.gradeLevel && <>Class {u.gradeLevel}</>}
+                            {u.gradeLevel && u.rollNumber ? ' · ' : ''}
+                            {u.rollNumber && <>Roll {u.rollNumber}</>}
+                            {u.guardianName && <> · Guardian: {u.guardianName}</>}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -107,7 +119,13 @@ export default function UsersPage() {
                   <td className="px-4 py-3 text-sm text-slate-500">
                     {u.lastLoginAt ? formatDistanceToNow(new Date(u.lastLoginAt), { addSuffix: true }) : 'Never'}
                   </td>
-                  <td className="px-4 py-3"><StatusBadge status={u.isActive ? 'Active' : 'Inactive'} /></td>
+                  <td className="px-4 py-3">
+                    {u.approvalStatus === 'Pending'
+                      ? <span className="badge-yellow">Pending approval</span>
+                      : u.approvalStatus === 'Rejected'
+                        ? <span className="badge-red">Rejected</span>
+                        : <StatusBadge status={u.isActive ? 'Active' : 'Inactive'} />}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button onClick={() => toggleMutation.mutate(u.id)} title={u.isActive ? 'Deactivate' : 'Activate'}
@@ -137,9 +155,31 @@ export default function UsersPage() {
           <Field label="Role"><select className="input" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as UserRole }))}>
             {roles.map(r => <option key={r} value={r}>{roleProfiles[r].label}</option>)}
           </select></Field>
+
+          {/* Student profile — shown only for students */}
+          {form.role === 'Student' && (
+            <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Student profile</div>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Class / Grade"><input className="input" value={form.gradeLevel} onChange={e => setForm(f => ({ ...f, gradeLevel: e.target.value }))} /></Field>
+                <Field label="Roll Number"><input className="input" value={form.rollNumber} onChange={e => setForm(f => ({ ...f, rollNumber: e.target.value }))} /></Field>
+              </div>
+              <Field label="Date of Birth"><input type="date" className="input" value={form.dateOfBirth} onChange={e => setForm(f => ({ ...f, dateOfBirth: e.target.value }))} /></Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Guardian Name"><input className="input" value={form.guardianName} onChange={e => setForm(f => ({ ...f, guardianName: e.target.value }))} /></Field>
+                <Field label="Guardian Phone"><input className="input" value={form.guardianPhone} onChange={e => setForm(f => ({ ...f, guardianPhone: e.target.value }))} /></Field>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-3 pt-2">
             <button onClick={() => setModalOpen(false)} className="btn-secondary flex-1">Cancel</button>
-            <button onClick={() => createMutation.mutate(form)} disabled={createMutation.isPending || roles.length === 0} className="btn-primary flex-1">
+            <button
+              onClick={() => createMutation.mutate({
+                ...form,
+                dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : null,
+              })}
+              disabled={createMutation.isPending || roles.length === 0} className="btn-primary flex-1">
               {createMutation.isPending ? 'Creating...' : 'Create User'}
             </button>
           </div>

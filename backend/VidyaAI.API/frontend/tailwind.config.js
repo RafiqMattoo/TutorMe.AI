@@ -38,11 +38,23 @@ export default {
       },
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
+        'ken-burns': 'kenBurns 18s ease-out both',
+        'scene-in': 'sceneIn 0.7s ease-out both',
       },
       keyframes: {
         fadeIn: {
           from: { opacity: '0', transform: 'translateY(4px)' },
           to:   { opacity: '1', transform: 'translateY(0)' },
+        },
+        // Slow pan/zoom over a still image to give it life (Ken Burns effect).
+        kenBurns: {
+          from: { transform: 'scale(1.05) translate(0, 0)' },
+          to:   { transform: 'scale(1.18) translate(-2.5%, -2%)' },
+        },
+        // Each new scene fades and lifts into place.
+        sceneIn: {
+          from: { opacity: '0', transform: 'translateY(12px) scale(0.99)' },
+          to:   { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
       },
     },
