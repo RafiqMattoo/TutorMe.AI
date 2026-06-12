@@ -32,6 +32,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<QuizAttempt> QuizAttempts => Set<QuizAttempt>();
     public DbSet<LessonPlan> LessonPlans => Set<LessonPlan>();
     public DbSet<Delivery> Deliveries => Set<Delivery>();
+    public DbSet<Narration> Narrations => Set<Narration>();
+    public DbSet<NarrationSegment> NarrationSegments => Set<NarrationSegment>();
+    public DbSet<AcademicYear> AcademicYears => Set<AcademicYear>();
+    public DbSet<Term> Terms => Set<Term>();
+    public DbSet<SchoolClass> SchoolClasses => Set<SchoolClass>();
+    public DbSet<Section> Sections => Set<Section>();
+    public DbSet<Subject> Subjects => Set<Subject>();
+    public DbSet<House> Houses => Set<House>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +56,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.Property(x => x.Type).HasConversion<string>();
             e.Property(x => x.Plan).HasConversion<string>();
             e.Property(x => x.SubscriptionStatus).HasConversion<string>();
+            e.Property(x => x.ApprovalStatus).HasConversion<string>();
             e.HasQueryFilter(x => !x.IsDeleted);
             e.HasIndex(x => x.Email).IsUnique();
         });
@@ -60,6 +69,11 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
             e.Property(x => x.LastName).HasMaxLength(100).IsRequired();
             e.Property(x => x.Role).HasConversion<string>();
+            e.Property(x => x.ApprovalStatus).HasConversion<string>();
+            e.Property(x => x.GradeLevel).HasMaxLength(60);
+            e.Property(x => x.RollNumber).HasMaxLength(60);
+            e.Property(x => x.GuardianName).HasMaxLength(150);
+            e.Property(x => x.GuardianPhone).HasMaxLength(30);
             e.HasQueryFilter(x => !x.IsDeleted);
             e.HasIndex(x => x.Email).IsUnique();
             e.HasOne(x => x.School).WithMany(x => x.Users)
@@ -340,6 +354,98 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.School).WithMany()
                 .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ── NARRATION ─────────────────────────────────────────────
+        modelBuilder.Entity<Narration>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Status).HasConversion<string>();
+            e.Property(x => x.Kind).HasConversion<string>();
+            e.Property(x => x.AudioUrl).HasMaxLength(1000);
+            e.Property(x => x.ContentType).HasMaxLength(100);
+            e.Property(x => x.Voice).HasMaxLength(100);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            // One narration per material per kind — regenerating replaces that kind.
+            e.HasIndex(x => new { x.MaterialId, x.Kind }).IsUnique();
+            e.HasOne(x => x.Material).WithMany()
+                .HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<NarrationSegment>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Text).IsRequired();
+            e.HasIndex(x => x.NarrationId);
+            e.HasIndex(x => new { x.NarrationId, x.SegmentIndex }).IsUnique();
+            e.HasOne(x => x.Narration).WithMany(n => n.Segments)
+                .HasForeignKey(x => x.NarrationId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── ACADEMIC STRUCTURE (A1) ───────────────────────────────
+        modelBuilder.Entity<AcademicYear>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(50);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Term>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(50);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.AcademicYear).WithMany(y => y.Terms)
+                .HasForeignKey(x => x.AcademicYearId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SchoolClass>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(60);
+            e.Property(x => x.Stage).HasConversion<string>();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Section>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(20);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.SchoolClassId);
+            e.HasOne(x => x.SchoolClass).WithMany(c => c.Sections)
+                .HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.ClassTeacher).WithMany()
+                .HasForeignKey(x => x.ClassTeacherId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Subject>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(80);
+            e.Property(x => x.Code).HasMaxLength(20);
+            e.Property(x => x.MediumOfInstruction).HasMaxLength(50);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<House>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(60);
+            e.Property(x => x.ColorHex).HasMaxLength(9);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.HouseMaster).WithMany()
+                .HasForeignKey(x => x.HouseMasterId).OnDelete(DeleteBehavior.SetNull);
         });
 
         // ── SEED DATA ─────────────────────────────────────────────

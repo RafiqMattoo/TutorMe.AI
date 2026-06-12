@@ -14,6 +14,7 @@ public interface IAppDbContext
     DbSet<RolePermission> RolePermissions { get; }
     DbSet<RoleDefinition> RoleDefinitions { get; }
     DbSet<UserSchoolEnrollment> UserSchoolEnrollments { get; }
+    DbSet<Notification> Notifications { get; }
     DbSet<Material> Materials { get; }
     DbSet<MaterialChunk> MaterialChunks { get; }
     DbSet<ChatSession> ChatSessions { get; }
@@ -25,6 +26,15 @@ public interface IAppDbContext
     DbSet<QuizAttempt> QuizAttempts { get; }
     DbSet<LessonPlan> LessonPlans { get; }
     DbSet<Delivery> Deliveries { get; }
+    DbSet<VidyaAI.Domain.Entities.Narration> Narrations { get; }
+    DbSet<VidyaAI.Domain.Entities.NarrationSegment> NarrationSegments { get; }
+    // Academic structure (A1)
+    DbSet<AcademicYear> AcademicYears { get; }
+    DbSet<Term> Terms { get; }
+    DbSet<SchoolClass> SchoolClasses { get; }
+    DbSet<Section> Sections { get; }
+    DbSet<Subject> Subjects { get; }
+    DbSet<House> Houses { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
@@ -61,6 +71,15 @@ public interface IStorageService
 {
     Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default);
     Task DeleteAsync(string fileUrl, CancellationToken ct = default);
+}
+
+// Verifies a captcha token (Google reCAPTCHA / Cloudflare Turnstile compatible).
+// When no secret is configured, Enabled is false and verification is skipped so
+// local/dev registration still works.
+public interface ICaptchaVerifier
+{
+    bool Enabled { get; }
+    Task<bool> VerifyAsync(string? token, CancellationToken ct = default);
 }
 
 // JWT token service
@@ -121,4 +140,51 @@ public sealed class LlmApiException(int statusCode, string message, string rawBo
 {
     public int StatusCode { get; } = statusCode;
     public string RawBody { get; } = rawBody;
+}
+
+// ── TEXT-TO-SPEECH (audio narration) ──────────────────────────────
+
+// One unit of text to narrate. ChunkIndex/PageNumber are carried through so the
+// resulting timing can be mapped back to the document for read-along highlighting.
+public sealed record TtsSegment(int Index, int ChunkIndex, int? PageNumber, string Text);
+
+// A narrated segment with its exact [StartMs, EndMs) offset in the stitched audio.
+public sealed record TtsTiming(int Index, int ChunkIndex, int? PageNumber, string Text, int StartMs, int EndMs);
+
+// The complete synthesis result: one audio blob plus the per-segment timeline.
+public sealed record TtsResult(
+    byte[] Audio, string ContentType, string FileExtension, int DurationMs,
+    IReadOnlyList<TtsTiming> Timings);
+
+public sealed record TtsVoice(string Id, string Name, string Language);
+
+// Turns text into a single audio file with a precise per-segment timeline, so the
+// frontend can highlight text in sync with playback. Implementations are pluggable
+// (Tts:Provider) — the default is local macOS `say`.
+public interface ITtsService
+{
+    // Lists voices the engine offers (for a voice picker).
+    IReadOnlyList<TtsVoice> GetVoices();
+
+    // Synthesizes all segments and stitches them into one audio file, returning the
+    // bytes plus each segment's measured start/end offset.
+    Task<TtsResult> SynthesizeAsync(IReadOnlyList<TtsSegment> segments, string? voiceId, CancellationToken ct = default);
+}
+
+// ── AI IMAGE GENERATION (illustrated story scenes) ────────────────
+
+// A single generated image: raw bytes plus how to store/serve it.
+public sealed record GeneratedImage(byte[] Data, string ContentType, string FileExtension);
+
+// Turns a text prompt into one illustration, used to give each narration segment a
+// picture for the animated story-scenes view. Image models aren't available locally,
+// so this is cloud-backed; Enabled is false when no API key is configured and the
+// caller should fall back to a text-only slide.
+public interface IImageGenerationService
+{
+    bool Enabled { get; }
+
+    // Generates an image for the prompt, or null if the model returned no image
+    // (callers degrade gracefully rather than failing the whole narration).
+    Task<GeneratedImage?> GenerateAsync(string prompt, CancellationToken ct = default);
 }

@@ -56,6 +56,20 @@ builder.Services.AddScoped<VidyaAI.Infrastructure.Services.CategoryService>();
 builder.Services.AddSingleton<IPdfTextExtractor, PdfTextExtractor>();
 builder.Services.AddSingleton<ITextChunker, TextChunker>();
 builder.Services.AddScoped<IStorageService, LocalFileStorageService>();
+
+// Email (registration/approval). SMTP when Smtp:Host is set; otherwise writes a
+// local HTML preview so dev works without a mail server.
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+// Captcha verification — disabled (skipped) unless Captcha:SecretKey is configured.
+builder.Services.AddHttpClient<ICaptchaVerifier, CaptchaVerifier>(c => c.Timeout = TimeSpan.FromSeconds(10));
+
+// Text-to-speech for audio narration. Config-driven (Tts:Provider); the default
+// "macos-say" uses the local macOS `say` command (free, offline). The interface
+// lets a cross-platform/cloud engine be swapped in without touching the pipeline.
+var ttsProvider = (builder.Configuration["Tts:Provider"] ?? "macos-say").Trim().ToLowerInvariant();
+builder.Services.AddSingleton<ITtsService, MacSayTtsService>();
+Log.Information("TTS provider: {Provider}", ttsProvider);
+
 // AI provider is config-driven (AI:Provider = "ollama" | "gemini"). Both
 // implement IEmbeddingService + ILlmChatService, so the rest of the pipeline is
 // provider-agnostic. "ollama" keeps all book content local; "gemini" uses the
@@ -76,6 +90,11 @@ else
     builder.Services.AddScoped<ILlmChatService>(sp => sp.GetRequiredService<GeminiService>());
 }
 Log.Information("AI provider: {Provider}", aiProvider);
+
+// AI image generation for illustrated story scenes. Always Gemini-backed (image
+// models aren't available via the local Ollama provider); degrades gracefully to
+// text-only slides when no Gemini API key is configured.
+builder.Services.AddHttpClient<IImageGenerationService, GeminiImageService>(c => c.Timeout = TimeSpan.FromSeconds(120));
 
 builder.Services.AddCors(opt =>
     opt.AddPolicy("AllowFrontend", p =>

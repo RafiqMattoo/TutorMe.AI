@@ -8,16 +8,39 @@ public record LoginResponse(string AccessToken, string RefreshToken, UserDto Use
 public record RefreshTokenRequest(string RefreshToken);
 public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 
+// ── SELF-REGISTRATION (public, no auth) ───────────────────────────
+public record RegisterSchoolRequest(
+    string SchoolName, string? City, string? State, string? Phone, string? Email,
+    SchoolType Type, BoardType Board,
+    string AdminFirstName, string AdminLastName, string AdminEmail, string AdminPassword, string? AdminPhone,
+    string? CaptchaToken = null);
+
+public record RegisterMemberRequest(
+    Guid SchoolId, UserRole Role,                 // Teacher or Student only
+    string FirstName, string LastName, string Email, string Password, string? Phone,
+    string? GradeLevel, string? RollNumber, DateTime? DateOfBirth,
+    string? GuardianName, string? GuardianPhone,
+    string? CaptchaToken = null);
+
+public record RegisterResponse(string Message);
+
+// Minimal school info exposed publicly so a member can pick their school at signup.
+public record PublicSchoolDto(Guid Id, string Name, string? City, string? State);
+
 // ── USER ──────────────────────────────────────────────────────────
 public record UserDto(
     Guid Id, string FirstName, string LastName, string Email,
     string? Phone, string? AvatarUrl, UserRole Role,
     bool IsActive, bool EmailVerified, DateTime? LastLoginAt,
-    Guid? SchoolId, string? SchoolName, DateTime CreatedAt);
+    Guid? SchoolId, string? SchoolName, DateTime CreatedAt,
+    ApprovalStatus ApprovalStatus, string? GradeLevel, string? RollNumber,
+    DateTime? DateOfBirth, string? GuardianName, string? GuardianPhone);
 
 public record CreateUserRequest(
     string FirstName, string LastName, string Email, string Password,
-    string? Phone, UserRole Role, Guid? SchoolId);
+    string? Phone, UserRole Role, Guid? SchoolId,
+    string? GradeLevel, string? RollNumber, DateTime? DateOfBirth,
+    string? GuardianName, string? GuardianPhone);
 
 public record UpdateUserRequest(
     string FirstName, string LastName, string? Phone,
@@ -55,7 +78,21 @@ public record SchoolDto(
     SchoolType Type, BoardType Board,
     SubscriptionPlan Plan, SubscriptionStatus SubscriptionStatus,
     DateTime? SubscriptionExpiresAt, bool IsActive,
-    int TotalUsers, int TotalArticles, DateTime CreatedAt);
+    int TotalUsers, int TotalArticles, DateTime CreatedAt,
+    ApprovalStatus ApprovalStatus);
+
+// ── APPROVALS & NOTIFICATIONS ─────────────────────────────────────
+public record PendingSchoolDto(
+    Guid Id, string Name, string? City, string? State, SchoolType Type, BoardType Board,
+    string? AdminName, string? AdminEmail, DateTime CreatedAt);
+
+public record PendingMemberDto(
+    Guid Id, string FirstName, string LastName, string Email, UserRole Role,
+    Guid? SchoolId, string? SchoolName, string? GradeLevel, string? RollNumber, DateTime CreatedAt);
+
+public record NotificationDto(
+    Guid Id, NotificationType Type, string Title, string Message, bool IsRead,
+    string? ReferenceId, DateTime CreatedAt);
 
 public record CreateSchoolRequest(
     string Name, string? Address, string? City, string? State,
@@ -159,6 +196,19 @@ public record MaterialDto(
 
 public record MaterialChunkDto(Guid Id, int ChunkIndex, int? PageNumber, string Content);
 
+// ── NARRATION (audio + read-along timeline) ───────────────────────
+public record NarrationSegmentDto(
+    int SegmentIndex, int ChunkIndex, int? PageNumber, string Text, int StartMs, int EndMs, string? ImageUrl);
+
+public record NarrationDto(
+    Guid Id, Guid MaterialId, NarrationKind Kind, NarrationStatus Status, string? AudioUrl, string ContentType,
+    string? Voice, int DurationMs, string? ErrorMessage,
+    IReadOnlyList<NarrationSegmentDto> Segments, DateTime CreatedAt);
+
+public record NarrationVoiceDto(string Id, string Name, string Language);
+
+public record GenerateNarrationRequest(string? Voice, NarrationKind Kind = NarrationKind.Verbatim);
+
 // ── TUTOR / CHAT ─────────────────────────────────────────────────
 public record ChatSessionDto(
     Guid Id, string Title, Guid? MaterialId, string? MaterialTitle,
@@ -255,3 +305,31 @@ public record DeliveryDto(
 public record CreateDeliveryRequest(
     string Title, string? Instructions, DateOnly ScheduledDate, string? GradeLevel,
     Guid? MaterialId, Guid? QuizId, Guid? FlashcardSetId);
+
+// ── ACADEMIC STRUCTURE (A1) ───────────────────────────────────────
+public record AcademicYearDto(
+    Guid Id, Guid SchoolId, string Name, DateTime StartDate, DateTime EndDate,
+    bool IsCurrent, IReadOnlyList<TermDto> Terms, DateTime CreatedAt);
+public record TermDto(
+    Guid Id, Guid AcademicYearId, string Name, DateTime StartDate, DateTime EndDate, int SortOrder);
+public record SaveAcademicYearRequest(string Name, DateTime StartDate, DateTime EndDate, bool IsCurrent, Guid? SchoolId);
+public record SaveTermRequest(string Name, DateTime StartDate, DateTime EndDate, int SortOrder);
+
+public record SchoolClassDto(
+    Guid Id, Guid SchoolId, string Name, SchoolStage Stage, int Level, int SectionCount, DateTime CreatedAt);
+public record SaveSchoolClassRequest(string Name, SchoolStage Stage, int Level, Guid? SchoolId);
+
+public record SectionDto(
+    Guid Id, Guid SchoolId, Guid SchoolClassId, string SchoolClassName, string Name,
+    int Capacity, Guid? ClassTeacherId, string? ClassTeacherName, DateTime CreatedAt);
+public record SaveSectionRequest(Guid SchoolClassId, string Name, int Capacity, Guid? ClassTeacherId);
+
+public record SubjectDto(
+    Guid Id, Guid SchoolId, string Name, string? Code, string? MediumOfInstruction,
+    bool IsLanguage, bool IsCoScholastic, DateTime CreatedAt);
+public record SaveSubjectRequest(
+    string Name, string? Code, string? MediumOfInstruction, bool IsLanguage, bool IsCoScholastic, Guid? SchoolId);
+
+public record HouseDto(
+    Guid Id, Guid SchoolId, string Name, string? ColorHex, Guid? HouseMasterId, string? HouseMasterName, DateTime CreatedAt);
+public record SaveHouseRequest(string Name, string? ColorHex, Guid? HouseMasterId, Guid? SchoolId);

@@ -19,6 +19,9 @@ public class School : BaseEntity
     public SubscriptionStatus SubscriptionStatus { get; set; } = SubscriptionStatus.Trial;
     public DateTime? SubscriptionExpiresAt { get; set; }
     public bool IsActive { get; set; } = true;
+    // Self-registered schools start Pending and need SuperAdmin approval; schools
+    // created directly by a SuperAdmin default to Approved.
+    public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Approved;
 
     public ICollection<User> Users { get; set; } = [];
     public ICollection<Article> Articles { get; set; } = [];
@@ -37,9 +40,19 @@ public class User : BaseEntity
     public UserRole Role { get; set; } = UserRole.Student;
     public bool IsActive { get; set; } = true;
     public bool EmailVerified { get; set; } = false;
+    // Self-registered teachers/students start Pending and need SchoolAdmin approval;
+    // users created directly by an admin default to Approved.
+    public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Approved;
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiry { get; set; }
     public DateTime? LastLoginAt { get; set; }
+
+    // ── Student profile (prominent when a school enrolls a student) ──
+    public string? GradeLevel { get; set; }      // e.g. "Class 8" / "Grade 10"
+    public string? RollNumber { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public string? GuardianName { get; set; }
+    public string? GuardianPhone { get; set; }
 
     public Guid? SchoolId { get; set; }
     public School? School { get; set; }
