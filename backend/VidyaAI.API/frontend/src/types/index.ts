@@ -248,7 +248,8 @@ export interface SchoolClass {
 }
 export interface Section {
   id: string; schoolId: string; schoolClassId: string; schoolClassName: string
-  name: string; capacity: number; classTeacherId?: string; classTeacherName?: string; createdAt: string
+  name: string; capacity: number; classTeacherId?: string; classTeacherName?: string
+  streamId?: string; streamName?: string; createdAt: string
 }
 export interface Subject {
   id: string; schoolId: string; name: string; code?: string; mediumOfInstruction?: string
@@ -257,6 +258,71 @@ export interface Subject {
 export interface House {
   id: string; schoolId: string; name: string; colorHex?: string
   houseMasterId?: string; houseMasterName?: string; createdAt: string
+}
+export interface Stream {
+  id: string; schoolId: string; name: string; code?: string; createdAt: string
+}
+export interface TeacherOption { id: string; name: string }
+export interface SubjectAllocation {
+  id: string; schoolId: string; subjectId: string; subjectName: string
+  schoolClassId: string; schoolClassName: string; sectionId?: string; sectionName?: string
+  teacherId: string; teacherName: string; createdAt: string
+}
+export interface GradeBand {
+  id: string; gradingScaleId: string; grade: string
+  minPercent: number; maxPercent: number; gradePoint?: number; description?: string
+}
+export interface GradingScale {
+  id: string; schoolId: string; name: string; board?: BoardType; isDefault: boolean
+  bands: GradeBand[]; createdAt: string
+}
+
+// ── STUDENT INFORMATION SYSTEM (A2) ───────────────────────────────
+export type Gender = 'Male' | 'Female' | 'Other'
+export type StudentCategory = 'General' | 'OBC' | 'SC' | 'ST' | 'EWS'
+export type StudentStatus = 'Active' | 'Inactive' | 'TransferredOut' | 'Graduated' | 'Alumni'
+
+export interface StudentListItem {
+  id: string; admissionNumber: string; rollNumber?: string; fullName: string
+  gender: Gender; category: StudentCategory; status: StudentStatus
+  schoolClassId?: string; className?: string; sectionName?: string; photoUrl?: string; admissionDate: string
+}
+
+export interface Student {
+  id: string; schoolId: string; admissionNumber: string; rollNumber?: string
+  firstName: string; lastName: string; gender: Gender; dateOfBirth: string; admissionDate: string
+  status: StudentStatus; photoUrl?: string
+  academicYearId?: string; schoolClassId?: string; className?: string; sectionId?: string; sectionName?: string
+  houseId?: string; houseName?: string
+  email?: string; phone?: string; address?: string; city?: string; state?: string; pincode?: string
+  category: StudentCategory; bloodGroup?: string; nationality?: string; motherTongue?: string; religion?: string
+  isCwsn: boolean; cwsnNature?: string; isRte: boolean; aadhaarNumber?: string; apaarId?: string
+  fatherName?: string; fatherPhone?: string; fatherOccupation?: string
+  motherName?: string; motherPhone?: string; motherOccupation?: string
+  guardianName?: string; guardianPhone?: string; guardianEmail?: string; guardianRelation?: string
+  createdAt: string
+}
+export interface StudentOption { id: string; name: string; admissionNumber: string; className?: string }
+
+// ── TRANSPORT (D4) ────────────────────────────────────────────────
+export type TransportFeeFrequency = 'Monthly' | 'Quarterly' | 'HalfYearly' | 'Annual'
+
+export interface TransportVehicle {
+  id: string; schoolId: string; registrationNumber: string; model?: string; capacity: number
+  driverName?: string; driverPhone?: string; notes?: string; isActive: boolean; routeCount: number; createdAt: string
+}
+export interface TransportRoute {
+  id: string; schoolId: string; name: string; code?: string; description?: string
+  vehicleId?: string; vehicleName?: string; fare: number; feeFrequency: TransportFeeFrequency
+  isActive: boolean; stopCount: number; studentCount: number; createdAt: string
+}
+export interface TransportStop {
+  id: string; schoolId: string; routeId: string; name: string; sortOrder: number
+  pickupTime?: string; dropTime?: string; stopFare?: number; createdAt: string
+}
+export interface StudentTransport {
+  id: string; schoolId: string; studentId: string; studentName: string; admissionNumber: string
+  routeId: string; routeName: string; stopId?: string; stopName?: string; fare: number; isActive: boolean; createdAt: string
 }
 
 // ── LESSON PLANS ──────────────────────────────────────────────────

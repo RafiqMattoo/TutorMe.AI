@@ -22,6 +22,9 @@ import RecitePage from './pages/recite/RecitePage'
 import ExplainerPage from './pages/explainer/ExplainerPage'
 import ScenesPage from './pages/scenes/ScenesPage'
 import AcademicStructurePage from './pages/academics/AcademicStructurePage'
+import StudentsPage from './pages/students/StudentsPage'
+import StudentFormPage from './pages/students/StudentFormPage'
+import TransportPage from './pages/transport/TransportPage'
 import LessonPlansPage from './pages/lesson-plans/LessonPlansPage'
 import LessonPlanDetailPage from './pages/lesson-plans/LessonPlanDetailPage'
 import TodayPage from './pages/today/TodayPage'
@@ -69,6 +72,10 @@ export default function App() {
           <Route path="explain" element={<RoleRoute><ExplainerPage /></RoleRoute>} />
           <Route path="scenes" element={<RoleRoute><ScenesPage /></RoleRoute>} />
           <Route path="academics" element={<RoleRoute><AcademicStructurePage /></RoleRoute>} />
+          <Route path="students" element={<RoleRoute><StudentsPage /></RoleRoute>} />
+          <Route path="students/new" element={<RoleRoute><StudentFormPage /></RoleRoute>} />
+          <Route path="students/:id/edit" element={<RoleRoute><StudentFormPage /></RoleRoute>} />
+          <Route path="transport" element={<RoleRoute><TransportPage /></RoleRoute>} />
           <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
           <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
         </Route>

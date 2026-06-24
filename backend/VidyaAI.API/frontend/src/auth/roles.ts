@@ -14,7 +14,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Platform command center with every school, user, and content workflow.',
     scope: 'Global platform access',
     accent: 'from-teal-500 to-cyan-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   SchoolAdmin: {
     label: 'School Admin',
@@ -22,7 +22,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Runs school operations, manages campus users, and keeps publishing moving.',
     scope: 'Own school only',
     accent: 'from-blue-500 to-indigo-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   Teacher: {
     label: 'Teacher',
@@ -30,7 +30,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Creates learning content, drafts lessons, and tracks classroom engagement.',
     scope: 'Content workspace',
     accent: 'from-emerald-500 to-teal-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/students', '/articles', '/categories', '/materials', '/tutor', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
   },
   Student: {
     label: 'Student',

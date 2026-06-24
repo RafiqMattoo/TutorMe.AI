@@ -5,7 +5,7 @@ import {
   BookOpen, GraduationCap, LayoutDashboard, Link2, LogOut,
   School, ShieldCheck, Tag, Users, Menu, Bell, Search, X,
   FileText, Sparkles, Layers, ClipboardList, Headphones, NotebookPen,
-  CalendarCheck, Send, ClipboardCheck, CheckCheck, Clapperboard, Images,
+  CalendarCheck, Send, ClipboardCheck, CheckCheck, Clapperboard, Images, UsersRound, Bus,
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import { authApi, notificationsApi } from '../../api'
@@ -32,6 +32,8 @@ const navGroups = [
       { to: '/roles',       icon: ShieldCheck,     label: 'Roles'       },
       { to: '/enrollments', icon: Link2,           label: 'Enrollments' },
       { to: '/academics',   icon: GraduationCap,   label: 'Academics'   },
+      { to: '/students',    icon: UsersRound,      label: 'Students'    },
+      { to: '/transport',   icon: Bus,             label: 'Transport'   },
     ],
   },
   {

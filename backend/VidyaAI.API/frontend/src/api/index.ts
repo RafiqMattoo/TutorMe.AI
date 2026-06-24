@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
-import type { AcademicYear, AppNotification, Article, ArticleListItem, ArticleStatus, AskTutorResponse, Category, ChatMessage, ChatSession, CreateDeliveryRequest, DashboardStats, Delivery, FlashcardSet, FlashcardSetSummary, House, LessonPlan, LessonPlanSummary, LoginResponse, Material, MaterialChunk, Narration, NarrationKind, NarrationVoice, PagedResult, PendingMember, PendingSchool, PublicSchool, Quiz, QuizAttemptResult, QuizDifficulty, QuizSummary, RoleDefinition, RolePermission, School, SchoolClass, Section, Subject, Term, TutorStreamEvent, User, UserSchoolEnrollment } from '../types'
+import type { AcademicYear, AppNotification, Article, ArticleListItem, ArticleStatus, AskTutorResponse, Category, ChatMessage, ChatSession, CreateDeliveryRequest, DashboardStats, Delivery, FlashcardSet, FlashcardSetSummary, GradingScale, House, LessonPlan, LessonPlanSummary, LoginResponse, Material, MaterialChunk, Narration, NarrationKind, NarrationVoice, PagedResult, PendingMember, PendingSchool, PublicSchool, Quiz, QuizAttemptResult, QuizDifficulty, QuizSummary, RoleDefinition, RolePermission, School, SchoolClass, Section, Stream, Student, StudentListItem, StudentOption, StudentStatus, StudentTransport, Subject, SubjectAllocation, TeacherOption, Term, TransportRoute, TransportStop, TransportVehicle, TutorStreamEvent, User, UserSchoolEnrollment } from '../types'
 
 const api = axios.create({ baseURL: '/api', timeout: 60000 })
 
@@ -178,6 +178,67 @@ export const academicsApi = {
   saveHouse: (data: object, id?: string) =>
     (id ? api.put<House>(`/academics/houses/${id}`, data) : api.post<House>('/academics/houses', data)).then(r => r.data),
   deleteHouse: (id: string, schoolId?: string) => api.delete(`/academics/houses/${id}`, { params: { schoolId } }),
+
+  teachers: (schoolId?: string) => api.get<TeacherOption[]>('/academics/teachers', { params: { schoolId } }).then(r => r.data),
+
+  streams: (schoolId?: string) => api.get<Stream[]>('/academics/streams', { params: { schoolId } }).then(r => r.data),
+  saveStream: (data: object, id?: string) =>
+    (id ? api.put<Stream>(`/academics/streams/${id}`, data) : api.post<Stream>('/academics/streams', data)).then(r => r.data),
+  deleteStream: (id: string, schoolId?: string) => api.delete(`/academics/streams/${id}`, { params: { schoolId } }),
+
+  allocations: (schoolId?: string, classId?: string) =>
+    api.get<SubjectAllocation[]>('/academics/allocations', { params: { schoolId, classId } }).then(r => r.data),
+  saveAllocation: (data: object, id?: string) =>
+    (id ? api.put<SubjectAllocation>(`/academics/allocations/${id}`, data) : api.post<SubjectAllocation>('/academics/allocations', data)).then(r => r.data),
+  deleteAllocation: (id: string, schoolId?: string) => api.delete(`/academics/allocations/${id}`, { params: { schoolId } }),
+
+  gradingScales: (schoolId?: string) => api.get<GradingScale[]>('/academics/grading-scales', { params: { schoolId } }).then(r => r.data),
+  saveGradingScale: (data: object, id?: string) =>
+    (id ? api.put<GradingScale>(`/academics/grading-scales/${id}`, data) : api.post<GradingScale>('/academics/grading-scales', data)).then(r => r.data),
+  deleteGradingScale: (id: string, schoolId?: string) => api.delete(`/academics/grading-scales/${id}`, { params: { schoolId } }),
+  saveGradeBand: (scaleId: string, data: object, schoolId?: string) =>
+    api.post(`/academics/grading-scales/${scaleId}/bands`, data, { params: { schoolId } }).then(r => r.data),
+  deleteGradeBand: (id: string, schoolId?: string) => api.delete(`/academics/bands/${id}`, { params: { schoolId } }),
+}
+
+// ── STUDENTS (SIS) ────────────────────────────────────────────────
+export const studentsApi = {
+  getAll: (params?: { page?: number; pageSize?: number; search?: string; classId?: string; sectionId?: string; status?: StudentStatus; schoolId?: string }) =>
+    api.get<PagedResult<StudentListItem>>('/students', { params }).then(r => r.data),
+  getById: (id: string, schoolId?: string) =>
+    api.get<Student>(`/students/${id}`, { params: { schoolId } }).then(r => r.data),
+  nextAdmissionNumber: (schoolId?: string) =>
+    api.get<{ admissionNumber: string }>('/students/next-admission-number', { params: { schoolId } }).then(r => r.data.admissionNumber),
+  options: (schoolId?: string, search?: string) =>
+    api.get<StudentOption[]>('/students/options', { params: { schoolId, search } }).then(r => r.data),
+  create: (data: object) => api.post<Student>('/students', data).then(r => r.data),
+  update: (id: string, data: object) => api.put<Student>(`/students/${id}`, data).then(r => r.data),
+  delete: (id: string, schoolId?: string) => api.delete(`/students/${id}`, { params: { schoolId } }),
+}
+
+// ── TRANSPORT (D4) ────────────────────────────────────────────────
+export const transportApi = {
+  vehicles: (schoolId?: string) => api.get<TransportVehicle[]>('/transport/vehicles', { params: { schoolId } }).then(r => r.data),
+  saveVehicle: (data: object, id?: string) =>
+    (id ? api.put<TransportVehicle>(`/transport/vehicles/${id}`, data) : api.post<TransportVehicle>('/transport/vehicles', data)).then(r => r.data),
+  deleteVehicle: (id: string, schoolId?: string) => api.delete(`/transport/vehicles/${id}`, { params: { schoolId } }),
+
+  routes: (schoolId?: string) => api.get<TransportRoute[]>('/transport/routes', { params: { schoolId } }).then(r => r.data),
+  saveRoute: (data: object, id?: string) =>
+    (id ? api.put<TransportRoute>(`/transport/routes/${id}`, data) : api.post<TransportRoute>('/transport/routes', data)).then(r => r.data),
+  deleteRoute: (id: string, schoolId?: string) => api.delete(`/transport/routes/${id}`, { params: { schoolId } }),
+
+  stops: (routeId: string, schoolId?: string) =>
+    api.get<TransportStop[]>(`/transport/routes/${routeId}/stops`, { params: { schoolId } }).then(r => r.data),
+  saveStop: (data: object, id?: string) =>
+    (id ? api.put<TransportStop>(`/transport/stops/${id}`, data) : api.post<TransportStop>('/transport/stops', data)).then(r => r.data),
+  deleteStop: (id: string, schoolId?: string) => api.delete(`/transport/stops/${id}`, { params: { schoolId } }),
+
+  allocations: (schoolId?: string, routeId?: string) =>
+    api.get<StudentTransport[]>('/transport/allocations', { params: { schoolId, routeId } }).then(r => r.data),
+  saveAllocation: (data: object, id?: string) =>
+    (id ? api.put<StudentTransport>(`/transport/allocations/${id}`, data) : api.post<StudentTransport>('/transport/allocations', data)).then(r => r.data),
+  deleteAllocation: (id: string, schoolId?: string) => api.delete(`/transport/allocations/${id}`, { params: { schoolId } }),
 }
 
 // ── TUTOR ─────────────────────────────────────────────────────────

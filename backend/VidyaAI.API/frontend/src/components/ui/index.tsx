@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { Loader2, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -187,6 +187,76 @@ export function Select({ label, options, ...props }: {
       <select {...props} className="input appearance-none">
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
+    </div>
+  )
+}
+
+// ── TABS (segmented control) ─────────────────────────────────────
+// A gradient "pill" indicator physically glides between tabs (spring-eased), the way
+// Linear/Vercel tab bars feel. The indicator is one absolutely-positioned element whose
+// left/width are measured from the active button, so it animates smoothly on change/resize.
+export function Tabs<T extends string>({ tabs, active, onChange, fullWidth }: {
+  tabs: readonly { key: T; label: string; icon?: React.ElementType }[]
+  active: T; onChange: (k: T) => void; fullWidth?: boolean
+}) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [pill, setPill] = useState<{ left: number; width: number; ready: boolean }>({ left: 0, width: 0, ready: false })
+
+  const measure = React.useCallback(() => {
+    const el = trackRef.current?.querySelector<HTMLButtonElement>(`[data-tab="${active}"]`)
+    if (el) setPill({ left: el.offsetLeft, width: el.offsetWidth, ready: true })
+  }, [active])
+
+  useLayoutEffect(() => { measure() }, [measure, tabs])
+  useEffect(() => {
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [measure])
+
+  return (
+    <div
+      ref={trackRef}
+      className={clsx(
+        'relative items-center gap-1 overflow-x-auto rounded-2xl border border-slate-200/80 bg-gradient-to-b from-slate-50 to-slate-100/80 p-1.5 shadow-inner',
+        fullWidth ? 'flex w-full' : 'inline-flex max-w-full',
+      )}
+    >
+      {/* Sliding gradient indicator */}
+      <span
+        aria-hidden
+        className={clsx(
+          'pointer-events-none absolute top-1.5 bottom-1.5 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-500 shadow-lg shadow-blue-500/40 ring-1 ring-white/20 transition-all duration-300',
+          pill.ready ? 'opacity-100' : 'opacity-0',
+        )}
+        style={{
+          left: pill.left,
+          width: pill.width,
+          transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)', // springy overshoot
+        }}
+      />
+      {tabs.map(t => {
+        const on = t.key === active
+        return (
+          <button
+            key={t.key}
+            data-tab={t.key}
+            onClick={() => onChange(t.key)}
+            className={clsx(
+              'group relative z-10 flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-[13px] font-semibold tracking-tight transition-colors duration-200',
+              on ? 'text-white' : 'text-slate-600 hover:text-blue-700',
+              fullWidth && 'flex-1',
+            )}
+          >
+            {t.icon && (
+              <t.icon
+                size={15}
+                className={clsx('transition-colors duration-200', on ? 'text-white' : 'text-blue-500 group-hover:text-blue-600')}
+              />
+            )}
+            {t.label}
+          </button>
+        )
+      })}
     </div>
   )
 }
