@@ -26,7 +26,7 @@ namespace VidyaAI.Application.Schools.Queries
                 .Select(s => new SchoolDto(
                     s.Id, s.Name, s.Address, s.City, s.State, s.Phone, s.Email, s.LogoUrl,
                     s.Type, s.Board, s.Plan, s.SubscriptionStatus, s.SubscriptionExpiresAt, s.IsActive,
-                    s.Users.Count, s.Articles.Count, s.CreatedAt))
+                    s.Users.Count, s.Articles.Count, s.CreatedAt, s.ApprovalStatus))
                 .ToListAsync(ct);
 
             return new PagedResult<SchoolDto>(items, total, q.Page, q.PageSize);
@@ -47,7 +47,7 @@ namespace VidyaAI.Application.Schools.Queries
 
             return new SchoolDto(s.Id, s.Name, s.Address, s.City, s.State, s.Phone, s.Email, s.LogoUrl,
                 s.Type, s.Board, s.Plan, s.SubscriptionStatus, s.SubscriptionExpiresAt, s.IsActive,
-                s.Users.Count, s.Articles.Count, s.CreatedAt);
+                s.Users.Count, s.Articles.Count, s.CreatedAt, s.ApprovalStatus);
         }
     }
 }
@@ -89,7 +89,7 @@ namespace VidyaAI.Application.Schools.Commands
             return new SchoolDto(school.Id, school.Name, school.Address, school.City, school.State,
                 school.Phone, school.Email, school.LogoUrl, school.Type, school.Board,
                 school.Plan, school.SubscriptionStatus, school.SubscriptionExpiresAt,
-                school.IsActive, 0, 0, school.CreatedAt);
+                school.IsActive, 0, 0, school.CreatedAt, school.ApprovalStatus);
         }
     }
 
@@ -119,7 +119,7 @@ namespace VidyaAI.Application.Schools.Commands
             return new SchoolDto(school.Id, school.Name, school.Address, school.City, school.State,
                 school.Phone, school.Email, school.LogoUrl, school.Type, school.Board,
                 school.Plan, school.SubscriptionStatus, school.SubscriptionExpiresAt,
-                school.IsActive, 0, 0, school.CreatedAt);
+                school.IsActive, 0, 0, school.CreatedAt, school.ApprovalStatus);
         }
     }
 

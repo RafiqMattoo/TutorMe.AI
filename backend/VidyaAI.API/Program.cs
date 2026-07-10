@@ -52,6 +52,50 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 builder.Services.AddScoped<VidyaAI.Infrastructure.Services.CategoryService>();
 
+// ── RAG / Tutor wiring ────────────────────────────────────────────
+builder.Services.AddSingleton<IPdfTextExtractor, PdfTextExtractor>();
+builder.Services.AddSingleton<ITextChunker, TextChunker>();
+builder.Services.AddScoped<IStorageService, LocalFileStorageService>();
+
+// Email (registration/approval). SMTP when Smtp:Host is set; otherwise writes a
+// local HTML preview so dev works without a mail server.
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+// Captcha verification — disabled (skipped) unless Captcha:SecretKey is configured.
+builder.Services.AddHttpClient<ICaptchaVerifier, CaptchaVerifier>(c => c.Timeout = TimeSpan.FromSeconds(10));
+
+// Text-to-speech for audio narration. Config-driven (Tts:Provider); the default
+// "macos-say" uses the local macOS `say` command (free, offline). The interface
+// lets a cross-platform/cloud engine be swapped in without touching the pipeline.
+var ttsProvider = (builder.Configuration["Tts:Provider"] ?? "macos-say").Trim().ToLowerInvariant();
+builder.Services.AddSingleton<ITtsService, MacSayTtsService>();
+Log.Information("TTS provider: {Provider}", ttsProvider);
+
+// AI provider is config-driven (AI:Provider = "ollama" | "gemini"). Both
+// implement IEmbeddingService + ILlmChatService, so the rest of the pipeline is
+// provider-agnostic. "ollama" keeps all book content local; "gemini" uses the
+// free cloud tier. Switching providers requires re-embedding existing materials
+// (different models produce incompatible vectors).
+var aiProvider = (builder.Configuration["AI:Provider"] ?? "gemini").Trim().ToLowerInvariant();
+if (aiProvider == "ollama")
+{
+    // Local LLM generation can be slow (model load + CPU inference) — allow more time.
+    builder.Services.AddHttpClient<OllamaAiService>(c => c.Timeout = TimeSpan.FromSeconds(300));
+    builder.Services.AddScoped<IEmbeddingService>(sp => sp.GetRequiredService<OllamaAiService>());
+    builder.Services.AddScoped<ILlmChatService>(sp => sp.GetRequiredService<OllamaAiService>());
+}
+else
+{
+    builder.Services.AddHttpClient<GeminiService>(c => c.Timeout = TimeSpan.FromSeconds(60));
+    builder.Services.AddScoped<IEmbeddingService>(sp => sp.GetRequiredService<GeminiService>());
+    builder.Services.AddScoped<ILlmChatService>(sp => sp.GetRequiredService<GeminiService>());
+}
+Log.Information("AI provider: {Provider}", aiProvider);
+
+// AI image generation for illustrated story scenes. Always Gemini-backed (image
+// models aren't available via the local Ollama provider); degrades gracefully to
+// text-only slides when no Gemini API key is configured.
+builder.Services.AddHttpClient<IImageGenerationService, GeminiImageService>(c => c.Timeout = TimeSpan.FromSeconds(120));
+
 builder.Services.AddCors(opt =>
     opt.AddPolicy("AllowFrontend", p =>
         p.WithOrigins(
@@ -88,6 +132,20 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors("AllowFrontend");
+
+// Serve uploaded files (Storage:Root) at Storage:PublicPath (default /files).
+var configuredStorageRoot = builder.Configuration["Storage:Root"];
+var storageRoot = string.IsNullOrWhiteSpace(configuredStorageRoot)
+    ? Path.Combine(AppContext.BaseDirectory, "storage")
+    : configuredStorageRoot;
+Directory.CreateDirectory(storageRoot);
+var publicPath = builder.Configuration["Storage:PublicPath"];
+if (string.IsNullOrWhiteSpace(publicPath)) publicPath = "/files";
+app.UseStaticFiles(new Microsoft.AspNetCore.Builder.StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(storageRoot),
+    RequestPath = publicPath
+});
 
 if (app.Environment.IsDevelopment())
 {

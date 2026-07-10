@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using VidyaAI.Application.Common.Interfaces;
 using VidyaAI.Application.DTOs;
 using VidyaAI.Domain.Entities;
+using VidyaAI.Domain.Enums;
 
 namespace VidyaAI.Application.Auth.Commands;
 
@@ -28,11 +29,22 @@ public sealed class LoginCommandHandler(
     {
         var user = await db.Users
             .Include(u => u.School)
-            .FirstOrDefaultAsync(u => u.Email == req.Email && u.IsActive && !u.IsDeleted, ct)
+            .FirstOrDefaultAsync(u => u.Email == req.Email && !u.IsDeleted, ct)
             ?? throw new UnauthorizedAccessException("Invalid email or password.");
 
         if (!BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Invalid email or password.");
+
+        // Surface a clear reason when a correct password still can't sign in, so
+        // self-registered users understand they're waiting on approval.
+        if (user.ApprovalStatus == ApprovalStatus.Pending)
+            throw new UnauthorizedAccessException("Your account is awaiting approval. You'll be able to sign in once an administrator approves it.");
+        if (user.ApprovalStatus == ApprovalStatus.Rejected)
+            throw new UnauthorizedAccessException("Your registration was not approved. Please contact your administrator.");
+        if (!user.IsActive)
+            throw new UnauthorizedAccessException("Your account is deactivated. Please contact your administrator.");
+        if (user.School is { IsActive: false } || user.School is { ApprovalStatus: ApprovalStatus.Pending })
+            throw new UnauthorizedAccessException("Your school is still awaiting approval. Please try again later.");
 
         var accessToken = jwt.GenerateAccessToken(user.Id, user.Email, user.Role.ToString(), user.SchoolId);
         var refreshToken = jwt.GenerateRefreshToken();
@@ -49,7 +61,8 @@ public sealed class LoginCommandHandler(
     private static UserDto MapUser(User u) => new(
         u.Id, u.FirstName, u.LastName, u.Email, u.Phone, u.AvatarUrl,
         u.Role, u.IsActive, u.EmailVerified, u.LastLoginAt,
-        u.SchoolId, u.School?.Name, u.CreatedAt);
+        u.SchoolId, u.School?.Name, u.CreatedAt,
+        u.ApprovalStatus, u.GradeLevel, u.RollNumber, u.DateOfBirth, u.GuardianName, u.GuardianPhone);
 }
 
 // ── REFRESH TOKEN COMMAND ─────────────────────────────────────────
@@ -76,7 +89,8 @@ public sealed class RefreshTokenCommandHandler(
         return new LoginResponse(accessToken, newRefresh, new UserDto(
             user.Id, user.FirstName, user.LastName, user.Email, user.Phone, user.AvatarUrl,
             user.Role, user.IsActive, user.EmailVerified, user.LastLoginAt,
-            user.SchoolId, user.School?.Name, user.CreatedAt));
+            user.SchoolId, user.School?.Name, user.CreatedAt,
+            user.ApprovalStatus, user.GradeLevel, user.RollNumber, user.DateOfBirth, user.GuardianName, user.GuardianPhone));
     }
 }
 

@@ -23,7 +23,7 @@ public sealed class SchoolService(AppDbContext db)
             .Select(s => new SchoolDto(
                 s.Id, s.Name, s.Address, s.City, s.State, s.Phone, s.Email, s.LogoUrl,
                 s.Type, s.Board, s.Plan, s.SubscriptionStatus, s.SubscriptionExpiresAt, s.IsActive,
-                s.Users.Count, s.Articles.Count, s.CreatedAt))
+                s.Users.Count, s.Articles.Count, s.CreatedAt, s.ApprovalStatus))
             .ToListAsync(ct);
 
         return new PagedResult<SchoolDto>(items, total, q.Page, q.PageSize);

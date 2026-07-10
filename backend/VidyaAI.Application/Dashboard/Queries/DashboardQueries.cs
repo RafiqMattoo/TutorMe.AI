@@ -64,7 +64,9 @@ namespace VidyaAI.Application.Users.Commands
 {
     public record CreateUserCommand(string FirstName, string LastName, string Email,
         string Password, string? Phone, UserRole Role, Guid? SchoolId,
-        bool ActorIsSuperAdmin, Guid? ActorSchoolId) : IRequest<UserDto>;
+        bool ActorIsSuperAdmin, Guid? ActorSchoolId,
+        string? GradeLevel = null, string? RollNumber = null, DateTime? DateOfBirth = null,
+        string? GuardianName = null, string? GuardianPhone = null) : IRequest<UserDto>;
 
     public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {
@@ -98,7 +100,11 @@ namespace VidyaAI.Application.Users.Commands
                 FirstName = cmd.FirstName, LastName = cmd.LastName, Email = cmd.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.Password),
                 Phone = cmd.Phone, Role = cmd.Role, SchoolId = schoolId,
-                IsActive = true, EmailVerified = false
+                IsActive = true, EmailVerified = false,
+                // Admin-created users are trusted — no approval queue.
+                ApprovalStatus = ApprovalStatus.Approved,
+                GradeLevel = cmd.GradeLevel, RollNumber = cmd.RollNumber, DateOfBirth = cmd.DateOfBirth,
+                GuardianName = cmd.GuardianName, GuardianPhone = cmd.GuardianPhone,
             };
             db.Users.Add(user);
             await db.SaveChangesAsync(ct);
@@ -106,7 +112,8 @@ namespace VidyaAI.Application.Users.Commands
             var school = schoolId.HasValue ? await db.Schools.FindAsync([schoolId], ct) : null;
             return new UserDto(user.Id, user.FirstName, user.LastName, user.Email, user.Phone,
                 user.AvatarUrl, user.Role, user.IsActive, user.EmailVerified,
-                user.LastLoginAt, user.SchoolId, school?.Name, user.CreatedAt);
+                user.LastLoginAt, user.SchoolId, school?.Name, user.CreatedAt,
+                user.ApprovalStatus, user.GradeLevel, user.RollNumber, user.DateOfBirth, user.GuardianName, user.GuardianPhone);
         }
     }
 
@@ -163,7 +170,8 @@ namespace VidyaAI.Application.Users.Queries
                 .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
                 .Select(u => new UserDto(u.Id, u.FirstName, u.LastName, u.Email, u.Phone, u.AvatarUrl,
                     u.Role, u.IsActive, u.EmailVerified, u.LastLoginAt,
-                    u.SchoolId, u.School != null ? u.School.Name : null, u.CreatedAt))
+                    u.SchoolId, u.School != null ? u.School.Name : null, u.CreatedAt,
+                    u.ApprovalStatus, u.GradeLevel, u.RollNumber, u.DateOfBirth, u.GuardianName, u.GuardianPhone))
                 .ToListAsync(ct);
 
             return new PagedResult<UserDto>(items, total, q.Page, q.PageSize);
