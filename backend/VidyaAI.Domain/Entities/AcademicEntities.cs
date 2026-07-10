@@ -61,6 +61,11 @@ public class Section : BaseEntity
 
     public Guid? ClassTeacherId { get; set; }
     public User? ClassTeacher { get; set; }
+
+    // Optional stream/track (Science/Commerce/Humanities) — typically at the Secondary stage,
+    // so a section like "11-Science-A" is expressible.
+    public Guid? StreamId { get; set; }
+    public AcademicStream? Stream { get; set; }
 }
 
 // A subject taught at the school. NEP multilingual/three-language and co-scholastic
@@ -88,4 +93,62 @@ public class House : BaseEntity
 
     public Guid? HouseMasterId { get; set; }
     public User? HouseMaster { get; set; }
+}
+
+// A stream / academic track offered at the school (e.g. Science, Commerce, Humanities).
+// Named AcademicStream to avoid clashing with System.IO.Stream elsewhere in the codebase.
+public class AcademicStream : BaseEntity
+{
+    public Guid SchoolId { get; set; }
+    public School School { get; set; } = null!;
+
+    public string Name { get; set; } = string.Empty;
+    public string? Code { get; set; }
+}
+
+// Maps a subject to a class (optionally a specific section) and the teacher who teaches it —
+// the "subject allocation" / subject–teacher mapping that timetable & assessment build on.
+public class SubjectAllocation : BaseEntity
+{
+    public Guid SchoolId { get; set; }
+
+    public Guid SubjectId { get; set; }
+    public Subject Subject { get; set; } = null!;
+
+    public Guid SchoolClassId { get; set; }
+    public SchoolClass SchoolClass { get; set; } = null!;
+
+    public Guid? SectionId { get; set; }   // null = applies to the whole class
+    public Section? Section { get; set; }
+
+    public Guid TeacherId { get; set; }
+    public User Teacher { get; set; } = null!;
+}
+
+// A configurable grading scale (e.g. CBSE 9-point, ICSE, JKBOSE). One default per school.
+// Report cards & assessment resolve a percentage to a grade via this scale's bands.
+public class GradingScale : BaseEntity
+{
+    public Guid SchoolId { get; set; }
+    public School School { get; set; } = null!;
+
+    public string Name { get; set; } = string.Empty;
+    public BoardType? Board { get; set; }
+    public bool IsDefault { get; set; }
+
+    public ICollection<GradeBand> Bands { get; set; } = [];
+}
+
+// A band within a grading scale: a percentage range mapped to a grade label & grade point.
+public class GradeBand : BaseEntity
+{
+    public Guid SchoolId { get; set; }
+    public Guid GradingScaleId { get; set; }
+    public GradingScale GradingScale { get; set; } = null!;
+
+    public string Grade { get; set; } = string.Empty;   // e.g. "A1"
+    public decimal MinPercent { get; set; }
+    public decimal MaxPercent { get; set; }
+    public decimal? GradePoint { get; set; }            // e.g. 10.0 for CBSE A1
+    public string? Description { get; set; }
 }

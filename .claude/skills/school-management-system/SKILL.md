@@ -159,10 +159,21 @@ Model these explicitly so every module can speak NEP:
   three-language, co-scholastic), House. Tenant-scoped, the spine everything references.
   *(Shipped: `AcademicEntities.cs`, `AcademicHandlers.cs`, `AcademicsController`,
   `AcademicStructurePage.tsx`, migration `AddAcademicStructure`. Backend + tsc green.)*
-- [ ] **A2. Student Information System (SIS)** — Student master: demographics, APAAR ID, UDISE
+  *(Completed 2026-06-12: added Streams (`AcademicStream`, Section.StreamId), Subject–Teacher
+  mapping (`SubjectAllocation` + `/academics/teachers` picker), configurable Grading Scales
+  (`GradingScale` + `GradeBand`, one default/school, CBSE-9-point style). Wired class-teacher &
+  house-master pickers. Migration `AddStreamsAllocationsGrading` (additive). Backend + tsc green.)*
+- [~] **A2. Student Information System (SIS)** — Student master: demographics, APAAR ID, UDISE
   student fields, Aadhaar (consented/encrypted), guardians/parents (link to `User`/Parent role),
   siblings, category (Gen/OBC/SC/ST/EWS), CWSN/divyang, medical, documents (via `IStorageService`),
   admission number, current enrollment (Class/Section/Year), house, transport/hostel flags.
+  *(Shipped 2026-06-12: `Student` master — `SisEntities.cs`, `StudentHandlers.cs`,
+  `StudentsController`, `StudentsPage.tsx`, migration `AddStudents`. Full CRUD + paged/filterable
+  roster (search, class, status), admission-number suggestion, identity/placement/contact/
+  demographics/guardian fields, RTE & CWSN flags, Category for UDISE. Backend + tsc green.
+  DEFERRED: photo/document upload via `IStorageService`, medical & discipline records, sibling
+  links, ID-card/QR generation, Parent/Student login provisioning, bulk CSV import, Aadhaar
+  encryption (E7). Enrollment-history/promotion is A4.)*
 - [ ] **A3. Staff & HR core** — Staff master (teaching/non-teaching), qualifications, subjects
   handled, designations, the extended SMS roles, joining/exit, documents. Reuse `User` for login.
 - [ ] **A4. Enrollment & promotion** — enrol a student into Class/Section for a Year; promote /
@@ -201,8 +212,15 @@ Model these explicitly so every module can speak NEP:
   (PF/ESI/TDS) fields.
 - [ ] **D3. Library** — catalog (books + digital, link to Materials), member issue/return,
   reservations, fines.
-- [ ] **D4. Transport** — routes, stops, vehicles, drivers, student allocation, fees link,
+- [~] **D4. Transport** — routes, stops, vehicles, drivers, student allocation, fees link,
   GPS/live-tracking hooks, parent ETA notifications.
+  *(Shipped 2026-06-13: `TransportEntities.cs` (Vehicle/Route/Stop/StudentTransport),
+  `TransportHandlers.cs`, `TransportController`, `TransportPage.tsx` (4 tabs), migration
+  `AddTransport`. Fleet w/ inline driver, routes w/ fare + `TransportFeeFrequency`, ordered
+  stops w/ pickup/drop & optional stop-fare, per-student allocation w/ captured fare. Reusable
+  `GET /students/options` picker added. Polished segmented `Tabs` UI component (also applied to
+  Academics). Backend + tsc green. DEFERRED: GPS/live-tracking, parent ETA notifications,
+  full fee-invoice integration (D1), driver as first-class staff record.)*
 - [ ] **D5. Hostel/Boarding** — blocks/rooms, allocation, attendance, mess, visitor log.
 - [ ] **D6. Inventory & assets** — stores, stock, issue/indent, asset register.
 

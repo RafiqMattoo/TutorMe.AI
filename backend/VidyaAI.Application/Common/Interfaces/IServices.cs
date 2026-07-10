@@ -35,6 +35,17 @@ public interface IAppDbContext
     DbSet<Section> Sections { get; }
     DbSet<Subject> Subjects { get; }
     DbSet<House> Houses { get; }
+    DbSet<AcademicStream> Streams { get; }
+    DbSet<SubjectAllocation> SubjectAllocations { get; }
+    DbSet<GradingScale> GradingScales { get; }
+    DbSet<GradeBand> GradeBands { get; }
+    // Student Information System (A2)
+    DbSet<Student> Students { get; }
+    // Transport (D4)
+    DbSet<TransportVehicle> TransportVehicles { get; }
+    DbSet<TransportRoute> TransportRoutes { get; }
+    DbSet<TransportStop> TransportStops { get; }
+    DbSet<StudentTransport> StudentTransports { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 

@@ -232,6 +232,13 @@ public record TutorStreamEvent(
     string Type, Guid? SessionId, string? Delta,
     IReadOnlyList<ChunkCitationDto>? Citations, Guid? MessageId);
 
+// ── SIMPLE BOT ───────────────────────────────────────────────────
+public record SimpleBotTurnDto(string Role, string Content);
+
+public record AskSimpleBotRequest(string Message, IReadOnlyList<SimpleBotTurnDto>? History);
+
+public record SimpleBotResponse(string Reply);
+
 // ── FLASHCARDS ───────────────────────────────────────────────────
 public record FlashcardDto(Guid Id, int OrderIndex, string Front, string Back);
 
@@ -321,8 +328,9 @@ public record SaveSchoolClassRequest(string Name, SchoolStage Stage, int Level, 
 
 public record SectionDto(
     Guid Id, Guid SchoolId, Guid SchoolClassId, string SchoolClassName, string Name,
-    int Capacity, Guid? ClassTeacherId, string? ClassTeacherName, DateTime CreatedAt);
-public record SaveSectionRequest(Guid SchoolClassId, string Name, int Capacity, Guid? ClassTeacherId);
+    int Capacity, Guid? ClassTeacherId, string? ClassTeacherName,
+    Guid? StreamId, string? StreamName, DateTime CreatedAt);
+public record SaveSectionRequest(Guid SchoolClassId, string Name, int Capacity, Guid? ClassTeacherId, Guid? StreamId);
 
 public record SubjectDto(
     Guid Id, Guid SchoolId, string Name, string? Code, string? MediumOfInstruction,
@@ -333,3 +341,92 @@ public record SaveSubjectRequest(
 public record HouseDto(
     Guid Id, Guid SchoolId, string Name, string? ColorHex, Guid? HouseMasterId, string? HouseMasterName, DateTime CreatedAt);
 public record SaveHouseRequest(string Name, string? ColorHex, Guid? HouseMasterId, Guid? SchoolId);
+
+// Streams / academic tracks (Science, Commerce, Humanities …)
+public record StreamDto(Guid Id, Guid SchoolId, string Name, string? Code, DateTime CreatedAt);
+public record SaveStreamRequest(string Name, string? Code, Guid? SchoolId);
+
+// Subject–teacher–class mapping (subject allocation)
+public record SubjectAllocationDto(
+    Guid Id, Guid SchoolId, Guid SubjectId, string SubjectName,
+    Guid SchoolClassId, string SchoolClassName, Guid? SectionId, string? SectionName,
+    Guid TeacherId, string TeacherName, DateTime CreatedAt);
+public record SaveSubjectAllocationRequest(
+    Guid SubjectId, Guid SchoolClassId, Guid? SectionId, Guid TeacherId, Guid? SchoolId);
+
+// Minimal teacher option for pickers (class teacher, house master, allocation).
+public record TeacherOptionDto(Guid Id, string Name);
+
+// Configurable grading scales (CBSE 9-point, ICSE, JKBOSE …) with percentage bands.
+public record GradeBandDto(
+    Guid Id, Guid GradingScaleId, string Grade, decimal MinPercent, decimal MaxPercent,
+    decimal? GradePoint, string? Description);
+public record GradingScaleDto(
+    Guid Id, Guid SchoolId, string Name, BoardType? Board, bool IsDefault,
+    IReadOnlyList<GradeBandDto> Bands, DateTime CreatedAt);
+public record SaveGradingScaleRequest(string Name, BoardType? Board, bool IsDefault, Guid? SchoolId);
+public record SaveGradeBandRequest(
+    string Grade, decimal MinPercent, decimal MaxPercent, decimal? GradePoint, string? Description);
+
+// ── STUDENT INFORMATION SYSTEM (A2) ───────────────────────────────
+public record StudentListDto(
+    Guid Id, string AdmissionNumber, string? RollNumber, string FullName,
+    Gender Gender, StudentCategory Category, StudentStatus Status,
+    Guid? SchoolClassId, string? ClassName, string? SectionName, string? PhotoUrl, DateTime AdmissionDate);
+
+public record StudentDto(
+    Guid Id, Guid SchoolId, string AdmissionNumber, string? RollNumber,
+    string FirstName, string LastName, Gender Gender, DateTime DateOfBirth, DateTime AdmissionDate,
+    StudentStatus Status, string? PhotoUrl,
+    Guid? AcademicYearId, Guid? SchoolClassId, string? ClassName, Guid? SectionId, string? SectionName,
+    Guid? HouseId, string? HouseName,
+    string? Email, string? Phone, string? Address, string? City, string? State, string? Pincode,
+    StudentCategory Category, string? BloodGroup, string? Nationality, string? MotherTongue, string? Religion,
+    bool IsCwsn, string? CwsnNature, bool IsRte, string? AadhaarNumber, string? ApaarId,
+    string? FatherName, string? FatherPhone, string? FatherOccupation,
+    string? MotherName, string? MotherPhone, string? MotherOccupation,
+    string? GuardianName, string? GuardianPhone, string? GuardianEmail, string? GuardianRelation,
+    DateTime CreatedAt);
+
+public record SaveStudentRequest(
+    string AdmissionNumber, string? RollNumber, string FirstName, string LastName,
+    Gender Gender, DateTime DateOfBirth, DateTime AdmissionDate, StudentStatus Status, string? PhotoUrl,
+    Guid? AcademicYearId, Guid? SchoolClassId, Guid? SectionId, Guid? HouseId,
+    string? Email, string? Phone, string? Address, string? City, string? State, string? Pincode,
+    StudentCategory Category, string? BloodGroup, string? Nationality, string? MotherTongue, string? Religion,
+    bool IsCwsn, string? CwsnNature, bool IsRte, string? AadhaarNumber, string? ApaarId,
+    string? FatherName, string? FatherPhone, string? FatherOccupation,
+    string? MotherName, string? MotherPhone, string? MotherOccupation,
+    string? GuardianName, string? GuardianPhone, string? GuardianEmail, string? GuardianRelation,
+    Guid? SchoolId);
+
+// Minimal student option for pickers (transport, timetable, fees …).
+public record StudentOptionDto(Guid Id, string Name, string AdmissionNumber, string? ClassName);
+
+// ── TRANSPORT (D4) ────────────────────────────────────────────────
+public record TransportVehicleDto(
+    Guid Id, Guid SchoolId, string RegistrationNumber, string? Model, int Capacity,
+    string? DriverName, string? DriverPhone, string? Notes, bool IsActive, int RouteCount, DateTime CreatedAt);
+public record SaveTransportVehicleRequest(
+    string RegistrationNumber, string? Model, int Capacity, string? DriverName, string? DriverPhone,
+    string? Notes, bool IsActive, Guid? SchoolId);
+
+public record TransportRouteDto(
+    Guid Id, Guid SchoolId, string Name, string? Code, string? Description,
+    Guid? VehicleId, string? VehicleName, decimal Fare, TransportFeeFrequency FeeFrequency, bool IsActive,
+    int StopCount, int StudentCount, DateTime CreatedAt);
+public record SaveTransportRouteRequest(
+    string Name, string? Code, string? Description, Guid? VehicleId,
+    decimal Fare, TransportFeeFrequency FeeFrequency, bool IsActive, Guid? SchoolId);
+
+public record TransportStopDto(
+    Guid Id, Guid SchoolId, Guid RouteId, string Name, int SortOrder,
+    string? PickupTime, string? DropTime, decimal? StopFare, DateTime CreatedAt);
+public record SaveTransportStopRequest(
+    Guid RouteId, string Name, int SortOrder, string? PickupTime, string? DropTime, decimal? StopFare, Guid? SchoolId);
+
+public record StudentTransportDto(
+    Guid Id, Guid SchoolId, Guid StudentId, string StudentName, string AdmissionNumber,
+    Guid RouteId, string RouteName, Guid? StopId, string? StopName, decimal Fare, bool IsActive, DateTime CreatedAt);
+public record SaveStudentTransportRequest(
+    Guid StudentId, Guid RouteId, Guid? StopId, decimal Fare, bool IsActive, Guid? SchoolId);

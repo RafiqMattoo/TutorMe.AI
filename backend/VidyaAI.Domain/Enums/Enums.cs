@@ -27,3 +27,14 @@ public enum NarrationStatus { Processing, Ready, Failed }
 // like Explained, plus an AI-generated picture per section for the animated story
 // scenes view.
 public enum NarrationKind { Verbatim, Explained, Illustrated }
+
+// ── STUDENT INFORMATION SYSTEM (A2) ───────────────────────────────
+public enum Gender { Male, Female, Other }
+// Social category for RTE/UDISE+ reporting (reservation categories).
+public enum StudentCategory { General, OBC, SC, ST, EWS }
+// Lifecycle of a student's enrolment at the school.
+public enum StudentStatus { Active, Inactive, TransferredOut, Graduated, Alumni }
+
+// ── TRANSPORT (D4) ────────────────────────────────────────────────
+// Billing cadence for a transport route's fare.
+public enum TransportFeeFrequency { Monthly, Quarterly, HalfYearly, Annual }

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VidyaAI — School Management System · User Documentation</title>
+<style>
+  :root {
+    --ink: #1f3a5f;
+    --ink-soft: #3a5f86;
+    --rule: #5b7da3;
+    --body: #2b2b2b;
+    --muted: #6b7280;
+    --line: #d8e0ea;
+    --bg-soft: #f4f7fb;
+    --accent: #2b6a9c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--body);
+    margin: 0;
+    background: #e9edf2;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ---- page model ---- */
+  .page {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 12px auto;
+    padding: 26mm 22mm;
+    box-shadow: 0 2px 14px rgba(0,0,0,.12);
+    position: relative;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; width: auto; min-height: auto; padding: 18mm 16mm; }
+    .page-break { page-break-before: always; }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  /* ---- cover ---- */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding-top: 60mm;
+  }
+  .flourish-top { color: var(--rule); opacity: .85; margin-bottom: 18px; }
+  .cover-rule { width: 100%; max-width: 150mm; border: none; border-top: 1.5px solid var(--rule); margin: 10px 0; }
+  .cover h1 {
+    font-family: "Segoe UI Light", "Segoe UI", Georgia, serif;
+    color: var(--ink);
+    font-weight: 400;
+    font-size: 44px;
+    letter-spacing: .5px;
+    line-height: 1.18;
+    margin: 18px 0;
+    text-transform: uppercase;
+  }
+  .cover .subtitle {
+    color: var(--ink-soft);
+    font-size: 17px;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .flourish-mid { color: var(--rule); opacity: .8; margin-top: 28px; }
+  .cover-footer {
+    position: absolute;
+    bottom: 24mm;
+    left: 0; right: 0;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+    letter-spacing: .5px;
+  }
+  .cover-meta {
+    position: absolute;
+    bottom: 34mm;
+    left: 0; right: 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* ---- typography ---- */
+  h2.section {
+    color: var(--ink);
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .section-kicker { color: var(--accent); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+  h3 { color: var(--ink-soft); font-size: 19px; margin: 26px 0 8px; }
+  h4 { color: var(--ink); font-size: 15px; margin: 18px 0 4px; text-transform: uppercase; letter-spacing: .6px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  strong { color: var(--ink); }
+  code { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-family: "Consolas", monospace; font-size: 12.5px; color: var(--accent); }
+
+  .lead { font-size: 16px; color: #444; }
+
+  /* ---- chips / badges ---- */
+  .who { display: inline-block; background: var(--bg-soft); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 4px; padding: 4px 10px; font-size: 12.5px; color: var(--ink-soft); margin: 6px 0; }
+  .who b { color: var(--ink); }
+
+  /* ---- callout ---- */
+  .callout { background: var(--bg-soft); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 14px 0; }
+  .callout .tag { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  th { background: var(--ink); color: #fff; text-align: left; padding: 8px 10px; font-weight: 600; }
+  td { border: 1px solid var(--line); padding: 7px 10px; vertical-align: top; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  td.yes { color: #1d7a46; font-weight: 700; text-align: center; }
+  td.no { color: #c0c5cc; text-align: center; }
+
+  /* ---- TOC ---- */
+  .toc { columns: 2; column-gap: 28px; margin-top: 16px; }
+  .toc ol { padding-left: 20px; }
+  .toc a { color: var(--ink-soft); text-decoration: none; }
+  .toc li { break-inside: avoid; }
+
+  /* ---- feature module card ---- */
+  .module { margin-bottom: 6px; }
+  .step-flow { counter-reset: step; list-style: none; padding-left: 0; }
+  .step-flow li { counter-increment: step; position: relative; padding-left: 38px; margin: 10px 0; }
+  .step-flow li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+
+  .footer-note { color: var(--muted); font-size: 11px; text-align: center; margin-top: 30px; border-top: 1px solid var(--line); padding-top: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="page cover">
+  <div class="flourish-top">
+    <svg width="120" height="48" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 6 C 50 18, 30 18, 22 30 C 30 26, 44 26, 52 34 C 56 24, 58 16, 60 6 Z" fill="currentColor"/>
+      <path d="M60 6 C 70 18, 90 18, 98 30 C 90 26, 76 26, 68 34 C 64 24, 62 16, 60 6 Z" fill="currentColor"/>
+      <circle cx="60" cy="40" r="3" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <hr class="cover-rule" />
+  <h1>VidyaAI —<br/>School Management System</h1>
+  <hr class="cover-rule" />
+
+  <div class="subtitle">User Documentation</div>
+
+  <div class="flourish-mid">
+    <svg width="90" height="36" viewBox="0 0 90 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M45 4 C 38 14, 22 16, 14 22 C 24 22, 36 22, 42 30 L 45 34 L 48 30 C 54 22, 66 22, 76 22 C 68 16, 52 14, 45 4 Z" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <div class="cover-meta">NEP&nbsp;2020-aligned · Version 1.0 · June 2026</div>
+  <div class="cover-footer">Sidco complex, rangreth, budgam</div>
+</section>
+
+<!-- ============ ABOUT + TOC ============ -->
+<section class="page page-break">
+  <div class="section-kicker">Overview</div>
+  <h2 class="section">About VidyaAI</h2>
+  <p class="lead">VidyaAI is an enterprise-grade, NEP&nbsp;2020-aligned School Management System for Indian schools. It brings the full life of a school — admissions and student records, academic structure, transport, AI-assisted teaching content, and parent communication — into one secure, multi-school platform.</p>
+
+  <p>This document is a guide for the people who use VidyaAI every day: <strong>Super Administrators</strong> who run the platform, <strong>School Administrators</strong> who manage a school, <strong>Teachers</strong> who create and deliver learning, and <strong>Students &amp; Parents</strong> who learn and follow progress. Each chapter explains, in plain language, what you can do and how the common workflows fit together.</p>
+
+  <div class="callout">
+    <span class="tag">How to read this guide</span>
+    <p style="margin-bottom:0">Every module lists <strong>who uses it</strong> and the <strong>actions available</strong>. Look for the blue chips for the audience, and the numbered flows for step-by-step workflows such as onboarding a school or delivering a lesson.</p>
+  </div>
+
+  <h3>Table of Contents</h3>
+  <div class="toc">
+    <ol>
+      <li><a href="#roles">Roles &amp; Who Can Do What</a></li>
+      <li><a href="#auth">Getting Started: Registration &amp; Sign-in</a></li>
+      <li><a href="#dashboard">Dashboard &amp; Analytics</a></li>
+      <li><a href="#schools">School Management</a></li>
+      <li><a href="#approvals">Approvals Workflow</a></li>
+      <li><a href="#users">Users, Roles &amp; Enrollments</a></li>
+      <li><a href="#academics">Academic Structure</a></li>
+      <li><a href="#students">Student Information System</a></li>
+      <li><a href="#transport">Transport Management</a></li>
+      <li><a href="#content">Content: Articles, Categories &amp; Materials</a></li>
+      <li><a href="#studytools">AI Study Tools: Flashcards, Quizzes, Lesson Plans</a></li>
+      <li><a href="#learning">Teaching &amp; Learning Tools: Tutor, Recite, Explain</a></li>
+      <li><a href="#deliveries">Deliveries &amp; Today</a></li>
+      <li><a href="#notifications">Notifications</a></li>
+      <li><a href="#matrix">Access Reference Matrix</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 1. ROLES ============ -->
+<section class="page page-break" id="roles">
+  <div class="section-kicker">Chapter 1</div>
+  <h2 class="section">Roles &amp; Who Can Do What</h2>
+  <p>VidyaAI is multi-tenant: many schools share one platform, but each school's data stays private. What you see and can do depends on your role.</p>
+
+  <h4>Super Administrator</h4>
+  <p>Runs the whole platform. Sees every school and all content. Creates and approves schools, manages subscriptions, and can act across the entire system.</p>
+
+  <h4>School Administrator</h4>
+  <p>Manages a single school. Approves teachers and students, builds the academic structure, manages student records and transport, and oversees all content for the school.</p>
+
+  <h4>Teacher</h4>
+  <p>The content and teaching workspace. Uploads materials, generates AI flashcards/quizzes/lesson plans, writes articles, and schedules deliveries to students.</p>
+
+  <h4>Student</h4>
+  <p>The learning view. Consumes today's deliveries, reads materials and articles, studies flashcards, takes quizzes, and asks the AI Tutor questions.</p>
+
+  <h4>Parent</h4>
+  <p>The guardian view. Follows school content and a child's learning activity, and listens to narrated lessons.</p>
+
+  <div class="callout">
+    <span class="tag">Scope rule</span>
+    <p style="margin-bottom:0">The Super Administrator works <strong>globally</strong>. Everyone else is <strong>scoped to their own school</strong> — they never see another school's students, content, or data.</p>
+  </div>
+</section>
+
+<!-- ============ 2. AUTH ============ -->
+<section class="page page-break" id="auth">
+  <div class="section-kicker">Chapter 2</div>
+  <h2 class="section">Getting Started: Registration &amp; Sign-in</h2>
+  <span class="who"><b>Used by:</b> Everyone</span>
+
+  <h3>Signing in</h3>
+  <p>Go to the <strong>Login</strong> page and enter your email and password. VidyaAI keeps you signed in securely and renews your session automatically, so you are not logged out mid-task. If your account is still pending, rejected, or deactivated, you'll see a clear message explaining why.</p>
+
+  <h3>Registering a new school</h3>
+  <p>A school can sign itself up from the <strong>Register</strong> page — providing the school details and the first administrator's account. The school starts in a <strong>Pending</strong> state and becomes active only after a Super Administrator approves it.</p>
+
+  <ol class="step-flow">
+    <li>School fills the registration form (school details + admin account).</li>
+    <li>The school and its admin are created in <strong>Pending</strong>.</li>
+    <li>A Super Administrator reviews it under <strong>Approvals</strong>.</li>
+    <li>On approval: the school is activated, a trial period begins, and the admin is notified that they can now sign in.</li>
+  </ol>
+
+  <h3>Registering as a teacher or student</h3>
+  <p>Teachers and students can self-register and pick their school. They land in a <strong>Pending</strong> queue until the School Administrator approves them.</p>
+  <p>Passwords must include at least one uppercase letter and one digit. Accounts created directly by an administrator are approved automatically and skip the queue.</p>
+</section>
+
+<!-- ============ 3. DASHBOARD ============ -->
+<section class="page page-break" id="dashboard">
+  <div class="section-kicker">Chapter 3</div>
+  <h2 class="section">Dashboard &amp; Analytics</h2>
+  <span class="who"><b>Used by:</b> Everyone (figures adapt to your role)</span>
+
+  <p>The Dashboard is your landing page after sign-in. It summarises activity at a glance and adapts to your scope — a Super Administrator sees platform-wide totals, while a School Administrator sees only their own school.</p>
+
+  <h4>What you'll see</h4>
+  <ul>
+    <li><strong>Key counts</strong> — schools, total users, students and teachers, and articles (published vs. draft).</li>
+    <li><strong>Engagement</strong> — comments, likes, and total views across content.</li>
+    <li><strong>Top articles</strong> — the five most-viewed published articles with author and stats.</li>
+    <li><strong>Recent activity</strong> — the ten latest articles and drafts with status and timestamp.</li>
+    <li><strong>This week</strong> — new users and new articles added in the last seven days.</li>
+  </ul>
+</section>
+
+<!-- ============ 4. SCHOOLS ============ -->
+<section class="page page-break" id="schools">
+  <div class="section-kicker">Chapter 4</div>
+  <h2 class="section">School Management</h2>
+  <span class="who"><b>Used by:</b> Super Administrator</span>
+
+  <p>The Schools area is where the Super Administrator manages every school on the platform.</p>
+
+  <h4>What you can do</h4>
+  <ul>
+    <li><strong>Browse schools</strong> — a searchable, paginated list (by name or city) showing subscription plan, status, user count, and article count.</li>
+    <li><strong>View a school</strong> — full profile with address, board type (CBSE, ICSE, etc.), and subscription details.</li>
+    <li><strong>Create a school</strong> — added directly by the Super Administrator; it is auto-approved and starts active.</li>
+    <li><strong>Edit a school</strong> — update name, address, contact, logo, and activation status.</li>
+    <li><strong>Manage subscription</strong> — set the plan (Free / Premium / Enterprise), status (Trial / Active / Expired), and expiry date.</li>
+    <li><strong>Remove a school</strong> — soft-deleted so records are preserved for audit.</li>
+  </ul>
+</section>
+
+<!-- ============ 5. APPROVALS ============ -->
+<section class="page page-break" id="approvals">
+  <div class="section-kicker">Chapter 5</div>
+  <h2 class="section">Approvals Workflow</h2>
+  <span class="who"><b>Used by:</b> Super Administrator (schools) · School Administrator (members)</span>
+
+  <p>Approvals is the gatekeeping queue. Nothing self-registered goes live until it's reviewed here.</p>
+
+  <h3>Pending schools <span style="font-weight:400;font-size:14px;color:var(--muted)">— Super Administrator</span></h3>
+  <ul>
+    <li><strong>Approve</strong> — activates the school, its admin, and all enrollments; starts a 14-day trial if no expiry is set; notifies the admin.</li>
+    <li><strong>Reject</strong> — rejects the school and admin, suspends enrollments, and notifies the admin.</li>
+  </ul>
+
+  <h3>Pending members <span style="font-weight:400;font-size:14px;color:var(--muted)">— School Administrator</span></h3>
+  <p>Teachers and students awaiting approval. A School Administrator sees only their own school's pending members; the Super Administrator sees all.</p>
+  <ul>
+    <li><strong>Approve member</strong> — activates the account and notifies the user.</li>
+    <li><strong>Reject member</strong> — deactivates the account and notifies the user.</li>
+  </ul>
+</section>
+
+<!-- ============ 6. USERS ============ -->
+<section class="page page-break" id="users">
+  <div class="section-kicker">Chapter 6</div>
+  <h2 class="section">Users, Roles &amp; Enrollments</h2>
+  <span class="who"><b>Used by:</b> Super Administrator (global) · School Administrator (their school)</span>
+
+  <h3>Users</h3>
+  <ul>
+    <li><strong>Browse</strong> — searchable, paginated list by email or name, filterable by school; shows role, status, email-verified, and last login.</li>
+    <li><strong>Create</strong> — the Super Administrator can create any user; a School Administrator can create teachers and students. Admin-created users are auto-approved.</li>
+    <li><strong>Student fields</strong> — grade level, roll number, date of birth, and guardian name/phone can be captured at creation.</li>
+    <li><strong>Enable / disable</strong> and <strong>remove</strong> (soft delete) accounts.</li>
+  </ul>
+
+  <h3>Roles</h3>
+  <p>A reference view of the role hierarchy and each role's scope — Super Administrator, School Administrator, Teacher, Student, and Parent — as described in Chapter&nbsp;1.</p>
+
+  <h3>Enrollments</h3>
+  <p>Enrollments connect a user to a school with a specific role and status. A single user can belong to more than one school.</p>
+  <ul>
+    <li><strong>View</strong> enrollments with role and status (Active / Pending / Suspended).</li>
+    <li><strong>Create</strong> an enrollment to add an existing user to a school.</li>
+    <li><strong>Set primary</strong> — mark one enrollment as the user's main school.</li>
+    <li><strong>Remove</strong> a user from a school.</li>
+  </ul>
+</section>
+
+<!-- ============ 7. ACADEMICS ============ -->
+<section class="page page-break" id="academics">
+  <div class="section-kicker">Chapter 7</div>
+  <h2 class="section">Academic Structure</h2>
+  <span class="who"><b>Used by:</b> School Administrator · Teacher</span>
+  <p>This is where a school's academic backbone is built, fully aligned to NEP&nbsp;2020. The page is organised into tabs.</p>
+
+  <h4>Classes</h4>
+  <p>Create classes (grades 0–12+), assign the NEP stage (Foundational, Preparatory, Middle, Secondary), and set the level used for promotion.</p>
+
+  <h4>Sections</h4>
+  <p>Divide a class into sections (e.g. 5-A, 5-B), assign a class teacher, set capacity, and link to a stream where relevant.</p>
+
+  <h4>Subjects</h4>
+  <p>Define subjects with code and medium of instruction. Flag a subject as a <strong>language</strong> (three-language formula) or as <strong>co-scholastic</strong> (arts, sports, life-skills for the Holistic Progress Card).</p>
+
+  <h4>Subject–Teacher Allocations</h4>
+  <p>Map each subject to a class/section and the assigned teacher. This drives timetabling, assessment, and report cards.</p>
+
+  <h4>Streams</h4>
+  <p>Create academic tracks (Science, Commerce, Humanities) and link them to sections at the Secondary stage.</p>
+
+  <h4>Houses</h4>
+  <p>Set up school houses for points and identity — name, optional house master, and a colour.</p>
+
+  <h4>Grading Scales</h4>
+  <p>Configure grade scales by board (e.g. CBSE 9-point), set a default for the school, and define grade bands (A1, A2, …) with percentage ranges and grade points.</p>
+
+  <h4>Academic Years &amp; Terms</h4>
+  <p>Create the session (e.g. 2025–26) with start/end dates, mark exactly one as current, and add nested terms or semesters that drive the exam and report-card calendar.</p>
+</section>
+
+<!-- ============ 8. STUDENTS ============ -->
+<section class="page page-break" id="students">
+  <div class="section-kicker">Chapter 8</div>
+  <h2 class="section">Student Information System (SIS)</h2>
+  <span class="who"><b>Used by:</b> School Administrator &amp; Teacher (view) · School Administrator (create/edit)</span>
+
+  <p>The SIS is the master register of every student in the school.</p>
+
+  <h4>Finding students</h4>
+  <p>Search the paginated list by name, admission number, or roll number, and filter by class, section, or status (Active, Inactive, Transferred-Out, Graduated, Alumni). Each row opens a full detail view.</p>
+
+  <h4>Adding &amp; editing a student</h4>
+  <ul>
+    <li><strong>Identity</strong> — name, gender, date of birth, admission and roll numbers, photo.</li>
+    <li><strong>Placement</strong> — academic year, class, section, and house.</li>
+    <li><strong>Contact</strong> — email, phone, and full address.</li>
+    <li><strong>Demographics &amp; compliance</strong> — category (General/SC/ST/OBC), blood group, nationality, mother tongue, religion; CWSN (special needs) flag, RTE (EWS quota) flag, and Aadhaar / APAAR ID for one-nation-one-student records.</li>
+    <li><strong>Guardians</strong> — father/mother and guardian details with phone, occupation, and relation.</li>
+    <li><strong>Account link</strong> — optionally connect the student to a Student or Parent login.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="tag">Life cycle</span>
+    <p style="margin-bottom:0">A student record progresses through its life cycle: <strong>Active → Graduated / Transferred-Out → Alumni / Inactive</strong>, keeping a complete history.</p>
+  </div>
+</section>
+
+<!-- ============ 9. TRANSPORT ============ -->
+<section class="page page-break" id="transport">
+  <div class="section-kicker">Chapter 9</div>
+  <h2 class="section">Transport Management</h2>
+  <span class="who"><b>Used by:</b> School Administrator</span>
+
+  <h4>Vehicles</h4>
+  <p>Register buses and vans with registration number, model, and capacity; capture driver name and phone; and activate or deactivate each vehicle.</p>
+
+  <h4>Routes</h4>
+  <p>Create routes with name, code, and description; assign a vehicle; and set the fare and frequency (Monthly, Quarterly, Annual, or Per-Trip). Each route shows its stop count and how many students are allocated.</p>
+
+  <h4>Stops</h4>
+  <p>Define ordered stops along a route with pickup and drop times and an optional stop-specific fare.</p>
+
+  <h4>Student Allocation</h4>
+  <p>Allocate students to a route and stop, capturing the fare at allocation time. Allocations can be activated or deactivated to handle changes and absences.</p>
+</section>
+
+<!-- ============ 10. CONTENT ============ -->
+<section class="page page-break" id="content">
+  <div class="section-kicker">Chapter 10</div>
+  <h2 class="section">Content: Articles, Categories &amp; Materials</h2>
+
+  <h3>Articles</h3>
+  <span class="who"><b>Create:</b> Super Admin · School Admin · Teacher &nbsp; | &nbsp; <b>Read:</b> Everyone</span>
+  <ul>
+    <li><strong>Write</strong> a draft with title, rich-text body, optional cover image, and a YouTube video link.</li>
+    <li><strong>Organise</strong> with a category and comma-separated tags.</li>
+    <li><strong>Publish</strong> now, <strong>schedule</strong> for a future time, or <strong>unpublish</strong> back to draft.</li>
+    <li><strong>Engagement</strong> — readers can view, like, and comment (with nested replies and comment likes).</li>
+  </ul>
+
+  <h3>Categories</h3>
+  <span class="who"><b>Used by:</b> School Administrator · Teacher</span>
+  <p>Create, edit, and delete categories to organise articles and materials, with sort order, an optional icon, and an active/inactive flag.</p>
+
+  <h3>Materials (PDF documents)</h3>
+  <span class="who"><b>Upload:</b> Super Admin · School Admin · Teacher &nbsp; | &nbsp; <b>Read:</b> Everyone</span>
+  <p>Upload a PDF and VidyaAI processes it in the background so it can power the AI tools. You'll see the indexing status move from <strong>Processing</strong> to <strong>Ready</strong> (or <strong>Failed</strong> with a reason).</p>
+  <ul>
+    <li><strong>Metadata</strong> — title, file name, size, and page count.</li>
+    <li><strong>Categorise</strong> into a content category.</li>
+    <li>Behind the scenes the PDF is split into sections and indexed so the Tutor, flashcards, quizzes, and lesson plans can draw on it.</li>
+  </ul>
+</section>
+
+<!-- ============ 11. STUDY TOOLS ============ -->
+<section class="page page-break" id="studytools">
+  <div class="section-kicker">Chapter 11</div>
+  <h2 class="section">AI Study Tools</h2>
+  <span class="who"><b>Generate:</b> Super Admin · School Admin · Teacher &nbsp; | &nbsp; <b>Use:</b> Everyone</span>
+  <p>From any <strong>Ready</strong> material, teachers can generate study resources with AI in a few clicks.</p>
+
+  <h3>Flashcards</h3>
+  <ul>
+    <li>Generate a set of <strong>3–30 cards</strong> from a material, each with a question on the front and a detailed answer on the back.</li>
+    <li><strong>Study mode</strong> lets learners flip through and review cards.</li>
+  </ul>
+
+  <h3>Quizzes</h3>
+  <ul>
+    <li>Generate <strong>3–25 multiple-choice questions</strong> at Easy, Medium, or Hard difficulty, each with four options and an explanation.</li>
+    <li>Students <strong>take the quiz</strong> and their score and answers are recorded as an attempt.</li>
+  </ul>
+
+  <h3>Lesson Plans</h3>
+  <ul>
+    <li>Generate a structured plan from a material by giving the subject, grade level, and duration (15–240 minutes).</li>
+    <li>The plan is formatted with objectives, activities, and assessment, and can be browsed and viewed by teachers.</li>
+  </ul>
+</section>
+
+<!-- ============ 12. LEARNING TOOLS ============ -->
+<section class="page page-break" id="learning">
+  <div class="section-kicker">Chapter 12</div>
+  <h2 class="section">Teaching &amp; Learning Tools</h2>
+
+  <h3>AI Tutor</h3>
+  <span class="who"><b>Used by:</b> Everyone</span>
+  <p>Ask questions in plain language and get answers grounded in the school's uploaded materials. The Tutor finds the most relevant sections, answers with citations back to the source, and keeps multi-turn chat sessions so you can browse your history later.</p>
+
+  <h3>Narration, Recite &amp; Explain</h3>
+  <span class="who"><b>Configure:</b> Teacher &nbsp; | &nbsp; <b>Listen / watch:</b> Student · Parent</span>
+  <p>Any material can be turned into audio in two styles:</p>
+  <ul>
+    <li><strong>Recite (verbatim)</strong> — the exact text read aloud, with the words highlighted in sync as they're spoken.</li>
+    <li><strong>Explain (simplified)</strong> — dense passages are simplified into an animated explainer with synchronised illustrations.</li>
+  </ul>
+  <p>Teachers choose the voice; learners simply press play. Audio is prepared in the background and becomes available once ready.</p>
+
+  <h3>Scenes</h3>
+  <span class="who"><b>Used by:</b> Everyone</span>
+  <p>A preview area reserved for upcoming visual, scenario-based learning.</p>
+</section>
+
+<!-- ============ 13. DELIVERIES ============ -->
+<section class="page page-break" id="deliveries">
+  <div class="section-kicker">Chapter 13</div>
+  <h2 class="section">Deliveries &amp; Today</h2>
+
+  <h3>Creating deliveries</h3>
+  <span class="who"><b>Used by:</b> Teacher · School Administrator</span>
+  <p>A delivery is a packaged learning task assigned to a calendar day. Give it a title and instructions, pick the date, and attach any combination of a <strong>material to read</strong>, a <strong>quiz to practise</strong>, and a <strong>flashcard set to study</strong> (at least one is required). Deliveries can be edited, filtered by date, or removed.</p>
+
+  <h3>Today</h3>
+  <span class="who"><b>Used by:</b> Everyone</span>
+  <p>The <strong>Today</strong> page shows students and parents what has been delivered for the day, with one-tap buttons to read, listen, or practise — opening straight into the material viewer, quiz, or flashcard study mode.</p>
+
+  <h4>A teacher's content-to-delivery flow</h4>
+  <ol class="step-flow">
+    <li>Upload a PDF material and wait for it to become <strong>Ready</strong>.</li>
+    <li>Generate flashcards, a quiz, and/or a lesson plan from it.</li>
+    <li>Optionally publish an article or generate a narration.</li>
+    <li>Create a delivery, attach the content, and schedule it for a date.</li>
+    <li>Students see it on <strong>Today</strong> and start learning.</li>
+  </ol>
+</section>
+
+<!-- ============ 14. NOTIFICATIONS ============ -->
+<section class="page page-break" id="notifications">
+  <div class="section-kicker">Chapter 14</div>
+  <h2 class="section">Notifications</h2>
+  <span class="who"><b>Used by:</b> Everyone</span>
+  <p>VidyaAI keeps users informed about the things that matter to them, especially around approvals:</p>
+  <ul>
+    <li><strong>Approval requested</strong> — a new school registration is waiting for the Super Administrator.</li>
+    <li><strong>Approval granted</strong> — a school or member has been approved and can sign in.</li>
+    <li><strong>Approval rejected</strong> — a registration was declined.</li>
+  </ul>
+  <p>Notifications are marked read or unread and link back to the related school or user.</p>
+</section>
+
+<!-- ============ 15. MATRIX ============ -->
+<section class="page page-break" id="matrix">
+  <div class="section-kicker">Reference</div>
+  <h2 class="section">Access Reference Matrix</h2>
+  <p>Which areas each role can open. <strong>SA</strong> = Super Administrator, <strong>Adm</strong> = School Administrator, <strong>Tch</strong> = Teacher, <strong>Std</strong> = Student, <strong>Par</strong> = Parent.</p>
+
+  <table>
+    <thead>
+      <tr><th>Area</th><th style="text-align:center">SA</th><th style="text-align:center">Adm</th><th style="text-align:center">Tch</th><th style="text-align:center">Std</th><th style="text-align:center">Par</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Dashboard</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Today</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Deliveries</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Schools</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Approvals</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Users</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Roles</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Enrollments</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Academics</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Students (SIS)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Transport</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+      <tr><td>Articles</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Categories</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Materials</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>AI Tutor</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Flashcards</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Quizzes</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Recite / Explain</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Lesson Plans</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">–</td><td class="no">–</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-note">
+    VidyaAI — School Management System · User Documentation · Version 1.0 · June 2026<br/>
+    Sidco complex, rangreth, budgam
+  </div>
+</section>
+
+</body>
+</html>

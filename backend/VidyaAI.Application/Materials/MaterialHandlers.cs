@@ -115,6 +115,9 @@ namespace VidyaAI.Application.Materials.Commands
             db.Materials.Add(material);
             await db.SaveChangesAsync(ct);
 
+            // Once the row exists, finish indexing even if the browser disconnects
+            // so the material is not left stuck in Processing.
+            var ingestCt = CancellationToken.None;
             try
             {
                 ms.Position = 0;
@@ -138,7 +141,7 @@ namespace VidyaAI.Application.Materials.Commands
                         try
                         {
                             vectors = await embeddings.EmbedBatchAsync(
-                                batch.Select(b => b.Content).ToList(), ct);
+                                batch.Select(b => b.Content).ToList(), ingestCt);
                         }
                         catch (Exception batchEx)
                         {
@@ -161,10 +164,10 @@ namespace VidyaAI.Application.Materials.Commands
                                 Embedding = vectors.Count > j ? vectors[j] : null
                             });
                         }
-                        await db.SaveChangesAsync(ct);
+                        await db.SaveChangesAsync(ingestCt);
 
                         if (i + batchSize < chunks.Count)
-                            await Task.Delay(pauseMsBetweenBatches, ct);
+                            await Task.Delay(pauseMsBetweenBatches, ingestCt);
                     }
 
                     if (failedBatches == 0)
@@ -189,10 +192,10 @@ namespace VidyaAI.Application.Materials.Commands
                 material.ErrorMessage = ex.Message;
             }
 
-            await db.SaveChangesAsync(ct);
+            await db.SaveChangesAsync(ingestCt);
 
             return await new VidyaAI.Application.Materials.Queries.GetMaterialByIdQueryHandler(db)
-                .Handle(new VidyaAI.Application.Materials.Queries.GetMaterialByIdQuery(material.Id), ct);
+                .Handle(new VidyaAI.Application.Materials.Queries.GetMaterialByIdQuery(material.Id), ingestCt);
         }
     }
 

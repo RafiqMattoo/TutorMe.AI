@@ -16,6 +16,10 @@ using VidyaAI.Application.LessonPlans.Commands;
 using VidyaAI.Application.LessonPlans.Queries;
 using VidyaAI.Application.Academics.Commands;
 using VidyaAI.Application.Academics.Queries;
+using VidyaAI.Application.Students.Commands;
+using VidyaAI.Application.Students.Queries;
+using VidyaAI.Application.Transport.Commands;
+using VidyaAI.Application.Transport.Queries;
 using VidyaAI.Application.Approvals.Commands;
 using VidyaAI.Application.Approvals.Queries;
 using VidyaAI.Application.Materials.Commands;
@@ -30,6 +34,7 @@ using VidyaAI.Application.Quizzes.Commands;
 using VidyaAI.Application.Quizzes.Queries;
 using VidyaAI.Application.Schools.Commands;
 using VidyaAI.Application.Schools.Queries;
+using VidyaAI.Application.SimpleBot.Commands;
 using VidyaAI.Application.Tutor.Commands;
 using VidyaAI.Application.Tutor.Queries;
 using VidyaAI.Application.Users.Commands;
@@ -372,6 +377,15 @@ public sealed class TutorController(ISender sender) : BaseController(sender)
     }
 }
 
+// ── SIMPLE BOT (direct LLM chat) ─────────────────────────────────
+[Route("api/simple-bot"), Authorize]
+public sealed class SimpleBotController(ISender sender) : BaseController(sender)
+{
+    [HttpPost("ask")]
+    public async Task<IActionResult> Ask([FromBody] AskSimpleBotRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new AskSimpleBotCommand(req.Message, req.History), ct));
+}
+
 // ── FLASHCARDS ────────────────────────────────────────────────────
 [Route("api/flashcards"), Authorize]
 public sealed class FlashcardsController(ISender sender) : BaseController(sender)
@@ -614,11 +628,11 @@ public sealed class AcademicsController(ISender sender) : BaseController(sender)
 
     [HttpPost("sections")]
     public async Task<IActionResult> SaveSection([FromBody] SaveSectionRequest req, [FromQuery] Guid? schoolId, CancellationToken ct)
-        => Ok(await Sender.Send(new SaveSectionCommand(null, Scope(schoolId), req.SchoolClassId, req.Name, req.Capacity, req.ClassTeacherId), ct));
+        => Ok(await Sender.Send(new SaveSectionCommand(null, Scope(schoolId), req.SchoolClassId, req.Name, req.Capacity, req.ClassTeacherId, req.StreamId), ct));
 
     [HttpPut("sections/{id:guid}")]
     public async Task<IActionResult> UpdateSection(Guid id, [FromBody] SaveSectionRequest req, [FromQuery] Guid? schoolId, CancellationToken ct)
-        => Ok(await Sender.Send(new SaveSectionCommand(id, Scope(schoolId), req.SchoolClassId, req.Name, req.Capacity, req.ClassTeacherId), ct));
+        => Ok(await Sender.Send(new SaveSectionCommand(id, Scope(schoolId), req.SchoolClassId, req.Name, req.Capacity, req.ClassTeacherId, req.StreamId), ct));
 
     [HttpDelete("sections/{id:guid}")]
     public async Task<IActionResult> DeleteSection(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
@@ -657,4 +671,194 @@ public sealed class AcademicsController(ISender sender) : BaseController(sender)
     [HttpDelete("houses/{id:guid}")]
     public async Task<IActionResult> DeleteHouse(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
     { await Sender.Send(new DeleteHouseCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Teachers (picker options for class teacher / house master / allocation)
+    [HttpGet("teachers")]
+    public async Task<IActionResult> GetTeachers([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetSchoolTeachersQuery(Scope(schoolId)), ct));
+
+    // Streams
+    [HttpGet("streams")]
+    public async Task<IActionResult> GetStreams([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetStreamsQuery(Scope(schoolId)), ct));
+
+    [HttpPost("streams")]
+    public async Task<IActionResult> SaveStream([FromBody] SaveStreamRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStreamCommand(null, Scope(req.SchoolId), req.Name, req.Code), ct));
+
+    [HttpPut("streams/{id:guid}")]
+    public async Task<IActionResult> UpdateStream(Guid id, [FromBody] SaveStreamRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStreamCommand(id, Scope(req.SchoolId), req.Name, req.Code), ct));
+
+    [HttpDelete("streams/{id:guid}")]
+    public async Task<IActionResult> DeleteStream(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteStreamCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Subject allocations (subject–teacher–class mapping)
+    [HttpGet("allocations")]
+    public async Task<IActionResult> GetAllocations([FromQuery] Guid? schoolId, [FromQuery] Guid? classId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetSubjectAllocationsQuery(Scope(schoolId), classId), ct));
+
+    [HttpPost("allocations")]
+    public async Task<IActionResult> SaveAllocation([FromBody] SaveSubjectAllocationRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveSubjectAllocationCommand(null, Scope(req.SchoolId), req.SubjectId, req.SchoolClassId, req.SectionId, req.TeacherId), ct));
+
+    [HttpPut("allocations/{id:guid}")]
+    public async Task<IActionResult> UpdateAllocation(Guid id, [FromBody] SaveSubjectAllocationRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveSubjectAllocationCommand(id, Scope(req.SchoolId), req.SubjectId, req.SchoolClassId, req.SectionId, req.TeacherId), ct));
+
+    [HttpDelete("allocations/{id:guid}")]
+    public async Task<IActionResult> DeleteAllocation(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteSubjectAllocationCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Grading scales (+ bands)
+    [HttpGet("grading-scales")]
+    public async Task<IActionResult> GetGradingScales([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetGradingScalesQuery(Scope(schoolId)), ct));
+
+    [HttpPost("grading-scales")]
+    public async Task<IActionResult> SaveGradingScale([FromBody] SaveGradingScaleRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveGradingScaleCommand(null, Scope(req.SchoolId), req.Name, req.Board, req.IsDefault), ct));
+
+    [HttpPut("grading-scales/{id:guid}")]
+    public async Task<IActionResult> UpdateGradingScale(Guid id, [FromBody] SaveGradingScaleRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveGradingScaleCommand(id, Scope(req.SchoolId), req.Name, req.Board, req.IsDefault), ct));
+
+    [HttpDelete("grading-scales/{id:guid}")]
+    public async Task<IActionResult> DeleteGradingScale(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteGradingScaleCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    [HttpPost("grading-scales/{scaleId:guid}/bands")]
+    public async Task<IActionResult> SaveGradeBand(Guid scaleId, [FromBody] SaveGradeBandRequest req, [FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveGradeBandCommand(null, Scope(schoolId), scaleId, req.Grade, req.MinPercent, req.MaxPercent, req.GradePoint, req.Description), ct));
+
+    [HttpPut("bands/{id:guid}")]
+    public async Task<IActionResult> UpdateGradeBand(Guid id, [FromBody] SaveGradeBandRequest req, [FromQuery] Guid scaleId, [FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveGradeBandCommand(id, Scope(schoolId), scaleId, req.Grade, req.MinPercent, req.MaxPercent, req.GradePoint, req.Description), ct));
+
+    [HttpDelete("bands/{id:guid}")]
+    public async Task<IActionResult> DeleteGradeBand(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteGradeBandCommand(id, Scope(schoolId)), ct); return NoContent(); }
+}
+
+// ── STUDENT INFORMATION SYSTEM (A2) ──────────────────────────────
+// Student master. Teachers may read the roster; only SuperAdmin/SchoolAdmin may write.
+// SuperAdmin operates on a school passed via ?schoolId=; everyone else is pinned to their own.
+[Route("api/students"), Authorize(Roles = "SuperAdmin,SchoolAdmin,Teacher")]
+public sealed class StudentsController(ISender sender) : BaseController(sender)
+{
+    private Guid Scope(Guid? schoolId)
+        => ((IsSuperAdmin ? (schoolId ?? CurrentSchoolId) : CurrentSchoolId))
+           ?? throw new InvalidOperationException("A school context is required.");
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] Guid? schoolId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20,
+        [FromQuery] string? search = null, [FromQuery] Guid? classId = null,
+        [FromQuery] Guid? sectionId = null, [FromQuery] StudentStatus? status = null,
+        CancellationToken ct = default)
+        => Ok(await Sender.Send(new GetStudentsQuery(Scope(schoolId), page, pageSize, search, classId, sectionId, status), ct));
+
+    [HttpGet("next-admission-number")]
+    public async Task<IActionResult> NextAdmissionNumber([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(new { admissionNumber = await Sender.Send(new GetNextAdmissionNumberQuery(Scope(schoolId)), ct) });
+
+    [HttpGet("options")]
+    public async Task<IActionResult> Options([FromQuery] Guid? schoolId, [FromQuery] string? search, CancellationToken ct)
+        => Ok(await Sender.Send(new GetStudentOptionsQuery(Scope(schoolId), search), ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetStudentByIdQuery(id, Scope(schoolId)), ct));
+
+    [HttpPost, Authorize(Roles = "SuperAdmin,SchoolAdmin")]
+    public async Task<IActionResult> Create([FromBody] SaveStudentRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStudentCommand(null, Scope(req.SchoolId), req), ct));
+
+    [HttpPut("{id:guid}"), Authorize(Roles = "SuperAdmin,SchoolAdmin")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] SaveStudentRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStudentCommand(id, Scope(req.SchoolId), req), ct));
+
+    [HttpDelete("{id:guid}"), Authorize(Roles = "SuperAdmin,SchoolAdmin")]
+    public async Task<IActionResult> Delete(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteStudentCommand(id, Scope(schoolId)), ct); return NoContent(); }
+}
+
+// ── TRANSPORT (D4) ───────────────────────────────────────────────
+// Fleet, routes, stops & per-student allocation with fares. Admin-managed; SuperAdmin
+// operates on a school via ?schoolId=, everyone else is pinned to their own school.
+[Route("api/transport"), Authorize(Roles = "SuperAdmin,SchoolAdmin")]
+public sealed class TransportController(ISender sender) : BaseController(sender)
+{
+    private Guid Scope(Guid? schoolId)
+        => ((IsSuperAdmin ? (schoolId ?? CurrentSchoolId) : CurrentSchoolId))
+           ?? throw new InvalidOperationException("A school context is required.");
+
+    // Vehicles
+    [HttpGet("vehicles")]
+    public async Task<IActionResult> GetVehicles([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetTransportVehiclesQuery(Scope(schoolId)), ct));
+
+    [HttpPost("vehicles")]
+    public async Task<IActionResult> SaveVehicle([FromBody] SaveTransportVehicleRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportVehicleCommand(null, Scope(req.SchoolId), req.RegistrationNumber, req.Model, req.Capacity, req.DriverName, req.DriverPhone, req.Notes, req.IsActive), ct));
+
+    [HttpPut("vehicles/{id:guid}")]
+    public async Task<IActionResult> UpdateVehicle(Guid id, [FromBody] SaveTransportVehicleRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportVehicleCommand(id, Scope(req.SchoolId), req.RegistrationNumber, req.Model, req.Capacity, req.DriverName, req.DriverPhone, req.Notes, req.IsActive), ct));
+
+    [HttpDelete("vehicles/{id:guid}")]
+    public async Task<IActionResult> DeleteVehicle(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteTransportVehicleCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Routes
+    [HttpGet("routes")]
+    public async Task<IActionResult> GetRoutes([FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetTransportRoutesQuery(Scope(schoolId)), ct));
+
+    [HttpPost("routes")]
+    public async Task<IActionResult> SaveRoute([FromBody] SaveTransportRouteRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportRouteCommand(null, Scope(req.SchoolId), req.Name, req.Code, req.Description, req.VehicleId, req.Fare, req.FeeFrequency, req.IsActive), ct));
+
+    [HttpPut("routes/{id:guid}")]
+    public async Task<IActionResult> UpdateRoute(Guid id, [FromBody] SaveTransportRouteRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportRouteCommand(id, Scope(req.SchoolId), req.Name, req.Code, req.Description, req.VehicleId, req.Fare, req.FeeFrequency, req.IsActive), ct));
+
+    [HttpDelete("routes/{id:guid}")]
+    public async Task<IActionResult> DeleteRoute(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteTransportRouteCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Stops (scoped to a route)
+    [HttpGet("routes/{routeId:guid}/stops")]
+    public async Task<IActionResult> GetStops(Guid routeId, [FromQuery] Guid? schoolId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetTransportStopsQuery(Scope(schoolId), routeId), ct));
+
+    [HttpPost("stops")]
+    public async Task<IActionResult> SaveStop([FromBody] SaveTransportStopRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportStopCommand(null, Scope(req.SchoolId), req.RouteId, req.Name, req.SortOrder, req.PickupTime, req.DropTime, req.StopFare), ct));
+
+    [HttpPut("stops/{id:guid}")]
+    public async Task<IActionResult> UpdateStop(Guid id, [FromBody] SaveTransportStopRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveTransportStopCommand(id, Scope(req.SchoolId), req.RouteId, req.Name, req.SortOrder, req.PickupTime, req.DropTime, req.StopFare), ct));
+
+    [HttpDelete("stops/{id:guid}")]
+    public async Task<IActionResult> DeleteStop(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteTransportStopCommand(id, Scope(schoolId)), ct); return NoContent(); }
+
+    // Student allocations
+    [HttpGet("allocations")]
+    public async Task<IActionResult> GetAllocations([FromQuery] Guid? schoolId, [FromQuery] Guid? routeId, CancellationToken ct)
+        => Ok(await Sender.Send(new GetStudentTransportsQuery(Scope(schoolId), routeId), ct));
+
+    [HttpPost("allocations")]
+    public async Task<IActionResult> SaveAllocation([FromBody] SaveStudentTransportRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStudentTransportCommand(null, Scope(req.SchoolId), req.StudentId, req.RouteId, req.StopId, req.Fare, req.IsActive), ct));
+
+    [HttpPut("allocations/{id:guid}")]
+    public async Task<IActionResult> UpdateAllocation(Guid id, [FromBody] SaveStudentTransportRequest req, CancellationToken ct)
+        => Ok(await Sender.Send(new SaveStudentTransportCommand(id, Scope(req.SchoolId), req.StudentId, req.RouteId, req.StopId, req.Fare, req.IsActive), ct));
+
+    [HttpDelete("allocations/{id:guid}")]
+    public async Task<IActionResult> DeleteAllocation(Guid id, [FromQuery] Guid? schoolId, CancellationToken ct)
+    { await Sender.Send(new DeleteStudentTransportCommand(id, Scope(schoolId)), ct); return NoContent(); }
 }

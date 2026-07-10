@@ -40,6 +40,15 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<Subject> Subjects => Set<Subject>();
     public DbSet<House> Houses => Set<House>();
+    public DbSet<AcademicStream> Streams => Set<AcademicStream>();
+    public DbSet<SubjectAllocation> SubjectAllocations => Set<SubjectAllocation>();
+    public DbSet<GradingScale> GradingScales => Set<GradingScale>();
+    public DbSet<GradeBand> GradeBands => Set<GradeBand>();
+    public DbSet<Student> Students => Set<Student>();
+    public DbSet<TransportVehicle> TransportVehicles => Set<TransportVehicle>();
+    public DbSet<TransportRoute> TransportRoutes => Set<TransportRoute>();
+    public DbSet<TransportStop> TransportStops => Set<TransportStop>();
+    public DbSet<StudentTransport> StudentTransports => Set<StudentTransport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -423,6 +432,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.ClassTeacher).WithMany()
                 .HasForeignKey(x => x.ClassTeacherId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.Stream).WithMany()
+                .HasForeignKey(x => x.StreamId).OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Subject>(e =>
@@ -446,6 +457,139 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.HouseMaster).WithMany()
                 .HasForeignKey(x => x.HouseMasterId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<AcademicStream>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(60);
+            e.Property(x => x.Code).HasMaxLength(20);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SubjectAllocation>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => new { x.SchoolClassId, x.SectionId });
+            e.HasOne(x => x.Subject).WithMany()
+                .HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.SchoolClass).WithMany()
+                .HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Section).WithMany()
+                .HasForeignKey(x => x.SectionId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Teacher).WithMany()
+                .HasForeignKey(x => x.TeacherId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<GradingScale>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(80);
+            e.Property(x => x.Board).HasConversion<string>();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GradeBand>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Grade).IsRequired().HasMaxLength(10);
+            e.Property(x => x.MinPercent).HasPrecision(5, 2);
+            e.Property(x => x.MaxPercent).HasPrecision(5, 2);
+            e.Property(x => x.GradePoint).HasPrecision(4, 2);
+            e.Property(x => x.Description).HasMaxLength(120);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.GradingScale).WithMany(s => s.Bands)
+                .HasForeignKey(x => x.GradingScaleId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── STUDENT INFORMATION SYSTEM (A2) ───────────────────────
+        modelBuilder.Entity<Student>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.AdmissionNumber).IsRequired().HasMaxLength(40);
+            e.Property(x => x.RollNumber).HasMaxLength(20);
+            e.Property(x => x.FirstName).IsRequired().HasMaxLength(80);
+            e.Property(x => x.LastName).HasMaxLength(80);
+            e.Property(x => x.Gender).HasConversion<string>();
+            e.Property(x => x.Status).HasConversion<string>();
+            e.Property(x => x.Category).HasConversion<string>();
+            e.Property(x => x.Email).HasMaxLength(150);
+            e.Property(x => x.Phone).HasMaxLength(20);
+            e.Property(x => x.City).HasMaxLength(80);
+            e.Property(x => x.State).HasMaxLength(80);
+            e.Property(x => x.Pincode).HasMaxLength(12);
+            e.Property(x => x.BloodGroup).HasMaxLength(5);
+            e.Property(x => x.AadhaarNumber).HasMaxLength(20);
+            e.Property(x => x.ApaarId).HasMaxLength(20);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => new { x.SchoolId, x.AdmissionNumber }).IsUnique();
+            e.HasIndex(x => x.SectionId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.AcademicYear).WithMany().HasForeignKey(x => x.AcademicYearId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.Section).WithMany().HasForeignKey(x => x.SectionId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.House).WithMany().HasForeignKey(x => x.HouseId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ── TRANSPORT (D4) ────────────────────────────────────────
+        modelBuilder.Entity<TransportVehicle>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.RegistrationNumber).IsRequired().HasMaxLength(30);
+            e.Property(x => x.Model).HasMaxLength(80);
+            e.Property(x => x.DriverName).HasMaxLength(80);
+            e.Property(x => x.DriverPhone).HasMaxLength(20);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => new { x.SchoolId, x.RegistrationNumber }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TransportRoute>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(80);
+            e.Property(x => x.Code).HasMaxLength(20);
+            e.Property(x => x.Fare).HasPrecision(10, 2);
+            e.Property(x => x.FeeFrequency).HasConversion<string>();
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Vehicle).WithMany(v => v.Routes).HasForeignKey(x => x.VehicleId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<TransportStop>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(80);
+            e.Property(x => x.PickupTime).HasMaxLength(10);
+            e.Property(x => x.DropTime).HasMaxLength(10);
+            e.Property(x => x.StopFare).HasPrecision(10, 2);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.RouteId);
+            e.HasOne(x => x.Route).WithMany(r => r.Stops).HasForeignKey(x => x.RouteId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<StudentTransport>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Fare).HasPrecision(10, 2);
+            e.HasQueryFilter(x => !x.IsDeleted);
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => new { x.SchoolId, x.StudentId });
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Route).WithMany().HasForeignKey(x => x.RouteId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Stop).WithMany().HasForeignKey(x => x.StopId).OnDelete(DeleteBehavior.SetNull);
         });
 
         // ── SEED DATA ─────────────────────────────────────────────
