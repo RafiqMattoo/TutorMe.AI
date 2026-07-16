@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { PendingSchool, PendingMember } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { PendingSchool, PendingMember } from '../../../shared/types/index.ts'
 
 // ── APPROVALS (self-registration review) ──────────────────────────
 

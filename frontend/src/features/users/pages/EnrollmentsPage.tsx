@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link2, Plus, Trash2 } from 'lucide-react'
 import { enrollmentsApi, schoolsApi, usersApi } from '../services'
-import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table } from '@/shared/components/ui'
-import { roleProfiles } from '@/shared/auth/roles'
-import type { EnrollmentStatus, UserRole } from '@/shared/types'
+import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table } from '../../../shared/components/ui/index.tsx'
+import { roleProfiles } from '../../../shared/auth/roles.ts'
+import type { EnrollmentStatus, UserRole } from '../../../shared/types/index.ts'
 import toast from 'react-hot-toast'
 
 const roles: UserRole[] = ['SchoolAdmin', 'Teacher', 'Student', 'Parent']

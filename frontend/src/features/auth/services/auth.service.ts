@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { PublicSchool, LoginResponse } from '@/shared/types'
+import axiosInstance from '../../../api/axiosInstance'
+import type { PublicSchool, LoginResponse } from '../../../shared/types/index.ts'
 
 // ── AUTH ──────────────────────────────────────────────────────────
 

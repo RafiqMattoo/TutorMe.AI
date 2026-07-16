@@ -8,7 +8,7 @@ import {
 import { quizzesApi } from '../services'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import type { QuizAttemptResult } from '@/shared/types'
+import type { QuizAttemptResult } from '../../../shared/types/index.ts'
 
 function fmtTime(sec: number) {
   const m = Math.floor(sec / 60)

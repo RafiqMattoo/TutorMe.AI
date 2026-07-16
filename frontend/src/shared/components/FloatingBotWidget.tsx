@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Bot, Loader2, RotateCcw, Send, Sparkles, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import { simpleBotApi } from '@/features/simple-bot/services'
-import { Markdown } from '@/shared/components/Markdown'
-import type { SimpleBotTurn } from '@/shared/types'
+import { simpleBotApi } from '../../features/simple-bot/services/index.ts'
+import { Markdown } from './Markdown.tsx'
+import type { SimpleBotTurn } from '../types/index.ts'
 
 interface BotMessage extends SimpleBotTurn {
   id: string

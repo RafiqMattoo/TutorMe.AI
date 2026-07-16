@@ -1,2 +1,2 @@
 export * from './articles.service'
-export { categoriesApi } from '@/features/categories/services'
+export { categoriesApi } from '../../categories/services/index.ts'

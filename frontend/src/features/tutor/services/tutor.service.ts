@@ -1,5 +1,5 @@
-import { API_BASE_URL, axiosInstance, getStoredAccessToken } from '@/api/axiosInstance'
-import type { ChatMessage, ChatSession, AskTutorResponse, TutorStreamEvent } from '@/shared/types'
+import { API_BASE_URL, axiosInstance, getStoredAccessToken } from '../../../api/axiosInstance.ts'
+import type { ChatMessage, ChatSession, AskTutorResponse, TutorStreamEvent } from '../../../shared/types/index.ts'
 
 // ── TUTOR ─────────────────────────────────────────────────────────
 

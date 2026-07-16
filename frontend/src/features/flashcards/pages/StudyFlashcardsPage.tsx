@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { flashcardsApi } from '../services'
 import clsx from 'clsx'
-import type { Flashcard } from '@/shared/types'
+import type { Flashcard } from '../../../shared/types/index.ts'
 
 type Verdict = 'known' | 'review'
 

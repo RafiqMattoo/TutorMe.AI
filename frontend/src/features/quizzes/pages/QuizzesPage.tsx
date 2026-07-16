@@ -3,12 +3,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { ClipboardList, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { materialsApi, quizzesApi } from '../services'
-import { canDeleteStudyContent, canGenerateStudyContent } from '@/shared/auth/roles'
-import { useAuthStore } from '@/shared/store/authStore'
-import { Field, Modal, PageHeader } from '@/shared/components/ui'
+import { canDeleteStudyContent, canGenerateStudyContent } from '../../../shared/auth/roles.ts'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import { Field, Modal, PageHeader } from '../../../shared/components/ui/index.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
-import type { QuizDifficulty } from '@/shared/types'
+import type { QuizDifficulty } from '../../../shared/types/index.ts'
 
 const difficulties: QuizDifficulty[] = ['Easy', 'Medium', 'Hard']
 const diffBadge: Record<QuizDifficulty, string> = { Easy: 'badge-green', Medium: 'badge-yellow', Hard: 'badge-red' }

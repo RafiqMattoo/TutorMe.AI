@@ -7,12 +7,15 @@ import {
   FileText, Sparkles, Layers, ClipboardList, Headphones, NotebookPen,
   CalendarCheck, Send, ClipboardCheck, CheckCheck, Clapperboard, Images, UsersRound, Bus,
   Bot,
+  Mic,
+  Lightbulb,
 } from 'lucide-react'
-import { useAuthStore } from '@/shared/store/authStore'
-import { authApi } from '@/features/auth/services'
-import { notificationsApi } from '@/features/notifications/services'
-import { canAccess, roleProfiles } from '@/shared/auth/roles'
-import FloatingBotWidget from '@/shared/components/FloatingBotWidget'
+import { useAuthStore } from '../../store/authStore.ts'
+import { authApi } from '../../../features/auth/services/index.ts'
+import { notificationsApi } from '../../../features/notifications/services/index.ts'
+import { canAccess, roleProfiles } from '../../auth/roles.ts'
+
+import FloatingBotWidget from '../FloatingBotWidget.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
@@ -55,7 +58,9 @@ const navGroups = [
       { to: '/flashcards',   icon: Layers,         label: 'Flashcards'   },
       { to: '/quizzes',      icon: ClipboardList,  label: 'Quizzes'      },
       { to: '/recite',       icon: Headphones,     label: 'Recitation'   },
-      { to: '/explain',      icon: Clapperboard,   label: 'AI Explainer' },
+      { to: '/explain',      icon: Lightbulb,      label: 'AI Explainer' },
+      { to: '/audio',  icon: Mic,   label: 'Audio ' },
+      {to : '/video', icon: Clapperboard, label: 'Video'},
       { to: '/scenes',       icon: Images,         label: 'Story Scenes' },
       { to: '/lesson-plans', icon: NotebookPen,    label: 'Lesson Plans' },
       { to: '/deliveries',   icon: Send,           label: 'Deliveries'   },
@@ -83,6 +88,7 @@ export default function AdminLayout() {
   const role = user?.role
   const profile = role ? roleProfiles[role] : null
   const colors = role ? (roleColor[role] ?? roleColor.SchoolAdmin) : roleColor.SchoolAdmin
+
   const [mobileOpen, setMobileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
 

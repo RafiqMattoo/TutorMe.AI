@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { PagedResult, StudentStatus, StudentListItem, Student, StudentOption } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { PagedResult, StudentStatus, StudentListItem, Student, StudentOption } from '../../../shared/types/index.ts'
 
 // ── STUDENTS (SIS) ────────────────────────────────────────────────
 

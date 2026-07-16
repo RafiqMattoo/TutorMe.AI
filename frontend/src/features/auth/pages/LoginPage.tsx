@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/shared/store/authStore'
 import { authApi } from '../services'
-import { roleOrder, roleProfiles } from '@/shared/auth/roles'
-import type { UserRole } from '@/shared/types'
+import type { UserRole } from '../../../shared/types/index.ts'
 import toast from 'react-hot-toast'
 import { ArrowRight, BookOpenCheck, Loader2, LockKeyhole, Sparkles, Zap } from 'lucide-react'
 import clsx from 'clsx'
+import { useAuthStore } from '../../../shared/store/authStore'
+import { roleOrder, roleProfiles } from '../../../shared/auth/roles'
 
 const demoPassword = 'Admin@123'
 
@@ -18,7 +18,7 @@ const featureList = [
 
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('SuperAdmin')
-  const [email,    setEmail]    = useState(roleProfiles.SuperAdmin.email)
+  const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState(demoPassword)
   const [loading,  setLoading]  = useState(false)
   const { login } = useAuthStore()

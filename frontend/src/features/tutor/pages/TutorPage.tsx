@@ -3,11 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { BookOpen, FileText, Loader2, Mic, MicOff, Plus, Send, Sparkles, Trash2 } from 'lucide-react'
 import { materialsApi, tutorApi } from '../services'
-import { PageHeader } from '@/shared/components/ui'
-import { Markdown } from '@/shared/components/Markdown'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import { Markdown } from '../../../shared/components/Markdown.tsx'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import type { ChatMessage } from '@/shared/types'
+import type { ChatMessage } from '../../../shared/types/index.ts'
 
 // Browser SpeechRecognition (Chrome/Edge — webkitSpeechRecognition).
 // Minimal local types since the DOM lib doesn't ship them.
