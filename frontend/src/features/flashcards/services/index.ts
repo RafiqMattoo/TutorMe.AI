@@ -1,2 +1,2 @@
 export * from './flashcards.service'
-export { materialsApi } from '@/features/materials/services'
+export { materialsApi } from '../../materials/services/index.ts'

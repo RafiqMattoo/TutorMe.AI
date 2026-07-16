@@ -121,7 +121,7 @@ export default function AdminLayout() {
           <GraduationCap size={18} className="text-white" />
         </div>
         <div>
-          <div className="text-[14.5px] font-bold tracking-tight text-white">VidyaAI</div>
+          <div className="text-[14.5px] font-bold tracking-tight text-white">VidyaAIfghjk</div>
           <div className="text-[11px] font-medium text-slate-500">Learning Platform</div>
         </div>
       </div>

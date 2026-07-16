@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { User, RolePermission, RoleDefinition, UserSchoolEnrollment, PagedResult } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { User, RolePermission, RoleDefinition, UserSchoolEnrollment, PagedResult } from '../../../shared/types/index.ts'
 
 export const rolesApi = {
   getRoles: () => axiosInstance.get<RoleDefinition[]>('/roles').then(r => r.data),

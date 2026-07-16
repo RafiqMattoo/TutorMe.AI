@@ -3,9 +3,9 @@ import { Bot, Loader2, RotateCcw, Send, Sparkles, UserRound } from 'lucide-react
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { simpleBotApi } from '../services'
-import { Markdown } from '@/shared/components/Markdown'
-import { PageHeader } from '@/shared/components/ui'
-import type { SimpleBotTurn } from '@/shared/types'
+import { Markdown } from '../../../shared/components/Markdown.tsx'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import type { SimpleBotTurn } from '../../../shared/types/index.ts'
 
 interface LocalBotMessage extends SimpleBotTurn {
   id: string

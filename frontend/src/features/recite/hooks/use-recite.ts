@@ -1,5 +1,5 @@
-import { useGetMaterialChunks, useGetMaterials } from '@/features/materials/hooks'
-import { useGenerateNarration, useGetNarration, useGetNarrationVoices } from '@/features/narration/hooks'
+import { useGetMaterialChunks, useGetMaterials } from '../../materials/hooks/index.ts'
+import { useGenerateNarration, useGetNarration, useGetNarrationVoices } from '../../narration/hooks/index.ts'
 
 export const useGetReciteMaterials = useGetMaterials
 export const useGetReciteMaterialChunks = useGetMaterialChunks

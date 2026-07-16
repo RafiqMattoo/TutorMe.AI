@@ -1,5 +1,5 @@
-import { useGetMaterials } from '@/features/materials/hooks'
-import { useGenerateNarration, useGetNarration, useGetNarrationVoices } from '@/features/narration/hooks'
+import { useGetMaterials } from '../../materials/hooks/index.ts'
+import { useGenerateNarration, useGetNarration, useGetNarrationVoices } from '../../narration/hooks/index.ts'
 
 export const useGetExplainerMaterials = useGetMaterials
 export const useGetExplainerNarration = (materialId?: string) => useGetNarration(materialId, 'Explained')

@@ -1,4 +1,4 @@
-import type { UserRole } from '@/shared/types'
+import type { UserRole } from '../types/index.ts'
 
 export const roleProfiles: Record<UserRole, {
   label: string
@@ -14,7 +14,7 @@ export const roleProfiles: Record<UserRole, {
     description: 'Platform command center with every school, user, and content workflow.',
     scope: 'Global platform access',
     accent: 'from-teal-500 to-cyan-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/simple-bot', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/simple-bot', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans' , '/audio' ,'/video'],
   },
   SchoolAdmin: {
     label: 'School Admin',

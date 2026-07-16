@@ -5,9 +5,9 @@ import { ArrowLeft, ArrowRight, Save, Check, User, GraduationCap, Phone, ShieldC
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { academicsApi, studentsApi } from '../services'
-import { Field, PageHeader } from '@/shared/components/ui'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { Gender, Student, StudentCategory, StudentStatus } from '@/shared/types'
+import { Field, PageHeader } from '../../../shared/components/ui/index.tsx'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { Gender, Student, StudentCategory, StudentStatus } from '../../../shared/types/index.ts'
 
 const GENDERS: Gender[] = ['Male', 'Female', 'Other']
 const CATEGORIES: StudentCategory[] = ['General', 'OBC', 'SC', 'ST', 'EWS']

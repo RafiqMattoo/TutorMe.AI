@@ -1,1 +1,1 @@
-export { useGetTodayDeliveries } from '@/features/deliveries/hooks'
+export { useGetTodayDeliveries } from '../../deliveries/hooks/index.ts'

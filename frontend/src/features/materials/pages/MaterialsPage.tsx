@@ -3,12 +3,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { CheckCircle2, Download, ExternalLink, FileText, Loader2, MessageCircle, Trash2, Upload, X, XCircle } from 'lucide-react'
 import { materialsApi } from '../services'
-import { canCreateMaterials, canDeleteStudyContent } from '@/shared/auth/roles'
-import { useAuthStore } from '@/shared/store/authStore'
-import { EmptyState, PageHeader, Pagination, SearchBar, Table } from '@/shared/components/ui'
+import { canCreateMaterials, canDeleteStudyContent } from '../../../shared/auth/roles.ts'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import { EmptyState, PageHeader, Pagination, SearchBar, Table } from '../../../shared/components/ui/index.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
-import type { Material, MaterialStatus, PagedResult } from '@/shared/types'
+import type { Material, MaterialStatus, PagedResult } from '../../../shared/types/index.ts'
 
 const statusBadge = (s: MaterialStatus, err?: string) => {
   if (s === 'Ready') return <span className="badge-green inline-flex items-center gap-1"><CheckCircle2 size={11} /> Ready</span>

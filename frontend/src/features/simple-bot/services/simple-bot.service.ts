@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { AskSimpleBotRequest, SimpleBotResponse } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { AskSimpleBotRequest, SimpleBotResponse } from '../../../shared/types/index.ts'
 
 // ── SIMPLE BOT ───────────────────────────────────────────────────
 

@@ -1,2 +1,2 @@
 export * from './students.service'
-export { academicsApi } from '@/features/academics/services'
+export { academicsApi } from '../../academics/services/index.ts'

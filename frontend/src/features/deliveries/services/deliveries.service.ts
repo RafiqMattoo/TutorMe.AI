@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { Student, Delivery, CreateDeliveryRequest } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { Student, Delivery, CreateDeliveryRequest } from '../../../shared/types/index.ts'
 
 // ── DELIVERIES (Delivered Today) ──────────────────────────────────
 
