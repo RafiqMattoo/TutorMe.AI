@@ -381,3 +381,16 @@ export interface CreateDeliveryRequest {
   quizId?: string
   flashcardSetId?: string
 }
+
+export interface Video {
+  id: string;
+  title: string;
+  author: string;
+  thumbnail: string;
+  views: string;
+  createdAt: string;
+}
+
+export interface VideoCardProps {
+  video: Video;
+}
