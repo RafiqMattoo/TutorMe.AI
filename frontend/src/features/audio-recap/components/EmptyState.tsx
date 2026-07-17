@@ -6,7 +6,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({ onCreate }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center pt-32 ">
+    <div className="300 flex flex-col items-center justify-center pt-6 ">
       {/* Audio Icon */}
       <div className="mb-6">
         <svg
