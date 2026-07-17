@@ -455,7 +455,7 @@ export default function AdminLayout() {
         </header>
 
         {/* ── Page content ─────────────────────────────────────── */}
-        <main className="flex-1 animate-fade-in">
+        <main className="flex-1 animate-fade-in bg-white">
           <Outlet />
         </main>
       </div>
