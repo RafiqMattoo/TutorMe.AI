@@ -1,6 +1,6 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { protectedRoutes } from './routes/protectedRoutes'
-import { publicRoutes } from './routes/publicRoutes'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { protectedRoutes } from "./routes/protectedRoutes";
+import { publicRoutes } from "./routes/publicRoutes";
 
 export default function App() {
   return (
@@ -11,5 +11,5 @@ export default function App() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
