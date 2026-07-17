@@ -6,7 +6,7 @@ import EmptyState from "../components/EmptyState";
 
 export default function AudioRecapPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className=" ">
       {/* Header */}
       <Header />
 
@@ -24,7 +24,7 @@ export default function AudioRecapPage() {
         </div>
 
         {/* Empty State */}
-        <div className="flex min-h-[calc(100vh-320px)] items-center justify-center">
+        <div className="flex  items-center justify-center ">
           <EmptyState />
         </div>
       </main>

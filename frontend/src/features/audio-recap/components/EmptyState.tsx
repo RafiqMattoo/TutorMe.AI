@@ -6,7 +6,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({ onCreate }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center pt-32 pb-24">
+    <div className="flex flex-col items-center justify-center pt-32 ">
       {/* Audio Icon */}
       <div className="mb-6">
         <svg
@@ -35,7 +35,7 @@ export default function EmptyState({ onCreate }: EmptyStateProps) {
       {/* Button */}
       <button
         onClick={onCreate}
-        className="mt-6 flex h-11 items-center gap-2 rounded-xl bg-[#1747FF] px-6 text-[16px] font-semibold text-white hover:bg-[#0F3DE6]"
+        className="mt-6 flex items-center gap-2 rounded-xl bg-[#1747FF] px-6 py-3 text-[16px] font-semibold text-white hover:bg-[#0F3DE6]"
       >
         <Plus size={18} />
         Create New
