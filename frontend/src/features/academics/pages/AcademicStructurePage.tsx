@@ -3,9 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Edit2, CalendarDays, GraduationCap, Boxes, BookMarked, Home, Layers, Network, Award } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { academicsApi } from '../services'
-import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table, Tabs } from '@/shared/components/ui'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { BoardType, SchoolStage } from '@/shared/types'
+import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table, Tabs } from '../../../shared/components/ui/index.tsx'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { BoardType, SchoolStage } from '../../../shared/types/index.ts'
 
 const STAGES: SchoolStage[] = ['Foundational', 'Preparatory', 'Middle', 'Secondary']
 const BOARDS: BoardType[] = ['CBSE', 'ICSE', 'JKBOSE', 'StateBoard', 'IGCSE', 'Other']

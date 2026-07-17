@@ -3,9 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Edit2, Bus, Route as RouteIcon, MapPin, UserCheck } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { studentsApi, transportApi } from '../services'
-import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table, Tabs } from '@/shared/components/ui'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { TransportFeeFrequency } from '@/shared/types'
+import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table, Tabs } from '../../../shared/components/ui/index.tsx'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { TransportFeeFrequency } from '../../../shared/types/index.ts'
 
 const FREQS: TransportFeeFrequency[] = ['Monthly', 'Quarterly', 'HalfYearly', 'Annual']
 const freqLabel = (f: TransportFeeFrequency) => (f === 'HalfYearly' ? 'Half-Yearly' : f)

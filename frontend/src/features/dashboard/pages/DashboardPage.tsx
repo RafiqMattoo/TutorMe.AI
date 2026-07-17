@@ -3,10 +3,10 @@ import type React from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { BookOpen, Eye, Heart, MessageSquare, School, TrendingUp, Users } from 'lucide-react'
 import { dashboardApi } from '../services'
-import { PageHeader, StatCard } from '@/shared/components/ui'
+import { PageHeader, StatCard } from '../../../shared/components/ui/index.tsx'
 import { formatDistanceToNow } from 'date-fns'
-import { useAuthStore } from '@/shared/store/authStore'
-import { roleProfiles } from '@/shared/auth/roles'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import { roleProfiles } from '../../../shared/auth/roles.ts'
 
 const COLORS = ['#14b8a6', '#2563eb', '#10b981', '#f59e0b', '#e11d48']
 

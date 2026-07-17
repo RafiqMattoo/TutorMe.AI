@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { LessonPlanSummary, LessonPlan } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { LessonPlanSummary, LessonPlan } from '../../../shared/types/index.ts'
 
 // ── LESSON PLANS ──────────────────────────────────────────────────
 

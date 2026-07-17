@@ -1,4 +1,4 @@
-import type { UserRole } from "@/shared/types";
+import type { UserRole } from "../types/index.ts";
 
 export const roleProfiles: Record<
   UserRole,
@@ -42,6 +42,7 @@ export const roleProfiles: Record<
       "/scenes",
       "/lesson-plans",
       "/audio-recap",
+      "/video",
     ],
   },
   SchoolAdmin: {

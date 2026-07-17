@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { DashboardStats } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { DashboardStats } from '../../../shared/types/index.ts'
 
 // ── DASHBOARD ─────────────────────────────────────────────────────
 

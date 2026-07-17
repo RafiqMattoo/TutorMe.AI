@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { Term, AcademicYear, SchoolClass, Section, Subject, House, Stream, TeacherOption, SubjectAllocation, GradingScale } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { Term, AcademicYear, SchoolClass, Section, Subject, House, Stream, TeacherOption, SubjectAllocation, GradingScale } from '../../../shared/types/index.ts'
 
 // ── ACADEMIC STRUCTURE (A1) ───────────────────────────────────────
 // schoolId is optional: SchoolAdmins are scoped by their JWT; a SuperAdmin passes one.

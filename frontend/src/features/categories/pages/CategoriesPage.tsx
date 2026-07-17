@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Edit2 } from 'lucide-react'
 import { categoriesApi } from '../services'
-import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table } from '@/shared/components/ui'
+import { EmptyState, Field, Modal, PageHeader, StatusBadge, Table } from '../../../shared/components/ui/index.tsx'
 import toast from 'react-hot-toast'
-import type { Category } from '@/shared/types'
-import { useAuthStore } from '@/shared/store/authStore'
+import type { Category } from '../../../shared/types/index.ts'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
 
 export default function CategoriesPage() {
   const [modalOpen, setModalOpen] = useState(false)

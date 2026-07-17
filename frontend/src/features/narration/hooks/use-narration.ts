@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { generateNarration, getNarration, getNarrationVoices } from '../services'
-import type { NarrationKind } from '@/shared/types'
+import type { NarrationKind } from '../../../shared/types/index.ts'
 
 export const useGetNarration = (materialId?: string, kind: NarrationKind = 'Verbatim') =>
   useQuery({

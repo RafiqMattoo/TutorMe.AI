@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { LoginResponse } from '@/shared/types'
+import { useAuthStore } from '../shared/store/authStore.ts'
+import type { LoginResponse } from '../shared/types/index.ts'
 
 const ACCESS_TOKEN_KEY = 'accessToken'
 const REFRESH_TOKEN_KEY = 'refreshToken'

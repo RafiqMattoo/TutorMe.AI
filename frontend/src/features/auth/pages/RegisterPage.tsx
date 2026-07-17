@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { ArrowLeft, BookOpenCheck, CheckCircle2, GraduationCap, Loader2, School as SchoolIcon, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
 import { authApi } from '../services'
-import Captcha from '@/shared/components/Captcha'
-import type { BoardType, SchoolType, UserRole } from '@/shared/types'
+import type { BoardType, SchoolType, UserRole } from '../../../shared/types/index.ts'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Captcha from '../../../../src/shared/components/Captcha'
 
 type Tab = 'school' | 'member'
 const boards: BoardType[] = ['CBSE', 'ICSE', 'JKBOSE', 'StateBoard', 'IGCSE', 'Other']
@@ -172,7 +172,6 @@ export default function RegisterPage() {
                         <input type="password" className="input" placeholder="Password *" value={school.adminPassword} onChange={e => setSchool(s => ({ ...s, adminPassword: e.target.value }))} />
                         <input className="input" placeholder="Phone" value={school.adminPhone} onChange={e => setSchool(s => ({ ...s, adminPhone: e.target.value }))} />
                       </div>
-                      <Captcha onChange={setCaptcha} />
                       <button onClick={() => registerSchool.mutate()} disabled={registerSchool.isPending} className="btn-primary mt-2 w-full py-3">
                         {registerSchool.isPending ? <><Loader2 size={16} className="animate-spin" /> Submitting…</> : 'Register school'}
                       </button>

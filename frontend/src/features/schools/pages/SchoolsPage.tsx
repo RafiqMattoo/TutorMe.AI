@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Edit2 } from 'lucide-react'
 import { schoolsApi } from '../services'
-import { PageHeader, SearchBar, Table, EmptyState, Pagination, StatusBadge, Modal, Field } from '@/shared/components/ui'
+import { PageHeader, SearchBar, Table, EmptyState, Pagination, StatusBadge, Modal, Field } from '../../../shared/components/ui/index.tsx'
 import toast from 'react-hot-toast'
-import type { School } from '@/shared/types'
+import type { School } from '../../../shared/types/index.ts'
 
 export function SchoolsPage() {
   const [page, setPage] = useState(1)

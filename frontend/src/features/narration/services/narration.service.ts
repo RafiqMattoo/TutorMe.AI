@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { NarrationKind, Narration, NarrationVoice } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { NarrationKind, Narration, NarrationVoice } from '../../../shared/types/index.ts'
 
 // ── NARRATION (audio read-along) ──────────────────────────────────
 

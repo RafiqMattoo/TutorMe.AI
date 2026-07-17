@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Check, GraduationCap, Loader2, School as SchoolIcon, UserRound, X } from 'lucide-react'
 import { approvalsApi } from '../services'
-import { PageHeader } from '@/shared/components/ui'
-import { useAuthStore } from '@/shared/store/authStore'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 

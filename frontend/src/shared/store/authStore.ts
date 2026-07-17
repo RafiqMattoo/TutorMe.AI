@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AuthState, LoginResponse } from '@/shared/types'
+import type { AuthState, LoginResponse } from '../types/index.ts'
 
 export const useAuthStore = create<AuthState>()(
   persist(

@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { TransportVehicle, TransportRoute, TransportStop, StudentTransport } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { TransportVehicle, TransportRoute, TransportStop, StudentTransport } from '../../../shared/types/index.ts'
 
 // ── TRANSPORT (D4) ────────────────────────────────────────────────
 

@@ -4,9 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Pencil, GraduationCap } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { academicsApi, studentsApi } from '../services'
-import { EmptyState, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '@/shared/components/ui'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { StudentStatus } from '@/shared/types'
+import { EmptyState, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '../../../shared/components/ui/index.tsx'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { StudentStatus } from '../../../shared/types/index.ts'
 
 const STATUSES: StudentStatus[] = ['Active', 'Inactive', 'TransferredOut', 'Graduated', 'Alumni']
 const statusColors: Record<StudentStatus, string> = {

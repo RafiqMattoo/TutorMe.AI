@@ -1,36 +1,37 @@
 import type React from "react";
 import { Navigate, Route, useLocation } from "react-router-dom";
-import { canAccess } from "@/shared/auth/roles";
-import AdminLayout from "@/shared/components/layout/AdminLayout";
-import { useAuthStore } from "@/shared/store/authStore";
-import AcademicStructurePage from "@/features/academics/pages/AcademicStructurePage";
-import ApprovalsPage from "@/features/approvals/pages/ApprovalsPage";
-import ArticleFormPage from "@/features/articles/pages/ArticleFormPage";
-import ArticlesPage from "@/features/articles/pages/ArticlesPage";
-import CategoriesPage from "@/features/categories/pages/CategoriesPage";
-import DashboardPage from "@/features/dashboard/pages/DashboardPage";
-import DeliveriesPage from "@/features/deliveries/pages/DeliveriesPage";
-import ExplainerPage from "@/features/explainer/pages/ExplainerPage";
-import FlashcardsPage from "@/features/flashcards/pages/FlashcardsPage";
-import StudyFlashcardsPage from "@/features/flashcards/pages/StudyFlashcardsPage";
-import LessonPlanDetailPage from "@/features/lesson-plans/pages/LessonPlanDetailPage";
-import LessonPlansPage from "@/features/lesson-plans/pages/LessonPlansPage";
-import MaterialsPage from "@/features/materials/pages/MaterialsPage";
-import QuizzesPage from "@/features/quizzes/pages/QuizzesPage";
-import TakeQuizPage from "@/features/quizzes/pages/TakeQuizPage";
-import RecitePage from "@/features/recite/pages/RecitePage";
-import ScenesPage from "@/features/scenes/pages/ScenesPage";
-import SchoolsPage from "@/features/schools/pages/SchoolsPage";
-import SimpleBotPage from "@/features/simple-bot/pages/SimpleBotPage";
-import StudentFormPage from "@/features/students/pages/StudentFormPage";
-import StudentsPage from "@/features/students/pages/StudentsPage";
-import TodayPage from "@/features/today/pages/TodayPage";
-import TransportPage from "@/features/transport/pages/TransportPage";
-import TutorPage from "@/features/tutor/pages/TutorPage";
-import EnrollmentsPage from "@/features/users/pages/EnrollmentsPage";
-import RolesPage from "@/features/users/pages/RolesPage";
-import UsersPage from "@/features/users/pages/UsersPage";
-import AudioRecap from "@/features/audio-recap/pages/AudioRecap";
+import { canAccess } from "../../shared/auth/roles";
+import { useAuthStore } from "../../shared/store/authStore";
+import DashboardPage from "../../features/dashboard/pages/DashboardPage";
+import DeliveriesPage from "../../features/deliveries/pages/DeliveriesPage";
+import ExplainerPage from "../../features/explainer/pages/ExplainerPage";
+import FlashcardsPage from "../../features/flashcards/pages/FlashcardsPage";
+import StudyFlashcardsPage from "../../features/flashcards/pages/StudyFlashcardsPage";
+import LessonPlanDetailPage from "../../features/lesson-plans/pages/LessonPlanDetailPage";
+import LessonPlansPage from "../../features/lesson-plans/pages/LessonPlansPage";
+import MaterialsPage from "../../features/materials/pages/MaterialsPage";
+import QuizzesPage from "../../features/quizzes/pages/QuizzesPage";
+import TakeQuizPage from "../../features/quizzes/pages/TakeQuizPage";
+import RecitePage from "../../features/recite/pages/RecitePage";
+import ScenesPage from "../../features/scenes/pages/ScenesPage";
+import SchoolsPage from "../../features/schools/pages/SchoolsPage";
+import SimpleBotPage from "../../features/simple-bot/pages/SimpleBotPage";
+import StudentFormPage from "../../features/students/pages/StudentFormPage";
+import StudentsPage from "../../features/students/pages/StudentsPage";
+import TodayPage from "../../features/today/pages/TodayPage";
+import TransportPage from "../../features/transport/pages/TransportPage";
+import TutorPage from "../../features/tutor/pages/TutorPage";
+import EnrollmentsPage from "../../features/users/pages/EnrollmentsPage";
+import RolesPage from "../../features/users/pages/RolesPage";
+import UsersPage from "../../features/users/pages/UsersPage";
+import AdminLayout from "../../shared/components/layout/AdminLayout";
+import AcademicStructurePage from "../../features/academics/pages/AcademicStructurePage";
+import ApprovalsPage from "../../features/approvals/pages/ApprovalsPage";
+import ArticleFormPage from "../../features/articles/pages/ArticleFormPage";
+import ArticlesPage from "../../features/articles/pages/ArticlesPage";
+import CategoriesPage from "../../features/categories/pages/CategoriesPage";
+import AudioRecap from "@/features/audio-recap/pages/AudioRecapPage";
+import AudioRecapPage from "@/features/audio-recap/pages/AudioRecapPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -289,11 +290,12 @@ export const protectedRoutes = (
         </RoleRoute>
       }
     />
+
     <Route
       path="audio-recap"
       element={
         <RoleRoute>
-          <AudioRecap />
+          <AudioRecapPage />
         </RoleRoute>
       }
     />

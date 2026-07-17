@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { Article, ArticleListItem, PagedResult } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { Article, ArticleListItem, PagedResult } from '../../../shared/types/index.ts'
 
 // ── ARTICLES ──────────────────────────────────────────────────────
 

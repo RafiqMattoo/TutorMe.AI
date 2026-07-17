@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
 import { usersApi } from '../services'
-import { EmptyState, Field, Modal, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '@/shared/components/ui'
+import { EmptyState, Field, Modal, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '../../../shared/components/ui/index.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
-import { manageableRoles, roleProfiles } from '@/shared/auth/roles'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { UserRole } from '@/shared/types'
+import { manageableRoles, roleProfiles } from '../../../shared/auth/roles.ts'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { UserRole } from '../../../shared/types/index.ts'
 
 const roleColors: Record<string, string> = {
   SuperAdmin: 'badge-red',

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, Edit3, Lock, Plus, ShieldCheck, Trash2 } from 'lucide-react'
-import { roleOrder } from '@/shared/auth/roles'
-import { Field, Modal, PageHeader } from '@/shared/components/ui'
+import { roleOrder } from '../../../shared/auth/roles.ts'
+import { Field, Modal, PageHeader } from '../../../shared/components/ui/index.tsx'
 import { rolesApi } from '../services'
-import { useAuthStore } from '@/shared/store/authStore'
-import type { PermissionModule, RoleDefinition, RolePermission, UserRole } from '@/shared/types'
+import { useAuthStore } from '../../../shared/store/authStore.ts'
+import type { PermissionModule, RoleDefinition, RolePermission, UserRole } from '../../../shared/types/index.ts'
 import toast from 'react-hot-toast'
 
 const modules: PermissionModule[] = ['Dashboard', 'Schools', 'Users', 'Roles', 'Articles', 'Categories']
