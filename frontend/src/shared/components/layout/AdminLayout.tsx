@@ -61,6 +61,7 @@ const navGroups = [
       { to: '/explain',      icon: Lightbulb,      label: 'AI Explainer' },
       { to: '/audio',  icon: Mic,   label: 'Audio ' },
       {to : '/video', icon: Clapperboard, label: 'Video'},
+      // {to : '/create-video', icon: Clapperboard, label: 'Create Video'},
       { to: '/scenes',       icon: Images,         label: 'Story Scenes' },
       { to: '/lesson-plans', icon: NotebookPen,    label: 'Lesson Plans' },
       { to: '/deliveries',   icon: Send,           label: 'Deliveries'   },

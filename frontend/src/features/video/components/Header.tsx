@@ -1,6 +1,10 @@
 import { Clapperboard, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+
+
+  const navigate = useNavigate();
   return (
     <header className="mb-8 flex items-center justify-between border-b border-slate-200 pb-8">
       {/* Left */}
@@ -24,7 +28,10 @@ const Header = () => {
       </div>
 
       {/* Button */}
-      <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md">
+      <button 
+        className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md"
+        onClick={() => navigate("/create-video")}
+      >
         <Plus size={18} />
         Create Video
       </button>
