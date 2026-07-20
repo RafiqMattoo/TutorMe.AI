@@ -34,18 +34,29 @@ import VideosPage from '../../features/video/pages/VideoPage'
 import VideoDescriptionPage from '../../features/video/pages/VideoDescriptionPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const token = useAuthStore(s => s.token)
-  return token ? <>{children}</> : <Navigate to="/login" replace />
+  const token = useAuthStore((s) => s.token);
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function RoleRoute({ children }: { children: React.ReactNode }) {
-  const user = useAuthStore(s => s.user)
-  const location = useLocation()
-  return canAccess(user?.role, location.pathname) ? <>{children}</> : <Navigate to="/dashboard" replace />
+  const user = useAuthStore((s) => s.user);
+  const location = useLocation();
+  return canAccess(user?.role, location.pathname) ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
 }
 
 export const protectedRoutes = (
-  <Route path="/" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
+  <Route
+    path="/"
+    element={
+      <PrivateRoute>
+        <AdminLayout />
+      </PrivateRoute>
+    }
+  >
     <Route index element={<Navigate to="/dashboard" replace />} />
     <Route path="dashboard" element={<RoleRoute><DashboardPage /></RoleRoute>} />
     <Route path="today" element={<RoleRoute><TodayPage /></RoleRoute>} />
@@ -79,4 +90,4 @@ export const protectedRoutes = (
     <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
     <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
   </Route>
-)
+);

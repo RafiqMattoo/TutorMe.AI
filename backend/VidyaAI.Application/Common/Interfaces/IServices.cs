@@ -50,15 +50,7 @@ public interface IAppDbContext
 }
 
 // Current user context (from JWT)
-public interface ICurrentUser
-{
-    Guid UserId { get; }
-    string Email { get; }
-    string Role { get; }
-    Guid? SchoolId { get; }
-    bool IsAuthenticated { get; }
-    bool IsInRole(string role);
-}
+
 
 // Cache abstraction over Redis
 public interface ICacheService
@@ -174,7 +166,7 @@ public sealed record TtsVoice(string Id, string Name, string Language);
 // (Tts:Provider) — the default is local macOS `say`.
 public interface ITtsService
 {
-    // Lists voices the engine offers (for a voice picker).
+    // Lists voices the engine offers (for a voice pick er).
     IReadOnlyList<TtsVoice> GetVoices();
 
     // Synthesizes all segments and stitches them into one audio file, returning the
