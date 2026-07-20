@@ -1,5 +1,7 @@
 import { Eye } from "lucide-react";
-import { Video } from "../../../shared/types";
+import { Video } from "../../../../shared/types";
+import { useNavigate } from "react-router-dom";
+
 // export interface Video {
 //   id: string;
 //   title: string;
@@ -14,8 +16,12 @@ interface VideoCardProps {
 }
 
 const VideoCard = ({ video }: VideoCardProps) => {
+  const navigate = useNavigate();
   return (
-    <div className="group cursor-pointer">
+    <div
+      className="group cursor-pointer"
+      onClick={() => navigate(`/video/${video.id}`)}
+    >
       {/* Thumbnail */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100">
         <img
@@ -27,28 +33,30 @@ const VideoCard = ({ video }: VideoCardProps) => {
 
       {/* Content */}
       <div className="mt-4">
-       <h3
-className="
+        <h3
+  className="
 mt-3
 line-clamp-1
 text-[18px]
-font-medium
-leading-7
-tracking-[-0.01em]
+font-semibold
+leading-6
+tracking-normal
 text-[#23274D]
 "
->
+        >
           {video.title}
         </h3>
 
         <p
-className="
+          className="
 mt-1
 text-[15px]
 font-normal
 text-[#8A91A8]
 "
->{video.author}</p>
+        >
+          {video.author}
+        </p>
 
         <div className="mt-2 flex items-center gap-2 text-sm text-gray-400">
           <span>{video.createdAt}</span>

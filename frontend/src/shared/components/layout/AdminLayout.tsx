@@ -19,6 +19,7 @@ import FloatingBotWidget from '../FloatingBotWidget.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import ScrollToTop from './ScrollToTop.tsx'
 
 // ── Navigation groups ────────────────────────────────────────────
 const navGroups = [
@@ -221,6 +222,9 @@ export default function AdminLayout() {
 
   // ── Shell ──────────────────────────────────────────────────────
   return (
+  <>
+    <ScrollToTop />
+
     <div className="flex min-h-screen bg-slate-50">
 
       {/* Desktop sidebar */}
@@ -372,5 +376,6 @@ export default function AdminLayout() {
 
       {location.pathname !== '/simple-bot' && <FloatingBotWidget />}
     </div>
+    </>
   )
 }

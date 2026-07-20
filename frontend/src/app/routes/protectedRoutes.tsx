@@ -31,6 +31,7 @@ import ArticleFormPage from '../../features/articles/pages/ArticleFormPage'
 import ArticlesPage from '../../features/articles/pages/ArticlesPage'
 import CategoriesPage from '../../features/categories/pages/CategoriesPage'
 import VideosPage from '../../features/video/pages/VideoPage'
+import VideoDescriptionPage from '../../features/video/pages/VideoDescriptionPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore(s => s.token)
@@ -68,6 +69,7 @@ export const protectedRoutes = (
     <Route path="recite" element={<RoleRoute><RecitePage /></RoleRoute>} />
     <Route path="explain" element={<RoleRoute><ExplainerPage /></RoleRoute>} />
     <Route path="video" element={<RoleRoute><VideosPage /></RoleRoute>} />
+    <Route path="video/:id" element={<RoleRoute><VideoDescriptionPage /></RoleRoute>} />
     <Route path="scenes" element={<RoleRoute><ScenesPage /></RoleRoute>} />
     <Route path="academics" element={<RoleRoute><AcademicStructurePage /></RoleRoute>} />
     <Route path="students" element={<RoleRoute><StudentsPage /></RoleRoute>} />
