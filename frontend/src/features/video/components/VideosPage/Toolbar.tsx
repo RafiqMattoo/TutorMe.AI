@@ -26,10 +26,10 @@ const Toolbar = () => {
       {/* Right */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         {/* Sort + Categories */}
-        <div className="flex flex-wrap items-center gap-3">
-          <SortDropDown />
-          <CategoryTabs />
-        </div>
+       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-nowrap lg:items-center">
+  <SortDropDown />
+  <CategoryTabs />
+</div>
 
         {/* Search */}
         <div className="flex h-10 w-full items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 shadow-sm sm:w-64">
