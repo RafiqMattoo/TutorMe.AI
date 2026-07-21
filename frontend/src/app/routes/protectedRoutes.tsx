@@ -32,6 +32,7 @@ import ArticlesPage from '../../features/articles/pages/ArticlesPage'
 import CategoriesPage from '../../features/categories/pages/CategoriesPage'
 import VideosPage from '../../features/video/pages/VideoPage'
 import VideoDescriptionPage from '../../features/video/pages/VideoDescriptionPage'
+import AudioRecapPage from '@/features/audio-recap/pages/AudioRecapPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -89,5 +90,6 @@ export const protectedRoutes = (
     <Route path="transport" element={<RoleRoute><TransportPage /></RoleRoute>} />
     <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
     <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
+    <Route path="audio-recap" element={<RoleRoute><AudioRecapPage /></RoleRoute>} />
   </Route>
 );

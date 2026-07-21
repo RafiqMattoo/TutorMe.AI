@@ -17,7 +17,7 @@ export const roleProfiles: Record<
     description: 'Platform command center with every school, user, and content workflow.',
     scope: 'Global platform access',
     accent: 'from-teal-500 to-cyan-400',
-    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/simple-bot', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans' , '/audio' ,'/video', '/video/:id'],
+    allowedRoutes: ['/dashboard', '/today', '/deliveries', '/schools', '/approvals', '/users', '/roles', '/enrollments', '/academics', '/students', '/transport', '/articles', '/categories', '/materials', '/tutor', '/simple-bot', '/flashcards', '/quizzes', '/recite', '/explain', '/scenes', '/lesson-plans' , '/audio-recap' ,'/video', '/video/:id'],
   },
   SchoolAdmin: {
     label: "School Admin",
