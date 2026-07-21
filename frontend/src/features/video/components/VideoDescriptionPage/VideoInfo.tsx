@@ -52,8 +52,8 @@ const VideoInfo = ({ video }: VideoInfoProps) => {
         {/* Right */}
         <div className="flex items-center gap-3">
           {/* Like/Dislike */}
-          <div className="flex overflow-hidden rounded-full border border-gray-200 bg-white">
-            <button className="flex items-center gap-2 px-5 py-3 transition hover:bg-gray-50">
+          <div className="flex overflow-hidden rounded-full border border-gray-200 bg-[#F3F4F6]">
+            <button className="flex items-center gap-2 px-5 py-3 transition-colors   hover:bg-[#E5E7EB]">
               <ThumbsUp size={18} />
               <span className="text-sm font-medium">
   {video.likes ?? 0}
@@ -62,13 +62,13 @@ const VideoInfo = ({ video }: VideoInfoProps) => {
 
             <div className="w-px bg-gray-200" />
 
-            <button className="px-5 transition hover:bg-gray-50">
+            <button className="px-5 transition-colors   hover:bg-[#E5E7EB]">
               <ThumbsDown size={18} />
             </button>
           </div>
 
           {/* Share */}
-          <button className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-6 py-3 font-medium text-[#23274D] transition hover:bg-gray-50">
+          <button className="flex items-center gap-2 rounded-full border border-gray-200   bg-[#F3F4F6] px-6 py-3 font-medium text-[#23274D] transition-colors   hover:bg-[#E5E7EB]">
             <Share2 size={18} />
             Share
           </button>
