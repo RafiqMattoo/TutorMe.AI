@@ -382,15 +382,52 @@ export interface CreateDeliveryRequest {
   flashcardSetId?: string
 }
 
+// export interface Video {
+//   id: string;
+//   title: string;
+//   author: string;
+//   thumbnail: string;
+//   views: string;
+//   createdAt: string;
+// }
+
+export interface VideoCardProps {
+  video: Video;
+}
+
+export interface VideoPlayerProps {
+  video: Video;
+}
+export interface VideoInfoProps {
+  video: Video;
+}
+
+export interface DescriptionCardProps {
+  video: Video;
+}
+export interface KeepWatchingProps {
+  video: Video;
+}
+export interface MasterTopicProps {
+  video: Video;
+}
+export interface VideoDescriptionPageProps {
+  video: Video;
+}
+export interface VideosPageProps {
+  videos: Video[];
+}
+
 export interface Video {
   id: string;
   title: string;
   author: string;
   thumbnail: string;
-  views: string;
   createdAt: string;
-}
-
-export interface VideoCardProps {
-  video: Video;
+  views: string;
+  description: string;
+  duration: string;
+  videoUrl?: string;
+  authorAvatar?: string;
+likes?: number;
 }
