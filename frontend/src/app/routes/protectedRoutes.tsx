@@ -32,20 +32,33 @@ import ArticlesPage from '../../features/articles/pages/ArticlesPage'
 import CategoriesPage from '../../features/categories/pages/CategoriesPage'
 import VideosPage from '../../features/video/pages/VideoPage'
 import CreateVideoPage from '@/features/video/pages/CreateVideoPage'
+import VideoDescriptionPage from '../../features/video/pages/VideoDescriptionPage'
+import AudioRecapPage from '@/features/audio-recap/pages/AudioRecapPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const token = useAuthStore(s => s.token)
-  return token ? <>{children}</> : <Navigate to="/login" replace />
+  const token = useAuthStore((s) => s.token);
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function RoleRoute({ children }: { children: React.ReactNode }) {
-  const user = useAuthStore(s => s.user)
-  const location = useLocation()
-  return canAccess(user?.role, location.pathname) ? <>{children}</> : <Navigate to="/dashboard" replace />
+  const user = useAuthStore((s) => s.user);
+  const location = useLocation();
+  return canAccess(user?.role, location.pathname) ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
 }
 
 export const protectedRoutes = (
-  <Route path="/" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
+  <Route
+    path="/"
+    element={
+      <PrivateRoute>
+        <AdminLayout />
+      </PrivateRoute>
+    }
+  >
     <Route index element={<Navigate to="/dashboard" replace />} />
     <Route path="dashboard" element={<RoleRoute><DashboardPage /></RoleRoute>} />
     <Route path="today" element={<RoleRoute><TodayPage /></RoleRoute>} />
@@ -70,6 +83,7 @@ export const protectedRoutes = (
     <Route path="explain" element={<RoleRoute><ExplainerPage /></RoleRoute>} />
     <Route path="video" element={<RoleRoute><VideosPage /></RoleRoute>} />
     <Route path="create-video" element={<RoleRoute><CreateVideoPage /></RoleRoute>} />
+    <Route path="video/:id" element={<RoleRoute><VideoDescriptionPage /></RoleRoute>} />
     <Route path="scenes" element={<RoleRoute><ScenesPage /></RoleRoute>} />
     <Route path="academics" element={<RoleRoute><AcademicStructurePage /></RoleRoute>} />
     <Route path="students" element={<RoleRoute><StudentsPage /></RoleRoute>} />
@@ -78,5 +92,6 @@ export const protectedRoutes = (
     <Route path="transport" element={<RoleRoute><TransportPage /></RoleRoute>} />
     <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
     <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
+    <Route path="audio-recap" element={<RoleRoute><AudioRecapPage /></RoleRoute>} />
   </Route>
-)
+);
