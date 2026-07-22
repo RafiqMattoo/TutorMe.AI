@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 using VidyaAI.Application.Common.Interfaces;
 using VidyaAI.Application.Videos.DTOs;
 
+
 namespace VidyaAI.Infrastructure.Services;
 
 public sealed class VideoService(
     HttpClient http,
     IConfiguration configuration,
-    ILogger<VideoService> logger)
-    : IVideoService
+    ILogger<VideoService> logger): IVideoService
 {
     private readonly string _baseUrl =
         configuration["Pixabay:BaseUrl"]
@@ -20,7 +20,66 @@ public sealed class VideoService(
     private readonly string _apiKey =
         configuration["Pixabay:ApiKey"]
         ?? throw new InvalidOperationException("Pixabay:ApiKey missing.");
+    public async Task<VideoDto?> GetVideoByIdAsync(
+    long id,
+    CancellationToken cancellationToken)
+    {
+        var url =
+            $"{_baseUrl}" +
+            $"?key={_apiKey}" +
+            $"&id={id}";
 
+        logger.LogInformation(
+            "Calling Pixabay Video By Id API : {Url}",
+            url);
+
+        var response = await http.GetAsync(
+            url,
+            cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error =
+                await response.Content.ReadAsStringAsync(cancellationToken);
+
+            logger.LogError(
+                "Pixabay API Error : {StatusCode} {Error}",
+                response.StatusCode,
+                error);
+
+            throw new InvalidOperationException(
+                "Unable to fetch video from Pixabay.");
+        }
+
+        var result =
+            await response.Content.ReadFromJsonAsync<VideoResponseDto>(
+                cancellationToken: cancellationToken);
+
+        var video = result?.Hits.FirstOrDefault();
+
+        if (video is null)
+            return null;
+
+        var file =
+            video.Videos.Large ??
+            video.Videos.Medium ??
+            video.Videos.Small ??
+            video.Videos.Tiny;
+
+        return new VideoDto(
+            video.Id,
+            video.Tags,
+            file?.Url ?? string.Empty,
+            file?.Thumbnail ?? string.Empty,
+            file?.Width ?? 0,
+            file?.Height ?? 0,
+            video.Duration,
+            video.Views,
+            video.Downloads,
+            video.Likes,
+            video.User,
+            video.UserImageUrl);
+    }
     public async Task<IReadOnlyList<VideoDto>> GetVideosAsync(
         string? query,
         int page,
@@ -60,7 +119,7 @@ public sealed class VideoService(
 
         return result.Hits.Select(video =>
 {
-    var file =
+        var file =
         video.Videos.Large ??
         video.Videos.Medium ??
         video.Videos.Small ??
@@ -80,6 +139,9 @@ public sealed class VideoService(
         video.User,
         video.UserImageUrl
     );
+
+
+
 }).ToList();
     }
 }

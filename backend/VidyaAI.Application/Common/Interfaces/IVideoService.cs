@@ -9,4 +9,8 @@ public interface IVideoService
         int page,
         int pageSize,
         CancellationToken cancellationToken);
+
+    Task<VideoDto?> GetVideoByIdAsync(
+        long id,
+        CancellationToken cancellationToken);
 }
