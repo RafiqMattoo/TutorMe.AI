@@ -33,6 +33,8 @@ import CategoriesPage from '../../features/categories/pages/CategoriesPage'
 import VideosPage from '../../features/video/pages/VideoPage'
 import VideoDescriptionPage from '../../features/video/pages/VideoDescriptionPage'
 import AudioRecapPage from '@/features/audio-recap/pages/AudioRecapPage'
+import CreateVideoPage from '@/features/video/pages/CreateVideoPage'
+import SelectMaterialsPage from '@/features/video/pages/SelectMaterialsPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -58,6 +60,9 @@ export const protectedRoutes = (
       </PrivateRoute>
     }
   >
+    <Route path="video/materials" element={<RoleRoute><SelectMaterialsPage /></RoleRoute>} />
+    <Route path="materials" element={<RoleRoute><MaterialsPage /></RoleRoute>} />
+    <Route path="create-video" element={<RoleRoute><CreateVideoPage /></RoleRoute>} />
     <Route index element={<Navigate to="/dashboard" replace />} />
     <Route path="dashboard" element={<RoleRoute><DashboardPage /></RoleRoute>} />
     <Route path="today" element={<RoleRoute><TodayPage /></RoleRoute>} />
@@ -71,7 +76,10 @@ export const protectedRoutes = (
     <Route path="articles/new" element={<RoleRoute><ArticleFormPage /></RoleRoute>} />
     <Route path="articles/:id/edit" element={<RoleRoute><ArticleFormPage /></RoleRoute>} />
     <Route path="categories" element={<RoleRoute><CategoriesPage /></RoleRoute>} />
+
     <Route path="materials" element={<RoleRoute><MaterialsPage /></RoleRoute>} />
+
+
     <Route path="tutor" element={<RoleRoute><TutorPage /></RoleRoute>} />
     <Route path="simple-bot" element={<RoleRoute><SimpleBotPage /></RoleRoute>} />
     <Route path="flashcards" element={<RoleRoute><FlashcardsPage /></RoleRoute>} />
