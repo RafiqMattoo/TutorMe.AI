@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import "./styles/global.css";
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,10 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply antialiased;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   * {
