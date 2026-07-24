@@ -43,9 +43,41 @@ using VidyaAI.Application.DTOs;
 using VidyaAI.Application.Enrollments;
 using VidyaAI.Application.Roles;
 using VidyaAI.Domain.Enums;
-namespace VidyaAI.API.Controllers
+using VidyaAI.Application.Videos.Queries.GetVideoById;
+using VidyaAI.Application.Videos.Queries.GetVideos;
+namespace VidyaAI.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public sealed class VideosController(ISender sender) : ControllerBase
 {
-    public class VideosController
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] string? query,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
+        var result = await sender.Send(
+            new GetVideosQuery(query, page, pageSize),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    [Authorize]
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetById(
+    long id,
+    CancellationToken cancellationToken = default)
+    {
+        var result = await sender.Send(
+            new GetVideoByIdQuery(id),
+            cancellationToken);
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
     }
 }
