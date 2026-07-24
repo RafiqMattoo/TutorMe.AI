@@ -459,9 +459,19 @@ export default function AdminLayout() {
         </header>
 
         {/* ── Page content ─────────────────────────────────────── */}
-        <main className="flex-1 animate-fade-in bg-white">
+       
+       
+                <main
+          className={`flex-1 animate-fade-in bg-white ${
+            location.pathname.startsWith("/video")
+              ? "overflow-hidden"
+              : "overflow-auto"
+          }`}
+          >
           <Outlet />
-        </main>
+          </main>
+       
+       
       </div>
 
       {location.pathname !== "/simple-bot" && <FloatingBotWidget />}

@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿﻿namespace VidyaAI.Application.Videos.DTOs;
 
-namespace VidyaAI.Application.videos.DTOs
-{
-    internal class VideoDto
-    {
-    }
-}
+public record VideoDto(
+    long Id,
+    string Tags,
+    string VideoUrl,
+    string ThumbnailUrl,
+    int Width,
+    int Height,
+    int Duration,
+    int Views,
+    int Downloads,
+    int Likes,
+    string User,
+    string UserImageUrl
+);

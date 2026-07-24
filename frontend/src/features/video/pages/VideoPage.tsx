@@ -1,4 +1,4 @@
-import Header from "../components/VideosPage/Header";
+import Header from "../components/CreateVideo/Header";
 import Toolbar from "../components/VideosPage/Toolbar";
 import VideoGrid from "../components/VideosPage/VideoGrid";
 
