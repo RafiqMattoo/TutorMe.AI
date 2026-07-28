@@ -5,6 +5,8 @@ import RegisterPage from "../../features/auth/pages/RegisterPage";
 export const publicRoutes = (
   <>
     <Route path="/login" element={<LoginPage />} />
+  
     <Route path="/register" element={<RegisterPage />} />
   </>
 )
+

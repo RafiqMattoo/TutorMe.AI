@@ -9,7 +9,6 @@ import { useAuthStore } from '../../../shared/store/authStore'
 import { roleOrder, roleProfiles } from '../../../shared/auth/roles'
 
 const demoPassword = 'Admin@123'
-
 const featureList = [
   { icon: Zap,           text: 'AI-powered study tools'       },
   { icon: BookOpenCheck, text: 'Role-aware content workspace'  },
@@ -207,8 +206,8 @@ export default function LoginPage() {
                 className="btn-primary mt-2 w-full py-3 text-[14px]"
               >
                 {loading
-                  ? <><Loader2 size={17} className="animate-spin" /> Signing in…</>
-                  : <>Sign in <ArrowRight size={16} /></>
+                  ? <><Loader2 size={17} className="animate-spin" /> Logging in…</>
+                  : <>Login  <ArrowRight size={16} /></>
                 }
               </button>
             </form>
