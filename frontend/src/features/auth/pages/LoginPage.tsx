@@ -12,6 +12,9 @@ import AppleLoginButton from '../components/AppleLoginButton.tsx'
 import Logo from "../components/Logo.tsx";
 import Divider from '../components/Divider.tsx'
 import {  Eye, EyeOff } from "lucide-react";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormData,} from '../schemas/login-schema/loginSchema.ts';
 
 
 const demoPassword = 'Admin@123'
@@ -24,34 +27,59 @@ const featureList = [
 
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('SuperAdmin')
-  const [email,    setEmail]    = useState('')
-  const [password, setPassword] = useState(demoPassword)
-  const [loading,  setLoading]  = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthStore()
   const navigate  = useNavigate()
 
-  const selectRole = (role: UserRole) => {
-    setSelectedRole(role)
-    setEmail(roleProfiles[role].email)
-    setPassword(demoPassword)
-  }
+  const {
+  register,
+  handleSubmit,
+  setValue,
+  formState: {
+    errors,
+    isSubmitting,
+  },
+} = useForm<LoginFormData>({
+  resolver: zodResolver(loginSchema),
+  defaultValues: {
+    email: '',
+    password: demoPassword,
+  },
+});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const res = await authApi.login(email, password)
-      login(res)
-      toast.success(`Welcome back, ${res.user.firstName}!`)
-      navigate('/dashboard')
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-      toast.error(msg ?? 'Invalid credentials')
-    } finally {
-      setLoading(false)
-    }
+ const selectRole = (role: UserRole) => {
+  setSelectedRole(role);
+
+  setValue("email", roleProfiles[role].email);
+  setValue("password", demoPassword);
+};
+
+const onSubmit = async (data: LoginFormData) => {
+  try {
+    const res = await authApi.login(
+      data.email,
+      data.password
+    );
+
+    login(res);
+
+    toast.success(`Welcome back, ${res.user.firstName}!`);
+
+    navigate('/dashboard');
+  } catch (err: unknown) {
+    const msg = (
+      err as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+      }
+    )?.response?.data?.message;
+
+    toast.error(msg ?? 'Invalid credentials');
   }
+};
 
   const currentProfile = roleProfiles[selectedRole]
 
@@ -179,7 +207,7 @@ export default function LoginPage() {
             {/* Header */}
             <div className="mb-8">
               {/* Mobile Logo */}
-<div className="flex justify-start md:hidden">
+<div className="flex justify-start lg:hidden">
   <Logo />
 </div>
    <div className="flex items-center gap-2 md:block">
@@ -224,7 +252,7 @@ export default function LoginPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
              <div className="mb-6 flex gap-4">
   <GoogleLoginButton
@@ -239,17 +267,23 @@ export default function LoginPage() {
 <Divider />
 
               {/* Email */}
-              <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-                  Email address
-                </label>
-                <input
-                  type="email" value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required className="input"
-                  placeholder="your@email.com"
-                />
-              </div>
+             <div>
+  <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+    Email address
+  </label>
+
+  <input
+    type="email"
+    className="input"
+    placeholder="your@email.com"
+    {...register("email")}
+  />
+
+  {/* Reserve space for the error */}
+  <p className="mt-1 min-h-[16px] text-xs text-red-500">
+    {errors.email?.message}
+  </p>
+</div>
 
               {/* Password */}
          
@@ -266,11 +300,9 @@ export default function LoginPage() {
 
     <input
       type={showPassword ? "text" : "password"}
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
       className="input pl-10 pr-10"
       placeholder="••••••••"
+      {...register("password")}
     />
 
     <button
@@ -279,23 +311,24 @@ export default function LoginPage() {
       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
       aria-label={showPassword ? "Hide password" : "Show password"}
     >
-      {showPassword ? (
-        <EyeOff size={18} />
-      ) : (
-        <Eye size={18} />
-      )}
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
     </button>
   </div>
+
+  {/* Reserve space for the error */}
+  <p className="mt-1 min-h-[16px] text-xs text-red-500">
+    {errors.password?.message}
+  </p>
 </div>
 
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting}
                 className="btn-primary mt-2 w-full py-3 text-[14px]"
               >
-                {loading
-                  ? <><Loader2 size={17} className="animate-spin" /> Signing in…</>
+                {isSubmitting ? 
+                 <><Loader2 size={17} className="animate-spin" /> Signing in…</>
                   : <>Sign in <ArrowRight size={16} /></>
                 }
               </button>
