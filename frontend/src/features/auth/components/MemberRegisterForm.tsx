@@ -309,8 +309,111 @@ const options =
                         />
                         </Field>
 
-      </div>
+{/* 
+         <Field id="role" label="Role *">
+        <div className="relative">
+          <select
+            id="role"
+            value={member.role}
+            onChange={(e) =>
+              setMember((m) => ({
+                ...m,
+                role: e.target.value as UserRole,
+              }))
+            }
+      className="
+        w-full
+        appearance-none
+        rounded-xl
+        border
+        border-slate-300
+        bg-white
+        px-4
+        py-2.5
+        pr-10
+        text-sm
+        text-slate-700
+        shadow-sm
+        transition-all
+        outline-none
+        hover:border-blue-400
+        focus:border-blue-600
+        focus:ring-2
+            focus:ring-blue-100
+          "
+        >
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+        </select>
 
+        <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </Field> */}
+        <Field id="role" label="Role *">
+    <Select 
+    options={[
+      { value: "Student", label: " Student" },
+      { value: "Teacher", label: " Teacher" },
+    ]}
+    value={[
+      { value: "Student", label: " Student" },
+      { value: "Teacher", label: " Teacher" },
+    ].find((option) => option.value === member.role)}
+    onChange={(option) =>
+      setMember((m) => ({
+        ...m,
+        role: option?.value as UserRole,
+      }))
+    }
+    placeholder="Select role"
+    styles={{
+      control: (base, state) => ({
+        ...base,
+        minHeight: 44,
+        borderRadius: 14,
+        borderColor: state.isFocused ? "#2563eb" : "#cbd5e1",
+        boxShadow: state.isFocused
+          ? "0 0 0 3px rgba(37,99,235,.15)"
+          : "none",
+        "&:hover": {
+          borderColor: "#2563eb",
+        },
+      }),
+      menu: (base) => ({
+        ...base,
+        borderRadius: 14,
+        overflow: "hidden",
+        boxShadow: "0 12px 30px rgba(0,0,0,.12)",
+      }),
+      option: (base, state) => ({
+        ...base,
+        padding: "12px 16px",
+        backgroundColor: state.isFocused
+          ? "#eff6ff"
+          : state.isSelected
+          ? "#2563eb"
+          : "#fff",
+        color: state.isSelected ? "#fff" : "#334155",
+            cursor: "pointer",
+          }),
+        }}
+      />
+    </Field>
+
+          </div>
 
       <Field id="memberPhone" label="Phone">
         <input

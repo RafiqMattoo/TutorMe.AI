@@ -7,6 +7,12 @@ import { ArrowRight, BookOpenCheck, Loader2, LockKeyhole, Sparkles, Zap } from '
 import clsx from 'clsx'
 import { useAuthStore } from '../../../shared/store/authStore'
 import { roleOrder, roleProfiles } from '../../../shared/auth/roles'
+import GoogleLoginButton from '../components/GoogleLoginButton.tsx'
+import AppleLoginButton from '../components/AppleLoginButton.tsx'
+import Logo from "../components/Logo.tsx";
+import Divider from '../components/Divider.tsx'
+import {  Eye, EyeOff } from "lucide-react";
+
 
 const demoPassword = 'Admin@123'
 const featureList = [
@@ -20,6 +26,7 @@ export default function LoginPage() {
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState(demoPassword)
   const [loading,  setLoading]  = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthStore()
   const navigate  = useNavigate()
 
@@ -48,11 +55,11 @@ export default function LoginPage() {
   const currentProfile = roleProfiles[selectedRole]
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="h-screen overflow-hidden bg-[var(--color-sidebar)] text-[var(--color-surface)]">
       <div className="grid min-h-screen lg:grid-cols-[1.1fr_0.9fr]">
 
         {/* ── Left: Hero panel ─────────────────────────────────── */}
-        <section className="relative flex min-h-[48rem] flex-col justify-between overflow-hidden px-6 py-8 lg:px-12">
+         <section className="relative hidden lg:flex lg:flex-col lg:justify-between lg:overflow-hidden lg:px-12 lg:py-8">
 
           {/* Background layers */}
           <div className="absolute inset-0"
@@ -71,46 +78,55 @@ export default function LoginPage() {
           {/* Bottom fade */}
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-slate-950/80 to-transparent" />
 
-          {/* Logo */}
-          <div className="relative flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-xl shadow-blue-600/50">
-              <BookOpenCheck size={22} />
-            </div>
-            <div>
-              <div className="text-[16px] font-bold tracking-tight">VidyaAI</div>
-              <div className="text-[11px] text-white/45 font-medium">Learning Platform</div>
-            </div>
-          </div>
+        {/* Logo */}
+<div className="relative flex items-center gap-3">
+  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-primary-600)] shadow-xl shadow-[var(--color-primary-600)]/50">
+    <BookOpenCheck size={22} />
+  </div>
+
+  <div>
+    <div className="text-[16px] font-bold tracking-tight">
+      VidyaAI
+    </div>
+
+    <div className="text-[11px] font-medium text-[var(--color-surface)]/45">
+      Learning Platform
+    </div>
+  </div>
+</div>
 
           {/* Hero copy */}
-          <div className="relative max-w-2xl py-12">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/15 px-3.5 py-1.5 text-[12px] font-semibold text-blue-300">
+          <div className="relative max-w-2xl py-8">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/15 px-3.5 py-1.5 text-[12px] font-semibold text-[var(--color-primary-300)]">
               <Sparkles size={13} />
               Role-aware intelligent learning platform
             </div>
 
-            <h1 className="text-5xl font-black leading-[1.04] tracking-tight text-white md:text-[62px]">
-              One platform.<br />
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                Five unique
-              </span>
-              <br />experiences.
-            </h1>
+          <h1 className="text-4xl font-black leading-[1.05] tracking-tight text-[var(--color-surface)] md:text-5xl xl:text-[56px]">
+  One platform.<br />
+<span className="bg-gradient-to-r from-[var(--color-primary-400)] to-[var(--color-primary-700)] bg-clip-text text-transparent">
+  Five unique
+</span>
+  <br />
+  experiences.
+</h1>
 
-            <p className="mt-6 max-w-md text-sm leading-7 text-slate-400">
+            <p className="mt-6 max-w-md text-sm leading-7 text-[var(--color-text-muted)]">
               Sign in as any role and the platform reshapes to serve that person — global admin,
               school operator, teacher, student, or parent guardian.
             </p>
 
             {/* Feature list */}
-            <ul className="mt-8 space-y-2.5">
+           <ul className="mt-6 space-y-2">
               {featureList.map(({ icon: Icon, text }) => (
-                <li key={text} className="flex items-center gap-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600/30 text-blue-400">
-                    <Icon size={13} />
-                  </span>
-                  <span className="text-[13px] font-medium text-slate-300">{text}</span>
-                </li>
+               <li key={text} className="flex items-center gap-3">
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--color-primary-600)]/30 text-[var(--color-primary-400)]">
+    <Icon size={13} />
+  </span>
+  <span className="text-[13px] font-medium text-[var(--color-surface)]">
+    {text}
+  </span>
+</li>
               ))}
             </ul>
           </div>
@@ -121,45 +137,87 @@ export default function LoginPage() {
               const p      = roleProfiles[role]
               const active = selectedRole === role
               return (
-                <button
-                  key={role}
-                  onClick={() => selectRole(role)}
-                  className={clsx(
-                    'group rounded-xl border p-3.5 text-left transition-all duration-200',
-                    active
-                      ? 'border-blue-400/50 bg-blue-600/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30'
-                      : 'border-white/[0.07] bg-white/[0.04] hover:border-white/15 hover:bg-white/[0.07]',
-                  )}
-                >
-                  <div className={clsx('mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r', p.accent)} />
-                  <div className={clsx('text-[13px] font-bold', active ? 'text-blue-200' : 'text-white/90')}>
-                    {p.label}
-                  </div>
-                  <div className={clsx('mt-1 text-[11px] leading-4', active ? 'text-blue-300/70' : 'text-white/40')}>
-                    {p.scope}
-                  </div>
-                </button>
-              )
+     <button
+  key={role}
+  onClick={() => selectRole(role)}
+  className={clsx(
+    'group rounded-xl border p-3.5 text-left transition-all duration-200',
+    active
+      ? 'border-blue-400/50 bg-[var(--color-primary-600)]/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30'
+      : 'border-white/[0.07] bg-[var(--color-surface)]/[0.04] hover:border-white/15 hover:bg-[var(--color-surface)]/[0.07]',
+  )}
+>
+  <div className={clsx('mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r', p.accent)} />
+
+  <div
+    className={clsx(
+      'text-[13px] font-bold',
+      active ? 'text-blue-200' : 'text-white/90',
+    )}
+  >
+    {p.label}
+  </div>
+
+  <div
+    className={clsx(
+      'mt-1 text-[11px] leading-4',
+      active ? 'text-blue-300/70' : 'text-white/40',
+    )}
+  >
+    {p.scope}
+  </div>
+</button> )
             })}
           </div>
         </section>
 
         {/* ── Right: Login form ─────────────────────────────────── */}
-        <section className="flex items-center justify-center bg-white px-6 py-12 text-slate-900">
+        <section className="flex items-center justify-center bg-[var(--color-surface)] px-6 py-8 text-[var(--color-text)]">
           <div className="w-full max-w-[400px]">
 
             {/* Header */}
             <div className="mb-8">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11.5px] font-bold text-blue-700 ring-1 ring-blue-200/60">
-                <span
-                  className={clsx('h-1.5 w-1.5 rounded-full bg-gradient-to-r', currentProfile.accent)}
-                />
-                {currentProfile.label}
-              </span>
-              <h2 className="mt-4 text-[30px] font-black tracking-tight text-slate-900">
-                Welcome back
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
+              {/* Mobile Logo */}
+<div className="flex justify-start md:hidden">
+  <Logo />
+</div>
+   <div className="flex items-center gap-2 md:block">
+    <h2 className="
+    text-[22px]
+    md:mt-4
+    md:text-[30px]
+    font-black
+    tracking-tight
+    text-[var(--color-text)]
+  ">
+    Welcome back
+  </h2>
+  <span className="
+    inline-flex 
+    items-center 
+    gap-1.5 
+    rounded-full 
+    bg-[var(--color-primary-600)] 
+    px-3 
+    py-1 
+    text-[11.5px] 
+    font-bold 
+    text-[var(--color-surface)] 
+    ring-1 
+    ring-[var(--color-surface-muted)]
+  ">
+    <span
+      className={clsx(
+        'h-1.5 w-1.5 rounded-full bg-gradient-to-r',
+        currentProfile.accent
+      )}
+    />
+    {currentProfile.label}
+  </span>
+
+  
+</div>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">
                 {currentProfile.description}
               </p>
             </div>
@@ -167,9 +225,21 @@ export default function LoginPage() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
 
+             <div className="mb-6 flex gap-4">
+  <GoogleLoginButton
+    onClick={() => toast.error("Google login not implemented yet")}
+  />
+
+  <AppleLoginButton
+    onClick={() => toast.error("Apple login not implemented yet")}
+  />
+</div>
+
+<Divider />
+
               {/* Email */}
               <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                   Email address
                 </label>
                 <input
@@ -181,23 +251,41 @@ export default function LoginPage() {
               </div>
 
               {/* Password */}
-              <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Password
-                </label>
-                <div className="relative">
-                  <LockKeyhole
-                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={15}
-                  />
-                  <input
-                    type="password" value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required className="input pl-10"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
+         
+<div>
+  <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+    Password
+  </label>
+
+  <div className="relative">
+    <LockKeyhole
+      className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
+      size={15}
+    />
+
+    <input
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+      className="input pl-10 pr-10"
+      placeholder="••••••••"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+      aria-label={showPassword ? "Hide password" : "Show password"}
+    >
+      {showPassword ? (
+        <EyeOff size={18} />
+      ) : (
+        <Eye size={18} />
+      )}
+    </button>
+  </div>
+</div>
 
               {/* Submit */}
               <button
@@ -213,26 +301,23 @@ export default function LoginPage() {
             </form>
 
             {/* Register link */}
-            <p className="mt-4 text-center text-[13px] text-slate-500">
+            <p className="mt-4 text-center text-[13px] text-[var(--color-text-muted)]">
               New here?{' '}
-              <Link to="/register" className="font-bold text-blue-600 hover:text-blue-700">
+              <Link to="/register" className="font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)]">
                 Register a school or join one
               </Link>
             </p>
 
-            {/* Demo hint */}
-            <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Demo credentials
-              </div>
-              <div className="mt-1 text-[12.5px] text-slate-600">
-                Password for all roles:{' '}
-                <span className="font-bold text-slate-900">{demoPassword}</span>
-              </div>
-              <div className="mt-2 text-[11px] text-slate-400">
-                Select any role card above to prefill email automatically.
-              </div>
-            </div>
+{/* Forgot Password Link */}
+<p className="mt-4 text-center text-[13px] text-[var(--color-text-muted)]">
+  Forgot your password?{" "}
+  <Link
+    to="/reset-password"
+    className="font-bold text-[var(--color-primary-600)] transition-colors hover:text-[var(--color-primary-700)]"
+  >
+    Reset Password
+  </Link>
+</p>
 
             {/* Role quick-switch strip */}
             <div className="mt-4 flex items-center gap-1.5">
@@ -247,8 +332,8 @@ export default function LoginPage() {
                     className={clsx(
                       'flex-1 rounded-lg py-2 text-[10.5px] font-semibold transition-all',
                       active
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200',
+                        ? 'bg-[var(--color-primary-600)] text-[var(--color-surface)] shadow-sm'
+                        : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]',
                     )}
                   >
                     {p.label.split(' ')[0]}
