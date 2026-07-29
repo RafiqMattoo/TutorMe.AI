@@ -1,8 +1,21 @@
 import { useEffect, useState } from "react";
 import { MailCheck } from "lucide-react";
+function maskEmail(email: string) {
+  const [name, domain] = email.split("@");
+
+  if (!name || !domain) return email;
+
+  const visible = Math.min(2, name.length);
+  const masked = "*".repeat(Math.max(name.length - visible, 2));
+
+  return `${name.slice(0, visible)}${masked}@${domain}`;
+}
 
 export default function VerificationEmailSentPage() {
   const [seconds, setSeconds] = useState(60);
+
+  const email = "john@gmail.com";
+
   useEffect(() => {
     if (seconds === 0) return;
 
@@ -32,7 +45,7 @@ export default function VerificationEmailSentPage() {
         </p>
 
         <p className="mt-4 text-lg font-semibold text-[var(--color-text)]">
-          jo****@gmail.com
+          {maskEmail(email)}
         </p>
 
         <p className="mt-4 text-sm leading-6 text-[var(--color-text-muted)]">
