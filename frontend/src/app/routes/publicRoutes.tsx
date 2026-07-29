@@ -3,6 +3,7 @@ import LoginPage from "../../features/auth/pages/LoginPage";
 import RegisterPage from "../../features/auth/pages/RegisterPage";
 import VerificationEmailSentPage from "../../features/auth/pages/VerificationEmailSentPage";
 import VerificationSuccessPage from "../../features/auth/pages/VerificationSuccessPage";
+import VerificationLinkExpiredPage from "../../features/auth/pages/VerificationLinkExpiredPage";
 
 export const publicRoutes = (
   <>
@@ -13,5 +14,9 @@ export const publicRoutes = (
       element={<VerificationEmailSentPage />}
     />
     <Route path="/email-verified" element={<VerificationSuccessPage />} />
+    <Route
+      path="/email-verification-expired"
+      element={<VerificationLinkExpiredPage />}
+    />
   </>
 );
