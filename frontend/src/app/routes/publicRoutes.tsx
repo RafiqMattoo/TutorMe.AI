@@ -8,6 +8,7 @@ import VerificationLinkExpiredPage from "../../features/auth/pages/VerificationL
 export const publicRoutes = (
   <>
     <Route path="/login" element={<LoginPage />} />
+  
     <Route path="/register" element={<RegisterPage />} />
     <Route
       path="/email-verification-sent"
