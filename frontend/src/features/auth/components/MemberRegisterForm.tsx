@@ -1,492 +1,303 @@
-import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
-import toast from 'react-hot-toast'
-
-import { authApi } from '../services'
-import type { UserRole } from '../../../shared/types/index.ts'
-import Captcha from '../../../../src/shared/components/Captcha'
-import { Field, Section } from './FormControls'
-import { PasswordInput } from './FormControls'
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "react-select";
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
+import { authApi } from "../services";
+import type { UserRole } from "../../../shared/types";
+import Captcha from "../../../../src/shared/components/Captcha";
+import { Field, Section, PasswordInput } from "./FormControls";
+
+import { SignupFormData,signupSchema } from "../schemas/register-schema/registerSchema";
+  
+ 
+
+
 function err(e: unknown) {
   return (
     e as {
       response?: {
         data?: {
-          message?: string
-        }
-      }
+          message?: string;
+        };
+      };
     }
-  )?.response?.data?.message
+  )?.response?.data?.message;
 }
 
-
 export default function MemberRegisterForm({
-  onSuccess
+  onSuccess,
 }: {
-  onSuccess: (message: string) => void
+  onSuccess: (message: string) => void;
 }) {
-
-  const [captcha, setCaptcha] = useState<string | undefined>()
+  const [captcha, setCaptcha] = useState<string | undefined>();
 
   const { data: schools } = useQuery({
-    queryKey: ['public-schools'],
-    queryFn: authApi.publicSchools
-  })
+    queryKey: ["public-schools"],
+    queryFn: authApi.publicSchools,
+  });
 
 
-const options =
-  (schools ?? []).map((school) => ({
+
+
+ const options = [
+  ...(schools ?? []).map((school) => ({
     value: school.id,
     label: school.name,
-  }));
+  })),
+
+  { value: "demo-1", label: "Green Valley School" },
+  { value: "demo-2", label: "Delhi Public School" },
+  { value: "demo-3", label: "Oxford Public School" },
+  { value: "demo-4", label: "St. Mary's School" },
+  { value: "demo-5", label: "Bright Future Academy" },
+];
 
 
 
-  const [member, setMember] = useState({
 
-    schoolId: '',
 
-    role: 'Student' as UserRole,
 
-    firstName: '',
-    lastName: '',
-
-    email: '',
-
-    password: '',
-
-    confirmPassword: '',
-
-    termsAccepted: false,
-
-    phone: '',
-
-    gradeLevel: '',
-    rollNumber: '',
-
-    dateOfBirth: '',
-
-    guardianName: '',
-    guardianPhone: '',
-
-  })
-
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    mode: "onChange",
+    defaultValues: {
+      schoolId: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "Student",
+      phone: "",
+      termsAccepted: false,
+    },
+  });
 
   const registerMember = useMutation({
-
-    mutationFn: () => {
-
-      const {
-        confirmPassword,
-        termsAccepted,
-        ...memberData
-      } = member
-
+    mutationFn: (data: SignupFormData) => {
+      const { confirmPassword, termsAccepted, ...memberData } = data;
 
       return authApi.registerMember({
-
         ...memberData,
-
-        dateOfBirth: member.dateOfBirth
-          ? new Date(member.dateOfBirth).toISOString()
-          : null,
-
-        captchaToken: captcha
-
-      })
-
+        captchaToken: captcha,
+      });
     },
 
-    onSuccess: r => onSuccess(r.message),
+    onSuccess: (r) => onSuccess(r.message),
 
-    onError: e =>
-      toast.error(
-        err(e) ?? 'Could not submit registration'
-      ),
+    onError: (e) =>
+      toast.error(err(e) ?? "Could not submit registration"),
+  });
 
-  })
-
+  const onSubmit = (data: SignupFormData) => {
+    registerMember.mutate(data);
+  };
 
   return (
-
-    <div className="space-y-3">
-
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-3"
+    >
       <Section title="Your school" />
-{/* 
-            <Field id="schoolId" label="School *">
-  <div className="relative">
 
-    <select
-      id="schoolId"
-      value={member.schoolId}
-      onChange={(e) =>
-        setMember((m) => ({
-          ...m,
-          schoolId: e.target.value,
-        }))
-      }
-      className="
-            w-full
-            appearance-none
-            rounded-xl
-            border
-            border-slate-300
-            bg-white
-            px-4
-            py-2.5
-            pr-10
-            text-sm
-            text-slate-700
-            shadow-sm
-            transition-all
-            outline-none
-            hover:border-[var(--color-primary-400)]
-            focus:border-[var(--color-primary-600)]
-            focus:ring-2
-            focus:ring-[var(--color-primary-100)]
-"
-    >
-      <option value="">Select your school</option>
-
-      {(schools ?? []).map((school) => (
-        <option key={school.id} value={school.id}>
-          {school.name}
-        </option>
-      ))}
-    </select>
-
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M19 9l-7 7-7-7"
-      />
-    </svg>
-
-  </div>
-                </Field> */}
-                <Field id="schoolId" label="School *">
-  <Select
-    options={options}
-    placeholder="Select your school"
-    value={options.find((o) => o.value === member.schoolId)}
-    onChange={(selected) =>
-      setMember((m) => ({
-        ...m,
-        schoolId: selected?.value ?? "",
-      }))
-    }
-    isSearchable
-    styles={{
-      control: (base, state) => ({
-        ...base,
-        minHeight: 32,
-        borderRadius: 12,
-        borderColor: state.isFocused ? "#2563eb" : "#cbd5e1",
-        boxShadow: state.isFocused
-          ? "0 0 0 3px rgba(37,99,235,0.15)"
-          : "none",
-        "&:hover": {
-          borderColor: "#2563eb",
-        },
-      }),
-      placeholder: (base) => ({
-        ...base,
-        color: "#94a3b8",
-      }),
-      option: (base, state) => ({
-        ...base,
-        backgroundColor: state.isSelected
-          ? "#2563eb"
-          : state.isFocused
-          ? "#eff6ff"
-          : "#fff",
-        color: state.isSelected ? "#fff" : "#334155",
-        cursor: "pointer",
-      }),
-      menu: (base) => ({
-        ...base,
-        borderRadius: 12,
-        overflow: "hidden",
-      }),
-    }}
-  />
-</Field>
-
-      
-
+      <Field id="schoolId" label="School *">
+        <Controller
+          control={control}
+          name="schoolId"
+          render={({ field }) => (
+            <Select
+              options={options}
+              placeholder="Select your school"
+              value={options.find(
+                (o) => o.value === field.value
+              )}
+              onChange={(selected) =>
+                field.onChange(selected?.value ?? "")
+              }
+              isSearchable
+            />
+            
+          )}
+        />
+        {errors.schoolId && (
+          <p className="mt-1 text-sm text-red-500">
+            {errors.schoolId.message}
+          </p>
+        )}
+      </Field>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
         <Field id="firstName" label="First name *">
           <input
             id="firstName"
             className="input"
-            placeholder="First name *"
-            value={member.firstName}
-            onChange={e =>
-              setMember(m => ({
-                ...m,
-                firstName: e.target.value
-              }))
-            }
+            placeholder="First name"
+            {...register("firstName")}
           />
+          {errors.firstName && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.firstName.message}
+            </p>
+          )}
         </Field>
-
 
         <Field id="lastName" label="Last name *">
           <input
             id="lastName"
             className="input"
-            placeholder="Last name *"
-            value={member.lastName}
-            onChange={e =>
-              setMember(m => ({
-                ...m,
-                lastName: e.target.value
-              }))
-            }
+            placeholder="Last name"
+            {...register("lastName")}
           />
+          {errors.lastName && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.lastName.message}
+            </p>
+          )}
         </Field>
-
       </div>
 
-
-      <Field id="memberEmail" label="Email *">
+      <Field id="email" label="Email *">
         <input
-          id="memberEmail"
+          id="email"
           type="email"
           className="input"
-          placeholder="Email *"
-          value={member.email}
-          onChange={e =>
-            setMember(m => ({
-              ...m,
-              email: e.target.value
-            }))
-          }
+          placeholder="Email"
+          {...register("email")}
         />
+        {errors.email && (
+          <p className="mt-1 text-sm text-red-500">
+            {errors.email.message}
+          </p>
+        )}
       </Field>
-
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field id="password" label="Password *">
-          <PasswordInput
-            id="password"
-            placeholder="Password *"
-            value={member.password}
-            onChange={(value) =>
-                setMember((m) => ({
-                ...m,
-                password: value,
-                }))
-            }
-            />
-
+          <Controller
+            control={control}
+            name="password"
+            render={({ field }) => (
+              <PasswordInput
+                id="password"
+                placeholder="Password"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password.message}
+            </p>
+          )}
         </Field>
 
-                <Field id="confirmPassword" label="Confirm password *">
-                        <PasswordInput
-                            id="confirmPassword"
-                            placeholder="Confirm Password *"
-                            value={member.confirmPassword}
-                            onChange={(value) =>
-                            setMember((m) => ({
-                                ...m,
-                                confirmPassword: value,
-                            }))
-                            }
-                        />
-                        </Field>
-
-{/* 
-         <Field id="role" label="Role *">
-        <div className="relative">
-          <select
-            id="role"
-            value={member.role}
-            onChange={(e) =>
-              setMember((m) => ({
-                ...m,
-                role: e.target.value as UserRole,
-              }))
-            }
-      className="
-        w-full
-        appearance-none
-        rounded-xl
-        border
-        border-slate-300
-        bg-white
-        px-4
-        py-2.5
-        pr-10
-        text-sm
-        text-slate-700
-        shadow-sm
-        transition-all
-        outline-none
-        hover:border-blue-400
-        focus:border-blue-600
-        focus:ring-2
-            focus:ring-blue-100
-          "
-        >
-          <option value="Student">Student</option>
-          <option value="Teacher">Teacher</option>
-        </select>
-
-        <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
+        <Field id="confirmPassword" label="Confirm Password *">
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <PasswordInput
+                id="confirmPassword"
+                placeholder="Confirm Password"
+                value={field.value}
+                onChange={field.onChange}
               />
-            </svg>
-          </div>
-        </Field> */}
-        <Field id="role" label="Role *">
-    <Select 
-    options={[
-      { value: "Student", label: " Student" },
-      { value: "Teacher", label: " Teacher" },
-    ]}
-    value={[
-      { value: "Student", label: " Student" },
-      { value: "Teacher", label: " Teacher" },
-    ].find((option) => option.value === member.role)}
-    onChange={(option) =>
-      setMember((m) => ({
-        ...m,
-        role: option?.value as UserRole,
-      }))
-    }
-    placeholder="Select role"
-    styles={{
-      control: (base, state) => ({
-        ...base,
-        minHeight: 44,
-        borderRadius: 14,
-        borderColor: state.isFocused ? "#2563eb" : "#cbd5e1",
-        boxShadow: state.isFocused
-          ? "0 0 0 3px rgba(37,99,235,.15)"
-          : "none",
-        "&:hover": {
-          borderColor: "#2563eb",
-        },
-      }),
-      menu: (base) => ({
-        ...base,
-        borderRadius: 14,
-        overflow: "hidden",
-        boxShadow: "0 12px 30px rgba(0,0,0,.12)",
-      }),
-      option: (base, state) => ({
-        ...base,
-        padding: "12px 16px",
-        backgroundColor: state.isFocused
-          ? "#eff6ff"
-          : state.isSelected
-          ? "#2563eb"
-          : "#fff",
-        color: state.isSelected ? "#fff" : "#334155",
-            cursor: "pointer",
-          }),
-        }}
-      />
-    </Field>
+            )}
+          />
+          {errors.confirmPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </Field>
+      </div>
 
-          </div>
-
-      <Field id="memberPhone" label="Phone">
-        <input
-          id="memberPhone"
-          className="input"
-          placeholder="Phone"
-          value={member.phone}
-          onChange={e =>
-            setMember(m => ({
-              ...m,
-              phone: e.target.value
-            }))
-          }
+      <Field id="role" label="Role *">
+        <Controller
+          control={control}
+          name="role"
+          render={({ field }) => (
+            <Select
+              options={[
+                { value: "Student", label: "Student" },
+                { value: "Teacher", label: "Teacher" },
+              ]}
+              value={[
+                { value: "Student", label: "Student" },
+                { value: "Teacher", label: "Teacher" },
+              ].find((option) => option.value === field.value)}
+              onChange={(option) =>
+                field.onChange(option?.value as UserRole)
+              }
+              placeholder="Select role"
+            />
+          )}
         />
       </Field>
 
+      <Field id="phone" label="Phone">
+        <input
+          id="phone"
+          className="input"
+          placeholder="Phone"
+          {...register("phone")}
+        />
+      </Field>
 
       <label
         htmlFor="termsAccepted"
         className="flex items-start gap-2 text-sm text-slate-600"
       >
-
         <input
           id="termsAccepted"
           type="checkbox"
+          {...register("termsAccepted")}
           className="mt-1 h-4 w-4"
-          checked={member.termsAccepted}
-          onChange={e =>
-            setMember(m => ({
-              ...m,
-              termsAccepted: e.target.checked
-            }))
-          }
         />
 
         <span>
           I agree to Terms &amp; Conditions
         </span>
-
       </label>
 
+      {errors.termsAccepted && (
+        <p className="text-sm text-red-500">
+          {errors.termsAccepted.message}
+        </p>
+      )}
 
       <Captcha onChange={setCaptcha} />
 
       <button
-        onClick={() => {
-          if (member.password !== member.confirmPassword) {
-            toast.error("Passwords do not match")
-            return
-          }
-
-          if (!member.termsAccepted) {
-            toast.error("Please accept Terms & Conditions")
-            return
-          }
-
-          registerMember.mutate()
-        }}
-        disabled={registerMember.isPending}
-        className="btn-primary mt-2 flex w-full items-center justify-center gap-2 py-3"
+        type="submit"
+        disabled={
+          registerMember.isPending ||
+          !watch("termsAccepted")
+        }
+        className="btn-primary mt-2 flex w-full items-center justify-center gap-2 py-3 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {registerMember.isPending ? (
           <>
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2
+              size={16}
+              className="animate-spin"
+            />
             Signing Up...
           </>
         ) : (
           "Sign Up"
         )}
       </button>
-
-    </div>
-
-  )
-
+    </form>
+  );
 }

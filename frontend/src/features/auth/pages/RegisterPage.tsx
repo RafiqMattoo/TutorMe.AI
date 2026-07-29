@@ -7,11 +7,21 @@ import {
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+// import {SocialLoginButtons} from '../components/SocialLoginButton';
+import { SignupFormData,signupSchema } from '../schemas/register-schema/registerSchema';
+  
+
+
+
+
+
 import RegisterHero from '../components/RegisterHero'
 import SchoolRegisterForm from '../components/SchoolRegisterForm'
 import MemberRegisterForm from '../components/MemberRegisterForm'
-import SocialLoginButtons from '../components/SocialLoginButton'
 import { TabButton } from '../components/FormControls'
+import SocialLoginButtons from '../components/SocialLoginButton';
 
 type Tab = 'school' | 'member'
 
@@ -20,6 +30,17 @@ export default function RegisterPage() {
   const [done, setDone] = useState<string | null>(null)
 
   const navigate = useNavigate()
+
+  const {
+  register,
+  handleSubmit,
+  watch,
+  formState: { errors, isValid },
+} = useForm<SignupFormData>({
+  resolver: zodResolver(signupSchema),
+  mode: "onChange",
+});
+
 
   return (
     <div className="min-h-screen bg-white text-slate-900 lg:h-screen lg:overflow-hidden">
@@ -116,7 +137,7 @@ export default function RegisterPage() {
 
                 {/* Social Login (Bottom) */}
                 <div className="mt-8">
-                  <SocialLoginButtons />
+                 <SocialLoginButtons/>
                 </div>
 
                 {/* Login Link */}
