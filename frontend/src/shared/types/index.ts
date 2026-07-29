@@ -431,3 +431,42 @@ export interface Video {
   authorAvatar?: string;
 likes?: number;
 }
+
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+} from "react"
+
+
+export interface InputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+
+  /**
+   * Icon displayed inside left side
+   */
+  leftIcon?: ReactNode
+
+
+  /**
+   * Icon displayed inside right side
+   */
+  rightIcon?: ReactNode
+
+
+  /**
+   * Input size
+   */
+  size?: "sm" | "md" | "lg"
+
+
+  /**
+   * Show clear button
+   */
+  clearable?: boolean
+
+
+  /**
+   * Clear callback
+   */
+  onClear?: () => void
+}
