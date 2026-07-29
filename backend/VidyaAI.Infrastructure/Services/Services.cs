@@ -73,8 +73,10 @@ public sealed class CategoryService(AppDbContext db)
     {
         var cat = new Category
         {
-            Name = req.Name, Description = req.Description,
-            IconUrl = req.IconUrl, SortOrder = req.SortOrder
+            Name = req.Name,
+            Description = req.Description,
+            IconUrl = req.IconUrl,
+            SortOrder = req.SortOrder
         };
         db.Categories.Add(cat);
         await db.SaveChangesAsync(ct);
