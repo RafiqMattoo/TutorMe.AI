@@ -7,62 +7,92 @@ namespace VidyaAI.Application.Common;
 // email service can build them. Each builder returns (subject, htmlBody).
 public static class EmailTemplates
 {
-    private const string Brand = "#2563eb";
-    private const string Ink = "#0f172a";
-    private const string Muted = "#64748b";
+  private const string Brand = "#2563eb";
+  private const string Ink = "#0f172a";
+  private const string Muted = "#64748b";
 
-    public static (string Subject, string Html) SchoolRegistrationReceived(string adminName, string schoolName)
-    {
-        var body = $"""
+  public static (string Subject, string Html) SchoolRegistrationReceived(string adminName, string schoolName)
+  {
+    var body = $"""
             {Greeting(adminName)}
             <p style="{P}">Thanks for registering <strong>{Esc(schoolName)}</strong> on VidyaAI.</p>
             {Callout("⏳", "Pending approval", "Your school is now in the review queue. A platform administrator will approve it shortly — you'll get an email the moment it's ready, and then you can sign in as the school admin.")}
             <p style="{P}">While you wait, there's nothing else you need to do.</p>
             """;
-        return ("Your school registration is being reviewed — VidyaAI",
-            Layout("School registration received", "We've received your school registration.", body));
-    }
+    return ("Your school registration is being reviewed — VidyaAI",
+        Layout("School registration received", "We've received your school registration.", body));
+  }
 
-    public static (string Subject, string Html) MemberRegistrationReceived(string name, string role, string schoolName)
-    {
-        var r = role.ToLowerInvariant();
-        var body = $"""
+  public static (string Subject, string Html) MemberRegistrationReceived(string name, string role, string schoolName)
+  {
+    var r = role.ToLowerInvariant();
+    var body = $"""
             {Greeting(name)}
             <p style="{P}">Your request to join <strong>{Esc(schoolName)}</strong> as a <strong>{Esc(r)}</strong> has been received.</p>
             {Callout("⏳", "Pending approval", $"A school admin at {Esc(schoolName)} will review your request. As soon as it's approved you'll get a confirmation email and can sign in.")}
             """;
-        return ($"Your {r} registration is being reviewed — VidyaAI",
-            Layout("Registration received", "We've received your registration.", body));
-    }
+    return ($"Your {r} registration is being reviewed — VidyaAI",
+        Layout("Registration received", "We've received your registration.", body));
+  }
 
-    public static (string Subject, string Html) Approved(string name, string what, string signInUrl)
-    {
-        var body = $"""
+  public static (string Subject, string Html) Approved(string name, string what, string signInUrl)
+  {
+    var body = $"""
             {Greeting(name)}
             {Callout("✅", "You're approved!", $"{Esc(what)} has been approved. You can now sign in and get started.")}
             <p style="text-align:center;margin:28px 0 8px;">
               <a href="{Esc(signInUrl)}" style="display:inline-block;background:{Brand};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 26px;border-radius:10px;">Sign in to VidyaAI</a>
             </p>
             """;
-        return ("You're approved — welcome to VidyaAI", Layout("Approved", "Your account is approved.", body));
-    }
+    return ("You're approved — welcome to VidyaAI", Layout("Approved", "Your account is approved.", body));
+  }
 
-    public static (string Subject, string Html) Rejected(string name, string what)
-    {
-        var body = $"""
+  public static (string Subject, string Html) Rejected(string name, string what)
+  {
+    var body = $"""
             {Greeting(name)}
             {Callout("ℹ️", "Registration not approved", $"Unfortunately {Esc(what)} was not approved at this time. If you think this was a mistake, please contact your administrator.")}
             """;
-        return ("Update on your VidyaAI registration", Layout("Registration update", "An update on your registration.", body));
-    }
+    return ("Update on your VidyaAI registration", Layout("Registration update", "An update on your registration.", body));
+  }
 
-    // ── Shared layout ─────────────────────────────────────────────
-    private static string Greeting(string name) =>
-        $"""<p style="{P}">Hi {Esc(string.IsNullOrWhiteSpace(name) ? "there" : name.Split(' ')[0])},</p>""";
+  // ── PASSWORD RESET ─────────────────────────────────────────────
+  public static (string Subject, string Html) PasswordReset(
+  string name,
+  string token)
+  {
+    var body = $"""
+        {Greeting(name)}
 
-    private const string P = "margin:0 0 16px;font-size:15px;line-height:1.65;color:#334155;";
+        <p style="{P}">
+            We received a request to reset your VidyaAI password.
+        </p>
 
-    private static string Callout(string emoji, string title, string text) => $"""
+        {Callout(
+            "🔐",
+            "Password Reset",
+            $"Use this reset token to reset your password: {token}. This token expires in 1 hour.")}
+
+        <p style="{P}">
+            If you didn't request this password reset, you can safely ignore this email.
+        </p>
+        """;
+
+    return (
+        "Reset your VidyaAI password",
+        Layout(
+            "Password Reset",
+            "Use this token to reset your password.",
+            body));
+  }
+
+  // ── Shared layout ─────────────────────────────────────────────
+  private static string Greeting(string name) =>
+      $"""<p style="{P}">Hi {Esc(string.IsNullOrWhiteSpace(name) ? "there" : name.Split(' ')[0])},</p>""";
+
+  private const string P = "margin:0 0 16px;font-size:15px;line-height:1.65;color:#334155;";
+
+  private static string Callout(string emoji, string title, string text) => $"""
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 20px;">
           <tr><td style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;">
             <div style="font-size:14px;font-weight:700;color:{Ink};margin-bottom:4px;">{emoji}&nbsp; {Esc(title)}</div>
@@ -71,7 +101,7 @@ public static class EmailTemplates
         </table>
         """;
 
-    private static string Layout(string heading, string preheader, string bodyHtml) => $"""
+  private static string Layout(string heading, string preheader, string bodyHtml) => $"""
         <!DOCTYPE html>
         <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
         <title>{Esc(heading)}</title></head>
@@ -107,5 +137,5 @@ public static class EmailTemplates
         </body></html>
         """;
 
-    private static string Esc(string? s) => WebUtility.HtmlEncode(s ?? string.Empty);
+  private static string Esc(string? s) => WebUtility.HtmlEncode(s ?? string.Empty);
 }

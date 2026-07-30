@@ -1,48 +1,11 @@
 ﻿using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using VidyaAI.Application.Articles.Commands;
-using VidyaAI.Application.Articles.Queries;
 using VidyaAI.Application.Auth.Commands;
-using VidyaAI.Application.Dashboard.Queries;
-using VidyaAI.Application.Deliveries.Commands;
-using VidyaAI.Application.Deliveries.Queries;
-using VidyaAI.Application.Flashcards.Commands;
-using VidyaAI.Application.Flashcards.Queries;
-using VidyaAI.Application.LessonPlans.Commands;
-using VidyaAI.Application.LessonPlans.Queries;
-using VidyaAI.Application.Academics.Commands;
-using VidyaAI.Application.Academics.Queries;
-using VidyaAI.Application.Students.Commands;
-using VidyaAI.Application.Students.Queries;
-using VidyaAI.Application.Transport.Commands;
-using VidyaAI.Application.Transport.Queries;
-using VidyaAI.Application.Approvals.Commands;
-using VidyaAI.Application.Approvals.Queries;
-using VidyaAI.Application.Materials.Commands;
-using VidyaAI.Application.Materials.Queries;
-using VidyaAI.Application.Narration.Commands;
-using VidyaAI.Application.Narration.Queries;
-using VidyaAI.Application.Notifications.Commands;
-using VidyaAI.Application.Notifications.Queries;
 using VidyaAI.Application.Registration.Commands;
 using VidyaAI.Application.Registration.Queries;
-using VidyaAI.Application.Quizzes.Commands;
-using VidyaAI.Application.Quizzes.Queries;
-using VidyaAI.Application.Schools.Commands;
-using VidyaAI.Application.Schools.Queries;
-using VidyaAI.Application.SimpleBot.Commands;
-using VidyaAI.Application.Tutor.Commands;
-using VidyaAI.Application.Tutor.Queries;
-using VidyaAI.Application.Users.Commands;
-using VidyaAI.Application.Users.Queries;
 using VidyaAI.Application.DTOs;
-using VidyaAI.Application.Enrollments;
-using VidyaAI.Application.Roles;
-using VidyaAI.Domain.Enums;
 namespace VidyaAI.API.Controllers
 {
     [Route("api/auth")]
@@ -73,10 +36,20 @@ namespace VidyaAI.API.Controllers
                 req.SchoolId, req.Role, req.FirstName, req.LastName, req.Email, req.Password, req.Phone,
                 req.GradeLevel, req.RollNumber, req.DateOfBirth, req.GuardianName, req.GuardianPhone, req.CaptchaToken), ct));
 
+        // [HttpPost("logout"), Authorize]
+        // public async Task<IActionResult> Logout(CancellationToken ct)
+        // {
+        //     await Sender.Send(new LogoutCommand(CurrentUserId), ct);
+        //     return NoContent();
+        // }
         [HttpPost("logout"), Authorize]
-        public async Task<IActionResult> Logout(CancellationToken ct)
+
+        //----Updated logout endpoint to use refresh token instead of userId for logout----
+        public async Task<IActionResult> Logout(
+    [FromBody] LogoutRequest req,
+    CancellationToken ct)
         {
-            await Sender.Send(new LogoutCommand(CurrentUserId), ct);
+            await Sender.Send(new LogoutCommand(req.RefreshToken), ct);
             return NoContent();
         }
 
@@ -88,6 +61,45 @@ namespace VidyaAI.API.Controllers
             role = User.FindFirstValue(ClaimTypes.Role),
             schoolId = User.FindFirstValue("schoolId")
         });
+
+        // ── FORGOT PASSWORD ───────────────────────────────────────────────
+        // Initiates the password reset process.
+        // Always returns the same response regardless of whether the email exists
+        // to prevent account enumeration attacks.
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(
+            [FromBody] ForgotPasswordRequestDto request,
+            CancellationToken ct)
+        {
+            await Sender.Send(
+                new ForgotPasswordCommand(request.Email),
+                ct);
+
+            return Ok(new
+            {
+                success = true,
+                message = "If the provided email address is associated with an account, password reset instructions have been sent."
+            });
+        }
+
+        // Resets the user's password using a valid password reset token.
+        [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(
+            [FromBody] ResetPasswordRequestDto req,
+            CancellationToken ct)
+        {
+            await Sender.Send(new ResetPasswordCommand(
+                req.Token,
+                req.NewPassword,
+                req.ConfirmPassword), ct);
+
+            return Ok(new
+            {
+                message = "Your password has been reset successfully."
+            });
+        }
     }
 
 }

@@ -11,6 +11,27 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<School> Schools => Set<School>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Article> Articles => Set<Article>();
+    //-----Added Sessions table--------
+    public DbSet<Session> Sessions => Set<Session>();
+    //-----Added External Login table--------
+    public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
+    //-----Added OneTimeToken table--------
+    public DbSet<OneTimeToken> OneTimeTokens => Set<OneTimeToken>();
+
+    // Stores two-factor authentication secrets.
+    public DbSet<TotpSecret> TotpSecrets => Set<TotpSecret>();
+    // Backup codes for account recovery.
+    public DbSet<RecoveryCode> RecoveryCodes => Set<RecoveryCode>();
+    // Tracks GDPR/data export requests submitted by users.
+    public DbSet<DataExportRequest> DataExportRequests => Set<DataExportRequest>();
+    // Login history for auditing and security.
+    public DbSet<LoginAudit> LoginAudits => Set<LoginAudit>();
+    // Records administrative actions performed in the system.
+    public DbSet<AdminAudit> AdminAudits => Set<AdminAudit>();
+
+    public DbSet<Exam> Exams => Set<Exam>();
+    public DbSet<ExamSubject> ExamSubjects => Set<ExamSubject>();
+    public DbSet<StudentExamResult> StudentExamResults => Set<StudentExamResult>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<CommentLike> CommentLikes => Set<CommentLike>();
@@ -54,6 +75,20 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     {
         base.OnModelCreating(modelBuilder);
 
+        // ------------------------------------------------------------
+        // PostgreSQL Extensions
+        // ------------------------------------------------------------
+        // Enable the citext extension so text comparisons (such as email)
+        // can be case-insensitive when configured.
+        modelBuilder.HasPostgresExtension("citext");
+
+        // Enable pgcrypto, which provides PostgreSQL cryptographic
+        // functions and UUID generation capabilities.
+        modelBuilder.HasPostgresExtension("pgcrypto");
+
+        // ── SCHOOL ────────────────────────────────────────────────
+
+
         // ── SCHOOL ────────────────────────────────────────────────
         modelBuilder.Entity<School>(e =>
         {
@@ -87,6 +122,149 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.HasIndex(x => x.Email).IsUnique();
             e.HasOne(x => x.School).WithMany(x => x.Users)
                 .HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.SetNull);
+
+        });
+
+        // ── SESSION ───────────────────────────────────────────────
+        modelBuilder.Entity<Session>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.RefreshToken)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            e.Property(x => x.DeviceName)
+                .HasMaxLength(200);
+
+            e.Property(x => x.IpAddress)
+                .HasMaxLength(50);
+
+            e.Property(x => x.UserAgent)
+                .HasMaxLength(500);
+
+            e.HasQueryFilter(x => !x.IsDeleted);
+
+            e.HasOne(x => x.User)
+                .WithMany(x => x.Sessions)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(x => x.UserId);
+
+            e.HasIndex(x => x.RefreshToken)
+                .IsUnique();
+
+            e.HasIndex(x => x.RefreshTokenExpiry);
+        });
+
+        // ── EXTERNAL LOGIN ───────────────────────────────────────
+        modelBuilder.Entity<ExternalLogin>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Provider)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            e.Property(x => x.ProviderUserId)
+                .HasMaxLength(250)
+                .IsRequired();
+
+            e.Property(x => x.ProviderEmail)
+                .HasMaxLength(200);
+
+            e.HasQueryFilter(x => !x.IsDeleted);
+
+            e.HasOne(x => x.User)
+                .WithMany(x => x.ExternalLogins)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // A provider account should only be linked once
+            e.HasIndex(x => new { x.Provider, x.ProviderUserId })
+                .IsUnique();
+
+            // Fast lookup of all external logins for a user
+            e.HasIndex(x => x.UserId);
+        });
+
+        // ── ONE TIME TOKEN ───────────────────────
+        modelBuilder.Entity<OneTimeToken>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Token)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            e.Property(x => x.Purpose)
+                .HasConversion<string>()
+                .IsRequired();
+            e.HasQueryFilter(x => !x.IsDeleted);
+
+            e.HasOne(x => x.User)
+                .WithMany(x => x.OneTimeTokens)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(x => x.UserId);
+
+            e.HasIndex(x => x.Token)
+                .IsUnique();
+
+            e.HasIndex(x => x.ExpiresAt);
+        });
+
+        // -----TOPT SECRET--------
+        modelBuilder.Entity<TotpSecret>()
+            .HasOne(x => x.User)
+            .WithOne(x => x.TotpSecret)
+            .HasForeignKey<TotpSecret>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // ---Recovery Codes---------------------------
+
+        modelBuilder.Entity<RecoveryCode>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.RecoveryCodes)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        //---Data Export Requests---------------------------
+        modelBuilder.Entity<DataExportRequest>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.DataExportRequests)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        //---Login Audits---------------------------
+        modelBuilder.Entity<LoginAudit>(entity =>
+        {
+            // Configure LoginAudit relationships and indexes.
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.LoginAudits)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Speeds up audit lookups by user.
+            entity.HasIndex(x => x.UserId);
+            // Speeds up filtering and reporting by date.
+            entity.HasIndex(x => x.AttemptedAt);
+        });
+
+        modelBuilder.Entity<AdminAudit>(entity =>
+        {
+            // Configure AdminAudit relationships and indexes.
+
+            entity.HasOne(x => x.AdminUser)
+                .WithMany(x => x.AdminAudits)
+                .HasForeignKey(x => x.AdminUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Speeds up audit lookups by administrator.
+            entity.HasIndex(x => x.AdminUserId);
+
+            // Speeds up reporting and filtering by date.
+            entity.HasIndex(x => x.PerformedAt);
         });
 
         modelBuilder.Entity<UserSchoolEnrollment>(e =>
@@ -538,8 +716,105 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             e.HasOne(x => x.Section).WithMany().HasForeignKey(x => x.SectionId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(x => x.House).WithMany().HasForeignKey(x => x.HouseId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.SetNull);
+            e.HasIndex(x => new { x.SchoolId, x.RollNumber });
+
+            e.HasIndex(x => x.ApaarId);
+
+            e.HasIndex(x => x.AadhaarNumber);
+
+            e.HasIndex(x => x.UserId)
+                .IsUnique()
+                .HasFilter("\"UserId\" IS NOT NULL");
+        });
+        // ── EXAMS (A2) ───────────────────────────────
+
+        modelBuilder.Entity<Exam>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            e.HasQueryFilter(x => !x.IsDeleted);
+
+            e.HasIndex(x => x.SchoolId);
+
+            e.HasOne(x => x.School)
+                .WithMany()
+                .HasForeignKey(x => x.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(x => x.AcademicYear)
+                .WithMany()
+                .HasForeignKey(x => x.AcademicYearId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(x => x.Term)
+                .WithMany()
+                .HasForeignKey(x => x.TermId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
+        modelBuilder.Entity<ExamSubject>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.MaxMarks)
+                .HasPrecision(10, 2);
+
+            e.Property(x => x.PassMarks)
+                .HasPrecision(10, 2);
+
+            e.HasOne(x => x.Exam)
+                .WithMany(x => x.Subjects)
+                .HasForeignKey(x => x.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(x => x.Subject)
+                .WithMany()
+                .HasForeignKey(x => x.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasIndex(x => new { x.ExamId, x.SubjectId })
+                .IsUnique();
+        });
+
+        // ── STUDENT EXAM RESULTS (A2) ─────────────────────────────
+        modelBuilder.Entity<StudentExamResult>(e =>
+            {
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.MarksObtained)
+                    .HasPrecision(10, 2);
+
+                e.Property(x => x.Grade)
+                    .HasMaxLength(10);
+
+                e.Property(x => x.Remarks)
+                    .HasMaxLength(500);
+
+                e.HasQueryFilter(x => !x.IsDeleted);
+
+                // Student ↔ ExamResults
+                e.HasOne(x => x.Student)
+                    .WithMany(s => s.ExamResults)
+                    .HasForeignKey(x => x.StudentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // ExamSubject ↔ Results
+                e.HasOne(x => x.ExamSubject)
+                    .WithMany(es => es.Results)
+                    .HasForeignKey(x => x.ExamSubjectId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => x.StudentId);
+
+                e.HasIndex(x => x.ExamSubjectId);
+
+                e.HasIndex(x => new { x.StudentId, x.ExamSubjectId })
+                    .IsUnique();
+            });
         // ── TRANSPORT (D4) ────────────────────────────────────────
         modelBuilder.Entity<TransportVehicle>(e =>
         {
@@ -611,50 +886,85 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
         modelBuilder.Entity<School>().HasData(new School
         {
-            Id = schoolId, Name = "CodeStrix Demo School",
-            City = "Srinagar", State = "J&K", Email = "demo@codestrix.com",
-            Board = BoardType.CBSE, Type = SchoolType.Private,
-            Plan = SubscriptionPlan.Pro, SubscriptionStatus = SubscriptionStatus.Active,
-            SubscriptionExpiresAt = DateTime.UtcNow.AddYears(1), IsActive = true,
+            Id = schoolId,
+            Name = "CodeStrix Demo School",
+            City = "Srinagar",
+            State = "J&K",
+            Email = "demo@codestrix.com",
+            Board = BoardType.CBSE,
+            Type = SchoolType.Private,
+            Plan = SubscriptionPlan.Pro,
+            SubscriptionStatus = SubscriptionStatus.Active,
+            SubscriptionExpiresAt = DateTime.UtcNow.AddYears(1),
+            IsActive = true,
             CreatedAt = DateTime.UtcNow
         });
 
         modelBuilder.Entity<User>().HasData(new User
         {
-            Id = superAdminId, FirstName = "Super", LastName = "Admin",
+            Id = superAdminId,
+            FirstName = "Super",
+            LastName = "Admin",
             Email = "admin@vidyaai.com",
             // Password: Admin@123 (bcrypt)
             PasswordHash = demoPasswordHash,
-            Role = UserRole.SuperAdmin, IsActive = true, EmailVerified = true,
-            SchoolId = schoolId, CreatedAt = DateTime.UtcNow
+            Role = UserRole.SuperAdmin,
+            IsActive = true,
+            EmailVerified = true,
+            SchoolId = schoolId,
+            CreatedAt = DateTime.UtcNow
         },
         new User
         {
-            Id = schoolAdminId, FirstName = "Aaliya", LastName = "Khan",
-            Email = "schooladmin@vidyaai.com", PasswordHash = demoPasswordHash,
-            Role = UserRole.SchoolAdmin, IsActive = true, EmailVerified = true,
-            SchoolId = schoolId, CreatedAt = DateTime.UtcNow
+            Id = schoolAdminId,
+            FirstName = "Aaliya",
+            LastName = "Khan",
+            Email = "schooladmin@vidyaai.com",
+            PasswordHash = demoPasswordHash,
+            Role = UserRole.SchoolAdmin,
+            IsActive = true,
+            EmailVerified = true,
+            SchoolId = schoolId,
+            CreatedAt = DateTime.UtcNow
         },
         new User
         {
-            Id = teacherId, FirstName = "Rohan", LastName = "Sharma",
-            Email = "teacher@vidyaai.com", PasswordHash = demoPasswordHash,
-            Role = UserRole.Teacher, IsActive = true, EmailVerified = true,
-            SchoolId = schoolId, CreatedAt = DateTime.UtcNow
+            Id = teacherId,
+            FirstName = "Rohan",
+            LastName = "Sharma",
+            Email = "teacher@vidyaai.com",
+            PasswordHash = demoPasswordHash,
+            Role = UserRole.Teacher,
+            IsActive = true,
+            EmailVerified = true,
+            SchoolId = schoolId,
+            CreatedAt = DateTime.UtcNow
         },
         new User
         {
-            Id = studentId, FirstName = "Zoya", LastName = "Mir",
-            Email = "student@vidyaai.com", PasswordHash = demoPasswordHash,
-            Role = UserRole.Student, IsActive = true, EmailVerified = true,
-            SchoolId = schoolId, CreatedAt = DateTime.UtcNow
+            Id = studentId,
+            FirstName = "Zoya",
+            LastName = "Mir",
+            Email = "student@vidyaai.com",
+            PasswordHash = demoPasswordHash,
+            Role = UserRole.Student,
+            IsActive = true,
+            EmailVerified = true,
+            SchoolId = schoolId,
+            CreatedAt = DateTime.UtcNow
         },
         new User
         {
-            Id = parentId, FirstName = "Imran", LastName = "Mir",
-            Email = "parent@vidyaai.com", PasswordHash = demoPasswordHash,
-            Role = UserRole.Parent, IsActive = true, EmailVerified = true,
-            SchoolId = schoolId, CreatedAt = DateTime.UtcNow
+            Id = parentId,
+            FirstName = "Imran",
+            LastName = "Mir",
+            Email = "parent@vidyaai.com",
+            PasswordHash = demoPasswordHash,
+            Role = UserRole.Parent,
+            IsActive = true,
+            EmailVerified = true,
+            SchoolId = schoolId,
+            CreatedAt = DateTime.UtcNow
         });
 
         modelBuilder.Entity<Category>().HasData(
@@ -696,9 +1006,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             rows.Add(new RolePermission
             {
                 Id = Guid.Parse($"10000000-0000-0000-0000-{id:000000000000}"),
-                Role = role, RoleDefinitionId = roleDefinitionIds[role],
-                Module = module, CanView = view, CanCreate = create,
-                CanEdit = edit, CanDelete = delete, CanApprove = approve,
+                Role = role,
+                RoleDefinitionId = roleDefinitionIds[role],
+                Module = module,
+                CanView = view,
+                CanCreate = create,
+                CanEdit = edit,
+                CanDelete = delete,
+                CanApprove = approve,
                 CreatedAt = DateTime.UtcNow
             });
         }

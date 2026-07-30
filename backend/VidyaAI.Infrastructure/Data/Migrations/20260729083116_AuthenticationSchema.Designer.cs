@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VidyaAI.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VidyaAI.Infrastructure.Data;
 namespace VidyaAI.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260729083116_AuthenticationSchema")]
+    partial class AuthenticationSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Streams", (string)null);
+                    b.ToTable("Streams");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.AcademicYear", b =>
@@ -94,7 +97,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("AcademicYears", (string)null);
+                    b.ToTable("AcademicYears");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.AdminAudit", b =>
@@ -137,7 +140,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("PerformedAt");
 
-                    b.ToTable("AdminAudits", (string)null);
+                    b.ToTable("AdminAudits");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Announcement", b =>
@@ -181,7 +184,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Announcements", (string)null);
+                    b.ToTable("Announcements");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Article", b =>
@@ -261,7 +264,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("Status");
 
-                    b.ToTable("Articles", (string)null);
+                    b.ToTable("Articles");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Category", b =>
@@ -298,7 +301,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -363,7 +366,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("ChatMessages", (string)null);
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.ChatSession", b =>
@@ -398,7 +401,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ChatSessions", (string)null);
+                    b.ToTable("ChatSessions");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Comment", b =>
@@ -440,7 +443,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.CommentLike", b =>
@@ -471,7 +474,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("CommentId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("CommentLikes", (string)null);
+                    b.ToTable("CommentLikes");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.DataExportRequest", b =>
@@ -509,7 +512,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DataExportRequests", (string)null);
+                    b.ToTable("DataExportRequests");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Delivery", b =>
@@ -569,7 +572,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId", "ScheduledDate");
 
-                    b.ToTable("Deliveries", (string)null);
+                    b.ToTable("Deliveries");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.ExternalLogin", b =>
@@ -611,7 +614,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("Provider", "ProviderUserId")
                         .IsUnique();
 
-                    b.ToTable("ExternalLogins", (string)null);
+                    b.ToTable("ExternalLogins");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Flashcard", b =>
@@ -650,7 +653,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("Flashcards", (string)null);
+                    b.ToTable("Flashcards");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.FlashcardSet", b =>
@@ -696,7 +699,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("FlashcardSets", (string)null);
+                    b.ToTable("FlashcardSets");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.GradeBand", b =>
@@ -747,7 +750,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("GradeBands", (string)null);
+                    b.ToTable("GradeBands");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.GradingScale", b =>
@@ -783,7 +786,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("GradingScales", (string)null);
+                    b.ToTable("GradingScales");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.House", b =>
@@ -822,7 +825,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Houses", (string)null);
+                    b.ToTable("Houses");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.LessonPlan", b =>
@@ -877,7 +880,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("LessonPlans", (string)null);
+                    b.ToTable("LessonPlans");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Like", b =>
@@ -908,7 +911,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("ArticleId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.LoginAudit", b =>
@@ -954,7 +957,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LoginAudits", (string)null);
+                    b.ToTable("LoginAudits");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Material", b =>
@@ -1022,7 +1025,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UploadedById");
 
-                    b.ToTable("Materials", (string)null);
+                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.MaterialChunk", b =>
@@ -1066,7 +1069,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("MaterialId", "ChunkIndex")
                         .IsUnique();
 
-                    b.ToTable("MaterialChunks", (string)null);
+                    b.ToTable("MaterialChunks");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Narration", b =>
@@ -1119,7 +1122,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("MaterialId", "Kind")
                         .IsUnique();
 
-                    b.ToTable("Narrations", (string)null);
+                    b.ToTable("Narrations");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.NarrationSegment", b =>
@@ -1169,7 +1172,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("NarrationId", "SegmentIndex")
                         .IsUnique();
 
-                    b.ToTable("NarrationSegments", (string)null);
+                    b.ToTable("NarrationSegments");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Notification", b =>
@@ -1212,7 +1215,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId", "IsRead");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.OneTimeToken", b =>
@@ -1260,7 +1263,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OneTimeTokens", (string)null);
+                    b.ToTable("OneTimeTokens");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Quiz", b =>
@@ -1310,7 +1313,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Quizzes", (string)null);
+                    b.ToTable("Quizzes");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.QuizAttempt", b =>
@@ -1353,7 +1356,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("QuizAttempts", (string)null);
+                    b.ToTable("QuizAttempts");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.QuizQuestion", b =>
@@ -1398,7 +1401,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("QuizQuestions", (string)null);
+                    b.ToTable("QuizQuestions");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.RecoveryCode", b =>
@@ -1433,7 +1436,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecoveryCodes", (string)null);
+                    b.ToTable("RecoveryCodes");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.RoleDefinition", b =>
@@ -1475,7 +1478,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("RoleDefinitions", (string)null);
+                    b.ToTable("RoleDefinitions");
 
                     b.HasData(
                         new
@@ -1580,7 +1583,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("RoleDefinitionId", "Module")
                         .IsUnique();
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions");
 
                     b.HasData(
                         new
@@ -1936,7 +1939,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
 
                     b.HasData(
                         new
@@ -1992,7 +1995,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("SchoolClasses", (string)null);
+                    b.ToTable("SchoolClasses");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Section", b =>
@@ -2040,7 +2043,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("StreamId");
 
-                    b.ToTable("Sections", (string)null);
+                    b.ToTable("Sections");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Session", b =>
@@ -2096,7 +2099,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Student", b =>
@@ -2272,7 +2275,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("SchoolId", "AdmissionNumber")
                         .IsUnique();
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.StudentTransport", b =>
@@ -2321,7 +2324,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId", "StudentId");
 
-                    b.ToTable("StudentTransports", (string)null);
+                    b.ToTable("StudentTransports");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Subject", b =>
@@ -2365,7 +2368,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.SubjectAllocation", b =>
@@ -2410,7 +2413,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolClassId", "SectionId");
 
-                    b.ToTable("SubjectAllocations", (string)null);
+                    b.ToTable("SubjectAllocations");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.Term", b =>
@@ -2454,7 +2457,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Terms", (string)null);
+                    b.ToTable("Terms");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.TotpSecret", b =>
@@ -2487,7 +2490,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("TotpSecrets", (string)null);
+                    b.ToTable("TotpSecrets");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.TransportRoute", b =>
@@ -2540,7 +2543,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("TransportRoutes", (string)null);
+                    b.ToTable("TransportRoutes");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.TransportStop", b =>
@@ -2590,7 +2593,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("TransportStops", (string)null);
+                    b.ToTable("TransportStops");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.TransportVehicle", b =>
@@ -2644,7 +2647,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("SchoolId", "RegistrationNumber")
                         .IsUnique();
 
-                    b.ToTable("TransportVehicles", (string)null);
+                    b.ToTable("TransportVehicles");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.User", b =>
@@ -2739,7 +2742,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -2847,7 +2850,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("UserId", "CategoryId")
                         .IsUnique();
 
-                    b.ToTable("UserPreferences", (string)null);
+                    b.ToTable("UserPreferences");
                 });
 
             modelBuilder.Entity("VidyaAI.Domain.Entities.UserSchoolEnrollment", b =>
@@ -2892,7 +2895,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.HasIndex("UserId", "SchoolId", "Role")
                         .IsUnique();
 
-                    b.ToTable("UserSchoolEnrollments", (string)null);
+                    b.ToTable("UserSchoolEnrollments");
 
                     b.HasData(
                         new

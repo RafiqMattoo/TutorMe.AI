@@ -36,6 +36,7 @@ import AudioRecapPage from '@/features/audio-recap/pages/AudioRecapPage'
 import CreateVideoPage from '@/features/video/pages/CreateVideoPage'
 import SelectMaterialsPage from '@/features/video/pages/SelectMaterialsPage'
 
+
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
   return token ? <>{children}</> : <Navigate to="/login" replace />;
@@ -99,5 +100,6 @@ export const protectedRoutes = (
     <Route path="lesson-plans" element={<RoleRoute><LessonPlansPage /></RoleRoute>} />
     <Route path="lesson-plans/:id" element={<RoleRoute><LessonPlanDetailPage /></RoleRoute>} />
     <Route path="audio-recap" element={<RoleRoute><AudioRecapPage /></RoleRoute>} />
+ 
   </Route>
 );

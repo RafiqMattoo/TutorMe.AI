@@ -1,39 +1,43 @@
-import { Filter, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface HeaderProps {
-  onFilter?: () => void;
   onGenerate?: () => void;
 }
 
-export default function Header({ onFilter, onGenerate }: HeaderProps) {
+export default function Header({ onGenerate }: HeaderProps) {
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="flex items-center justify-between px-8 py-6">
+    <header className="border-b border-[#E5E7EB] bg-white">
+      <div className="flex  items-end justify-between px-8 pb-5">
         {/* Left */}
         <div>
-          <h1 className="text-[44px] font-bold leading-tight text-[#2C2C6C]">
+          <h1 className="text-[30px] font-bold leading-none tracking-[-0.02em] text-[#172554]">
             Audio Recaps
           </h1>
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onFilter}
-            className="flex h-11 items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 text-[15px] font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            <Filter size={18} />
-            Filter
-          </button>
-
-          <button
-            onClick={onGenerate}
-            className="flex h-11 items-center gap-2 rounded-xl bg-[#1747FF] px-6 text-[15px] font-semibold text-white transition hover:bg-[#0F3DE6]"
-          >
-            <Plus size={18} />
-            Generate Audio Recap
-          </button>
-        </div>
+        <button
+          onClick={onGenerate}
+          className="
+            flex
+            items-center
+            gap-2
+            rounded-xl
+            bg-[#1747FF]
+            px-4
+            py-2
+            text-[12px]
+            font-semibold
+            text-white
+            transition
+            duration-200
+            hover:bg-[#0F3DE6]
+            active:scale-[0.98]
+          "
+        >
+          <Plus size={18} strokeWidth={2.5} />
+          Generate Audio Recap
+        </button>
       </div>
     </header>
   );

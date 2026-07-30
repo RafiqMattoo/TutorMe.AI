@@ -7,6 +7,9 @@ public record LoginRequest(string Email, string Password);
 public record LoginResponse(string AccessToken, string RefreshToken, UserDto User);
 public record RefreshTokenRequest(string RefreshToken);
 public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
+//---Added logout request to use refresh token ---
+public record LogoutRequest(string RefreshToken);
+
 
 // ── SELF-REGISTRATION (public, no auth) ───────────────────────────
 public record RegisterSchoolRequest(
