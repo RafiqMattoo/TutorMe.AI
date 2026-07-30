@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { ArrowLeft, BookOpenCheck, CheckCircle2, GraduationCap, Loader2, School as SchoolIcon, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
-import { authApi } from '../../api'
-import Captcha from '../../components/Captcha'
-import type { BoardType, SchoolType, UserRole } from '../../types'
+
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import { BoardType, SchoolType, UserRole } from '@/shared/types'
+import { authApi } from '../services'
+import Captcha from '@/shared/components/Captcha'
 
 type Tab = 'school' | 'member'
 const boards: BoardType[] = ['CBSE', 'ICSE', 'JKBOSE', 'StateBoard', 'IGCSE', 'Other']

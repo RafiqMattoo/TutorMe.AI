@@ -287,7 +287,7 @@ const selectRole = (role: UserRole) => {
             error={errors.password}
           />
 
-          <div className="mt-2 flex justify-end">
+          <div className="mt-[-10px] flex justify-end">
             <Link
               to="/reset-password"
               className="text-xs font-medium text-[var(--color-primary-600)] transition-colors hover:text-[var(--color-primary-700)]"
