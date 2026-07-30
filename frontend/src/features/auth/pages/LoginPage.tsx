@@ -55,6 +55,7 @@ const methods = useForm<LoginFormData>({
 const {
   handleSubmit,
   setValue,
+  clearErrors, // <-- Extract clearErrors here
   formState: {
     errors,
     isSubmitting,
@@ -62,8 +63,12 @@ const {
 } = methods;
 
 
-  const selectRole = (role: UserRole) => {
+const selectRole = (role: UserRole) => {
     setSelectedRole(role);
+    
+    // Clear any existing validation errors immediately on tab switch
+    clearErrors(); 
+    
     setValue("email", roleProfiles[role].email);
     setValue("password", demoPassword);
   };
@@ -178,39 +183,46 @@ const {
               const p = roleProfiles[role];
               const active = selectedRole === role;
               return (
-                <button
-                  key={role}
-                  onClick={() => selectRole(role)}
-                  className={clsx(
-                    "group rounded-xl border p-3.5 text-left transition-all duration-200",
-                    active
-                      ? "border-blue-400/50 bg-[var(--color-primary-600)]/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30"
-                      : "border-white/[0.07] bg-[var(--color-surface)]/[0.04] hover:border-white/15 hover:bg-[var(--color-surface)]/[0.07]",
-                  )}
-                >
-                  <div
-                    className={clsx(
-                      "mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r",
-                      p.accent,
-                    )}
-                  />
-                  <div
-                    className={clsx(
-                      "text-[13px] font-bold",
-                      active ? "text-blue-200" : "text-white/90",
-                    )}
-                  >
-                    {p.label}
-                  </div>
-                  <div
-                    className={clsx(
-                      "mt-1 text-[11px] leading-4",
-                      active ? "text-blue-300/70" : "text-white/40",
-                    )}
-                  >
-                    {p.scope}
-                  </div>
-                </button>
+              <button
+  key={role}
+  type="button"
+  onClick={() => selectRole(role)}
+  disabled={isSubmitting}
+  className={clsx(
+    "group rounded-xl border p-3.5 text-left transition-all duration-200",
+    isSubmitting && "cursor-not-allowed opacity-60",
+    active
+      ? "border-blue-400/50 bg-[var(--color-primary-600)]/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30"
+      : clsx(
+          "border-white/[0.07] bg-[var(--color-surface)]/[0.04]",
+          !isSubmitting &&
+            "hover:border-white/15 hover:bg-[var(--color-surface)]/[0.07]"
+        ),
+  )}
+>
+  <div
+    className={clsx(
+      "mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r",
+      p.accent,
+    )}
+  />
+  <div
+    className={clsx(
+      "text-[13px] font-bold",
+      active ? "text-blue-200" : "text-white/90",
+    )}
+  >
+    {p.label}
+  </div>
+  <div
+    className={clsx(
+      "mt-1 text-[11px] leading-4",
+      active ? "text-blue-300/70" : "text-white/40",
+    )}
+  >
+    {p.scope}
+  </div>
+</button>
               );
             })}
           </div>
@@ -231,51 +243,56 @@ const {
             </div>
 
             {/* Title & Subtitle */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 lg:block">
-                <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 lg:mt-4 lg:text-[30px] lg:font-black lg:text-[var(--color-text)]">
-                  Welcome back
-                </h2>
+            <div className="mb-6 space-y-2.5">
+  <div className="flex items-center justify-between gap-3">
+    <h2 className="text-2xl font-bold tracking-tight text-slate-900 lg:text-[30px] lg:font-extrabold lg:text-[var(--color-text)]">
+      Welcome back
+    </h2>
 
-                {/* Desktop Role Badge */}
-                <span className="hidden lg:inline-flex items-center gap-1.5 rounded-full bg-[var(--color-primary-600)] px-3 py-1 text-[11.5px] font-bold text-[var(--color-surface)] ring-1 ring-[var(--color-surface-muted)]">
-                  <span
-                    className={clsx(
-                      "h-1.5 w-1.5 rounded-full bg-gradient-to-r",
-                      currentProfile.accent,
-                    )}
-                  />
-                  {currentProfile.label}
-                </span>
-              </div>
+    {/* Desktop Role Badge */}
+    {/* <span className="hidden lg:inline-flex items-center gap-2 rounded-full bg-[var(--color-primary-600)] px-3 py-1.5 text-xs font-semibold text-[var(--color-surface)] shadow-sm ring-1 ring-[var(--color-surface-muted)]">
+      <span
+        className={clsx(
+          "h-2 w-2 rounded-full bg-gradient-to-r",
+          currentProfile.accent,
+        )}
+      />
+      {currentProfile.label}
+    </span> */}
+  </div>
 
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-500 lg:mt-2 lg:text-sm lg:leading-6 lg:text-[var(--color-text-muted)]">
-                {currentProfile.description}
-              </p>
-            </div>
+  <p className="max-w-md text-sm leading-6 text-slate-500 lg:text-[var(--color-text-muted)]">
+    {currentProfile.description}
+  </p>
+</div>
 
             {/* Mobile Segmented Role Switcher Tabs (UI Design) */}
-            <div className="mb-6 flex items-center justify-between rounded-full bg-slate-100/90 p-1 lg:hidden">
+            {/* <div className="mb-6 flex items-center justify-between rounded-full bg-slate-100/90 p-1 lg:hidden">
               {roleOrder.map((role) => {
                 const p = roleProfiles[role];
                 const active = selectedRole === role;
                 return (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => selectRole(role)}
-                    className={clsx(
-                      "flex-1 rounded-full py-1.5 text-center text-[11px] font-medium transition-all duration-150",
-                      active
-                        ? "bg-blue-600 font-semibold text-white shadow-sm"
-                        : "text-slate-600 hover:text-slate-900",
-                    )}
-                  >
-                    {p.label.split(" ")[0]}
-                  </button>
+               <button
+  key={role}
+  type="button"
+  onClick={() => selectRole(role)}
+  disabled={isSubmitting}
+  className={clsx(
+    "flex-1 rounded-full py-1.5 text-center text-[11px] font-medium transition-all duration-150",
+    isSubmitting && "cursor-not-allowed opacity-60",
+    active
+      ? "bg-blue-600 font-semibold text-white shadow-sm"
+      : clsx(
+          "text-slate-600",
+          !isSubmitting && "hover:text-slate-900"
+        ),
+  )}
+>
+  {p.label.split(" ")[0]}
+</button>
                 );
               })}
-            </div>
+            </div> */}
 
             {/* Form */}
             <FormProvider {...methods}>
@@ -352,27 +369,31 @@ const {
             </div>
 
             {/* Desktop Role quick-switch strip (UNTOUCHED DESKTOP VIEW) */}
-            <div className="mt-4 hidden items-center gap-1.5 lg:flex">
+            {/* <div className="mt-4 hidden items-center gap-1.5 lg:flex">
               {roleOrder.map((role) => {
                 const p = roleProfiles[role];
                 const active = selectedRole === role;
                 return (
-                  <button
-                    key={role}
-                    onClick={() => selectRole(role)}
-                    title={p.label}
-                    className={clsx(
-                      "flex-1 rounded-lg py-2 text-[10.5px] font-semibold transition-all",
-                      active
-                        ? "bg-[var(--color-primary-600)] text-[var(--color-surface)] shadow-sm"
-                        : "bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]",
-                    )}
-                  >
-                    {p.label.split(" ")[0]}
-                  </button>
+                 <button
+  key={role}
+  type="button"
+  onClick={() => selectRole(role)}
+  disabled={isSubmitting}
+  title={p.label}
+  className={clsx(
+    "flex-1 rounded-lg py-2 text-[10.5px] font-semibold transition-all",
+    isSubmitting && "cursor-not-allowed opacity-60",
+    active
+      ? "bg-[var(--color-primary-600)] text-[var(--color-surface)] shadow-sm"
+      : "bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]",
+    !isSubmitting && "hover:scale-[1.02]"
+  )}
+>
+  {p.label.split(" ")[0]}
+</button>
                 );
               })}
-            </div>
+            </div> */}
           </div>
         </section>
       </div>
