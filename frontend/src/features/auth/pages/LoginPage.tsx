@@ -38,7 +38,6 @@ const featureList = [
 
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>("SuperAdmin");
-  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthStore();
   const navigate = useNavigate();
 

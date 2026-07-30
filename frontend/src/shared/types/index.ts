@@ -431,42 +431,127 @@ export interface Video {
   authorAvatar?: string;
 likes?: number;
 }
-
 import type {
   InputHTMLAttributes,
   ReactNode,
 } from "react"
 
+import type {
+  FieldError,
+} from "react-hook-form"
 
-export interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+
+export type TextFieldInputType =
+  | "text"
+  | "email"
+  | "password"
+  | "phone"
+  | "number"
+  | "age"
+  | "pincode"
+  | "year"
+  | "bankaccount"
+  | "gst"
+  | "pan"
+  | "ifsc"
+  | "username"
+  | "name"
+  | "address"
+
+
+
+export interface TextFieldInputProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "name"
+    | "type"
+    | "value"
+    | "onChange"
+  > {
+
 
   /**
-   * Icon displayed inside left side
+   * React Hook Form field name
+   */
+  name: string
+
+
+
+  /**
+   * Field label
+   */
+  label?: string
+
+
+
+  /**
+   * Input behavior type
+   */
+  type?: TextFieldInputType
+
+
+
+  /**
+   * Show required indicator
+   */
+  required?: boolean
+
+
+
+  /**
+   * React Hook Form validation error
+   */
+  error?:
+    | FieldError
+    | string
+
+
+
+  /**
+   * Left side icon
    */
   leftIcon?: ReactNode
 
 
+
   /**
-   * Icon displayed inside right side
+   * Right side icon
    */
   rightIcon?: ReactNode
 
 
-  /**
-   * Input size
-   */
-  size?: "sm" | "md" | "lg"
-
 
   /**
-   * Show clear button
+   * Shows clear button when value exists
    */
   clearable?: boolean
 
 
+
   /**
-   * Clear callback
+   * Phone prefix
    */
-  onClear?: () => void
+  countryCode?: string
+
+
+
+  /**
+   * Custom class overrides
+   */
+  className?: string
+
+
+
+  /**
+   * Disable input
+   */
+  disabled?: boolean
+
+
+
+  /**
+   * Read only input
+   */
+  readOnly?: boolean
+
 }
