@@ -25,7 +25,8 @@ import SocialLoginButtons from '../components/SocialLoginButton';
 
 type Tab = 'school' | 'member'
 
-export default function RegisterPage() {
+export default function 
+RegisterPage() {
   const [tab, setTab] = useState<Tab>('school')
   const [done, setDone] = useState<string | null>(null)
 
