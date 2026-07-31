@@ -1,6 +1,6 @@
 import { Route } from "react-router-dom";
 import LoginPage from "../../features/auth/pages/LoginPage";
-import RegisterPage from "../../features/auth/pages/RegisterPage";
+import RegisterPage from "../../features/auth/pages/RegistrationPage";
 import VerificationEmailSentPage from "../../features/auth/pages/VerificationEmailSentPage";
 import VerificationSuccessPage from "../../features/auth/pages/VerificationSuccessPage";
 import VerificationLinkExpiredPage from "../../features/auth/pages/VerificationLinkExpiredPage";
