@@ -9,7 +9,6 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import {SocialLoginButtons} from '../components/SocialLoginButton';
 import { SignupFormData,signupSchema } from '../schemas/register-schema/registerSchema';
   
 
