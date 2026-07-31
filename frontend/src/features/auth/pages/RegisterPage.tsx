@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { ArrowLeft, BookOpenCheck, CheckCircle2, GraduationCap, Loader2, School as SchoolIcon, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SignupFormData,signupSchema } from '../schemas/register-schema/registerSchema';
+  
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { BoardType, SchoolType, UserRole } from '@/shared/types'
