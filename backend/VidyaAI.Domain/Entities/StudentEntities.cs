@@ -69,4 +69,5 @@ public class Student : BaseEntity
     // Optional link to a login account (Student/Parent). Account provisioning deferred.
     public Guid? UserId { get; set; }
     public User? User { get; set; }
+    public ICollection<StudentExamResult> ExamResults { get; set; } = [];
 }

@@ -38,7 +38,6 @@ const featureList = [
 
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>("SuperAdmin");
-  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthStore();
   const navigate = useNavigate();
 
@@ -56,6 +55,7 @@ const methods = useForm<LoginFormData>({
 const {
   handleSubmit,
   setValue,
+  clearErrors, // <-- Extract clearErrors here
   formState: {
     errors,
     isSubmitting,
@@ -63,8 +63,12 @@ const {
 } = methods;
 
 
-  const selectRole = (role: UserRole) => {
+const selectRole = (role: UserRole) => {
     setSelectedRole(role);
+    
+    // Clear any existing validation errors immediately on tab switch
+    clearErrors(); 
+    
     setValue("email", roleProfiles[role].email);
     setValue("password", demoPassword);
   };
@@ -179,203 +183,158 @@ const {
               const p = roleProfiles[role];
               const active = selectedRole === role;
               return (
-                <button
-                  key={role}
-                  onClick={() => selectRole(role)}
-                  className={clsx(
-                    "group rounded-xl border p-3.5 text-left transition-all duration-200",
-                    active
-                      ? "border-blue-400/50 bg-[var(--color-primary-600)]/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30"
-                      : "border-white/[0.07] bg-[var(--color-surface)]/[0.04] hover:border-white/15 hover:bg-[var(--color-surface)]/[0.07]",
-                  )}
-                >
-                  <div
-                    className={clsx(
-                      "mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r",
-                      p.accent,
-                    )}
-                  />
-                  <div
-                    className={clsx(
-                      "text-[13px] font-bold",
-                      active ? "text-blue-200" : "text-white/90",
-                    )}
-                  >
-                    {p.label}
-                  </div>
-                  <div
-                    className={clsx(
-                      "mt-1 text-[11px] leading-4",
-                      active ? "text-blue-300/70" : "text-white/40",
-                    )}
-                  >
-                    {p.scope}
-                  </div>
-                </button>
+              <button
+  key={role}
+  type="button"
+  onClick={() => selectRole(role)}
+  disabled={isSubmitting}
+  className={clsx(
+    "group rounded-xl border p-3.5 text-left transition-all duration-200",
+    isSubmitting && "cursor-not-allowed opacity-60",
+    active
+      ? "border-blue-400/50 bg-[var(--color-primary-600)]/20 shadow-lg shadow-blue-900/40 ring-1 ring-blue-500/30"
+      : clsx(
+          "border-white/[0.07] bg-[var(--color-surface)]/[0.04]",
+          !isSubmitting &&
+            "hover:border-white/15 hover:bg-[var(--color-surface)]/[0.07]"
+        ),
+  )}
+>
+  <div
+    className={clsx(
+      "mb-2.5 h-1 w-8 rounded-full bg-gradient-to-r",
+      p.accent,
+    )}
+  />
+  <div
+    className={clsx(
+      "text-[13px] font-bold",
+      active ? "text-blue-200" : "text-white/90",
+    )}
+  >
+    {p.label}
+  </div>
+  <div
+    className={clsx(
+      "mt-1 text-[11px] leading-4",
+      active ? "text-blue-300/70" : "text-white/40",
+    )}
+  >
+    {p.scope}
+  </div>
+</button>
               );
             })}
           </div>
         </section>
 
-        {/* ── Right: Login form (REFACTORED FOR MOBILE, UNTOUCHED ON DESKTOP) ──────────────── */}
-        <section className="flex min-h-screen overflow-hidden items-center justify-center p-4 lg:min-h-0 lg:bg-[var(--color-surface)] lg:p-8 lg:text-[var(--color-text)]">
-          {/* Card container on mobile / Flat panel on desktop */}
-          <div className="w-full max-w-[440px] rounded-3xl bg-white p-7 shadow-xl shadow-slate-200/60 border border-slate-100 lg:max-w-[400px] lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:border-none">
-            {/* Header Logo (Mobile Design Header) */}
-            <div className="mb-6 flex items-center gap-2.5 lg:hidden">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20">
-                <BookOpenCheck size={20} />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-slate-900">
-                VidyaAI
-              </span>
-            </div>
+       {/* ── Right: Login form ───────────────────────────────────────────── */}
+<section className="flex min-h-screen items-center justify-center overflow-hidden p-4 lg:min-h-0 lg:bg-[var(--color-surface)] lg:p-8 lg:text-[var(--color-text)]">
+  {/* Card */}
+  <div className="w-full max-w-[440px] rounded-3xl border border-slate-100 bg-white p-7 shadow-xl shadow-slate-200/60 lg:max-w-[400px] lg:rounded-none lg:border-none lg:bg-transparent lg:p-0 lg:shadow-none">
 
-            {/* Title & Subtitle */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 lg:block">
-                <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 lg:mt-4 lg:text-[30px] lg:font-black lg:text-[var(--color-text)]">
-                  Welcome back
-                </h2>
+    {/* Mobile Logo */}
+    <div className="mb-8 flex items-center gap-3 lg:hidden">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20">
+        <BookOpenCheck size={20} />
+      </div>
 
-                {/* Desktop Role Badge */}
-                <span className="hidden lg:inline-flex items-center gap-1.5 rounded-full bg-[var(--color-primary-600)] px-3 py-1 text-[11.5px] font-bold text-[var(--color-surface)] ring-1 ring-[var(--color-surface-muted)]">
-                  <span
-                    className={clsx(
-                      "h-1.5 w-1.5 rounded-full bg-gradient-to-r",
-                      currentProfile.accent,
-                    )}
-                  />
-                  {currentProfile.label}
-                </span>
-              </div>
+      <span className="text-xl font-bold tracking-tight text-slate-900">
+        VidyaAI
+      </span>
+    </div>
 
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-500 lg:mt-2 lg:text-sm lg:leading-6 lg:text-[var(--color-text-muted)]">
-                {currentProfile.description}
-              </p>
-            </div>
+    {/* Heading */}
+    <div className="mb-8">
+      <h2 className="text-2xl font-bold tracking-tight text-slate-900 lg:text-[30px] lg:font-extrabold lg:text-[var(--color-text)]">
+        Welcome back
+      </h2>
 
-            {/* Mobile Segmented Role Switcher Tabs (UI Design) */}
-            <div className="mb-6 flex items-center justify-between rounded-full bg-slate-100/90 p-1 lg:hidden">
-              {roleOrder.map((role) => {
-                const p = roleProfiles[role];
-                const active = selectedRole === role;
-                return (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => selectRole(role)}
-                    className={clsx(
-                      "flex-1 rounded-full py-1.5 text-center text-[11px] font-medium transition-all duration-150",
-                      active
-                        ? "bg-blue-600 font-semibold text-white shadow-sm"
-                        : "text-slate-600 hover:text-slate-900",
-                    )}
-                  >
-                    {p.label.split(" ")[0]}
-                  </button>
-                );
-              })}
-            </div>
+      <p className="mt-2 text-sm leading-6 text-slate-500 lg:text-[15px] lg:text-[var(--color-text-muted)]">
+        {currentProfile.description}
+      </p>
+    </div>
 
-            {/* Form */}
-            <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    {/* Form */}
+    <FormProvider {...methods}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
+        {/* Email */}
+        <TextFieldInput
+          name="email"
+          label="Email address"
+          type="email"
+          placeholder="your@email.com"
+          leftIcon={<Mail size={18} />}
+          error={errors.email}
+        />
 
-  {/* Email */}
-  <TextFieldInput
-    name="email"
-    label="Email address"
-    type="email"
-    placeholder="your@email.com"
-    leftIcon={<Mail size={18} />}
-    error={errors.email}
-  />
+        {/* Password */}
+        <div>
+          <TextFieldInput
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            leftIcon={
+              <LockKeyhole
+                size={15}
+                className="text-slate-400 lg:text-[var(--color-text-muted)]"
+              />
+            }
+            error={errors.password}
+          />
 
-
-  {/* Password */}
-  <TextFieldInput
-    name="password"
-    label="Password"
-    type="password"
-    placeholder="••••••••"
-    leftIcon={
-      <LockKeyhole
-        className="text-slate-400 lg:text-[var(--color-text-muted)]"
-        size={15}
-      />
-    }
-    error={errors.password}
-  />
-
-
-  {/* Submit */}
-  <button
-    type="submit"
-    disabled={isSubmitting}
-    className="btn-primary mt-2 w-full py-3 text-[14px]"
-  >
-    {isSubmitting ? (
-      <>
-        <Loader2 size={17} className="animate-spin" />
-        Signing in…
-      </>
-    ) : (
-      <>
-        Sign in <ArrowRight size={16} />
-      </>
-    )}
-  </button>
-
-</form>
-</FormProvider>
-
-            {/* Footer links */}
-            <div className="mt-6 text-center text-xs text-slate-500 space-y-2 lg:text-[13px] lg:text-[var(--color-text-muted)]">
-              <p>
-                Forgot your password?{" "}
-                <Link
-                  to="/reset-password"
-                  className="font-bold text-[var(--color-primary-600)] lg:text-[var(--color-primary-600)] transition-colors hover:text-[var(--color-primary-700)] lg:hover:text-[var(--color-primary-700)]"
-                >
-                  Reset Password
-                </Link>
-              </p>
-              <p>
-                New here?{" "}
-                <Link
-                  to="/register"
-                  className="font-bold text-[var(--color-primary-600)] lg:text-[var(--color-primary-600)] transition-colorshover:text-[var(--color-primary-700)]lg:hover:text-[var(--color-primary-700)]"
-                >
-                  Register a school or join one
-                </Link>
-              </p>
-            </div>
-
-            {/* Desktop Role quick-switch strip (UNTOUCHED DESKTOP VIEW) */}
-            <div className="mt-4 hidden items-center gap-1.5 lg:flex">
-              {roleOrder.map((role) => {
-                const p = roleProfiles[role];
-                const active = selectedRole === role;
-                return (
-                  <button
-                    key={role}
-                    onClick={() => selectRole(role)}
-                    title={p.label}
-                    className={clsx(
-                      "flex-1 rounded-lg py-2 text-[10.5px] font-semibold transition-all",
-                      active
-                        ? "bg-[var(--color-primary-600)] text-[var(--color-surface)] shadow-sm"
-                        : "bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]",
-                    )}
-                  >
-                    {p.label.split(" ")[0]}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="mt-[-10px] flex justify-end">
+            <Link
+              to="/reset-password"
+              className="text-xs font-medium text-[var(--color-primary-600)] transition-colors hover:text-[var(--color-primary-700)]"
+            >
+              Forgot Password?
+            </Link>
           </div>
-        </section>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn-primary mt-2 flex w-full items-center justify-center gap-2 py-3 text-sm"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2
+                size={17}
+                className="animate-spin"
+              />
+              Signing in...
+            </>
+          ) : (
+            <>
+              Sign in
+              <ArrowRight size={16} />
+            </>
+          )}
+        </button>
+      </form>
+    </FormProvider>
+
+    {/* Footer */}
+    <div className="mt-8 border-t border-slate-200 pt-6 text-center">
+      <p className="text-xs text-slate-500 lg:text-[13px] lg:text-[var(--color-text-muted)]">
+        New here?{" "}
+        <Link
+          to="/register"
+          className="font-semibold text-[var(--color-primary-600)] transition-colors hover:text-[var(--color-primary-700)]"
+        >
+          Register a school or join one
+        </Link>
+      </p>
+    </div>
+  </div>
+</section>
       </div>
     </div>
   );
