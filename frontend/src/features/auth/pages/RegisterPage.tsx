@@ -13,13 +13,15 @@ import {
   UserRound,
 } from "lucide-react";
 
-import toast from "react-hot-toast";
-import clsx from "clsx";
-import { BoardType, SchoolType, UserRole } from "@/shared/types";
-import { authApi } from "../services";
-import Captcha from "@/shared/components/Captcha";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import { SignupFormData,signupSchema } from '../schemas/register-schema/registerSchema';
+  
+import toast from 'react-hot-toast'
+import clsx from 'clsx'
+import { BoardType, SchoolType, UserRole } from '@/shared/types'
+import { authApi } from '../services'
+import Captcha from '@/shared/components/Captcha'
 
 import {
   registerSchoolSchema,
@@ -49,6 +51,9 @@ const schoolTypes: SchoolType[] = [
   "College",
 ];
 
+
+
+
 const steps = [
   {
     icon: UserRound,
@@ -72,11 +77,12 @@ function err(e: unknown) {
     ?.message;
 }
 
-export default function RegisterPage() {
-  const [tab, setTab] = useState<Tab>("school");
-  const [done, setDone] = useState<string | null>(null);
-  const [captcha, setCaptcha] = useState<string | undefined>();
-  const navigate = useNavigate();
+export default function 
+RegisterPage() {
+  const [tab, setTab] = useState<Tab>('school')
+  const [done, setDone] = useState<string | null>(null)
+  const [captcha, setCaptcha] = useState<string | undefined>()
+  const navigate = useNavigate()
 
   const { data: schools } = useQuery({
     queryKey: ["public-schools"],
