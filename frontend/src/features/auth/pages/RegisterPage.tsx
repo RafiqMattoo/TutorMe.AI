@@ -12,6 +12,19 @@ import Captcha from '@/shared/components/Captcha'
 type Tab = 'school' | 'member'
 const boards: BoardType[] = ['CBSE', 'ICSE', 'JKBOSE', 'StateBoard', 'IGCSE', 'Other']
 const schoolTypes: SchoolType[] = ['Private', 'Government', 'CoachingCentre', 'College']
+<<<<<<< HEAD
+=======
+
+const steps = [
+  { icon: UserRound,   title: 'Register',        text: 'Create a school, or join one as a teacher or student.' },
+  { icon: ShieldCheck, title: 'Admin approves',  text: 'A super admin reviews schools; school admins review members.' },
+  { icon: Sparkles,    title: 'Start learning',  text: 'Sign in and unlock the AI study workspace.' },
+]
+
+function err(e: unknown) {
+  return (e as { response?: { data?: { message?: string } } })?.response?.data?.message
+}
+>>>>>>> 17c2f6ac94c080ca257055cdfc61030fe050a645
 
 const steps = [
   { icon: UserRound,   title: 'Register',        text: 'Create a school, or join one as a teacher or student.' },

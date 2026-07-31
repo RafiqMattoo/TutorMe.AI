@@ -261,12 +261,12 @@ ref
 
     {label && (
       <div
-        className="
-          mb-1.5
-          flex
-          items-center
-        "
-      >
+  className="
+    mb-2
+    flex
+    items-center
+  "
+>
         <label
           className="
             text-sm
@@ -292,36 +292,41 @@ ref
 
 
 
-    <div
-     className={clsx(
-  `
-  flex
-  h-11
-  w-full
-  items-center
-  rounded-lg
-  border
-  px-3
-  transition-colors
-  bg-[var(--color-surface)]
-  `,
+   <div
+  className={clsx(
+    `
+    flex
+    h-11
+    w-full
+    items-center
+    rounded-xl
+    border
+    bg-[var(--color-surface)]
+    px-4
+    shadow-sm
+    transition-all
+    duration-200
+    `,
 
-  hasError &&
-    "border-[var(--color-danger)]",
+    hasError
+      ? `
+        border-[var(--color-danger)]
+        `
+      : `
+        border-[var(--color-border)]
+        focus-within:border-[var(--color-primary-600)]
+        focus-within:ring-2
+        focus-within:ring-[var(--color-primary-100)]
+        `,
 
-  !hasError &&
-    isFocused &&
-    "border-[var(--color-primary-600)]",
-
-  !hasError &&
-    !isFocused &&
-    "border-[var(--color-border)]",
-
-  disabled &&
-    "cursor-not-allowed opacity-60"
-)}
-    >
-
+    disabled &&
+      `
+      cursor-not-allowed
+      opacity-60
+      bg-[var(--color-surface-muted)]
+      `
+  )}
+>
 
       {leftIcon && (
         <span
@@ -385,21 +390,19 @@ ref
         }
 
 
-        className={clsx(
-          `
-          min-w-0
-          h-full
-          flex-1
-          bg-transparent
-          outline-none
-          text-sm
-          leading-none
-          text-[var(--color-text)]
-          placeholder:text-[var(--color-text-muted)]
-          `,
-          className
-        )}
-
+       className={clsx(
+`
+h-full
+min-w-0
+flex-1
+bg-transparent
+text-sm
+text-[var(--color-text)]
+placeholder:text-[var(--color-text-muted)]
+outline-none
+`,
+className
+)}
 
 
         onChange={(event) => {
