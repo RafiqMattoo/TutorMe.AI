@@ -555,3 +555,37 @@ export interface TextFieldInputProps
   readOnly?: boolean
 
 }
+
+export interface RegisterSchoolFormData {
+  schoolName: string;
+
+  schoolRegistrationNumber?: string;
+
+  address: {
+    houseNo?: string;
+    street: string;
+    area: string;
+    landmark: string;
+  };
+
+  principalName: string;
+
+  establishedYear: number;
+
+  website?: string;
+
+  city: string;
+  state: string;
+
+  phone: string;
+  email: string;
+
+  type: "Private" | "Government";
+  board: string;
+
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  adminPassword: string;
+  adminPhone: string;
+}
