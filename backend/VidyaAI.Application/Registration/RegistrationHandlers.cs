@@ -65,27 +65,45 @@ namespace VidyaAI.Application.Registration.Commands
 
             var school = new School
             {
-                Name = cmd.SchoolName, City = cmd.City, State = cmd.State,
-                Phone = cmd.Phone, Email = cmd.Email, Type = cmd.Type, Board = cmd.Board,
-                Plan = SubscriptionPlan.Free, SubscriptionStatus = SubscriptionStatus.Trial,
-                IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
+                Name = cmd.SchoolName,
+                City = cmd.City,
+                State = cmd.State,
+                Phone = cmd.Phone,
+                Email = cmd.Email,
+                Type = cmd.Type,
+                Board = cmd.Board,
+                Plan = SubscriptionPlan.Free,
+                SubscriptionStatus = SubscriptionStatus.Trial,
+                IsActive = false,
+                ApprovalStatus = ApprovalStatus.Pending,
             };
             db.Schools.Add(school);
 
             var admin = new User
             {
-                FirstName = cmd.AdminFirstName, LastName = cmd.AdminLastName, Email = cmd.AdminEmail,
+                FirstName = cmd.AdminFirstName,
+                LastName = cmd.AdminLastName,
+                Email = cmd.AdminEmail,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.AdminPassword),
-                Phone = cmd.AdminPhone, Role = UserRole.SchoolAdmin, SchoolId = school.Id,
-                IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
+                Phone = cmd.AdminPhone,
+                Role = UserRole.SchoolAdmin,
+                SchoolId = school.Id,
+                IsActive = false,
+                ApprovalStatus = ApprovalStatus.Pending,
             };
             db.Users.Add(admin);
 
             db.UserSchoolEnrollments.Add(new UserSchoolEnrollment
             {
-                UserId = admin.Id, SchoolId = school.Id, Role = UserRole.SchoolAdmin,
-                Status = EnrollmentStatus.Pending, IsPrimary = true,
+                UserId = admin.Id,
+                SchoolId = school.Id,
+                Role = UserRole.SchoolAdmin,
+                Status = EnrollmentStatus.Pending,
+                IsPrimary = true,
             });
+
+
+
 
             await NotificationFactory.AddForRoleAsync(db, UserRole.SuperAdmin, null,
                 NotificationType.ApprovalRequested, "New school awaiting approval",
@@ -147,19 +165,30 @@ namespace VidyaAI.Application.Registration.Commands
 
             var user = new User
             {
-                FirstName = cmd.FirstName, LastName = cmd.LastName, Email = cmd.Email,
+                FirstName = cmd.FirstName,
+                LastName = cmd.LastName,
+                Email = cmd.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.Password),
-                Phone = cmd.Phone, Role = cmd.Role, SchoolId = cmd.SchoolId,
-                IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
-                GradeLevel = cmd.GradeLevel, RollNumber = cmd.RollNumber, DateOfBirth = cmd.DateOfBirth,
-                GuardianName = cmd.GuardianName, GuardianPhone = cmd.GuardianPhone,
+                Phone = cmd.Phone,
+                Role = cmd.Role,
+                SchoolId = cmd.SchoolId,
+                IsActive = false,
+                ApprovalStatus = ApprovalStatus.Pending,
+                GradeLevel = cmd.GradeLevel,
+                RollNumber = cmd.RollNumber,
+                DateOfBirth = cmd.DateOfBirth,
+                GuardianName = cmd.GuardianName,
+                GuardianPhone = cmd.GuardianPhone,
             };
             db.Users.Add(user);
 
             db.UserSchoolEnrollments.Add(new UserSchoolEnrollment
             {
-                UserId = user.Id, SchoolId = cmd.SchoolId, Role = cmd.Role,
-                Status = EnrollmentStatus.Pending, IsPrimary = true,
+                UserId = user.Id,
+                SchoolId = cmd.SchoolId,
+                Role = cmd.Role,
+                Status = EnrollmentStatus.Pending,
+                IsPrimary = true,
             });
 
             await NotificationFactory.AddForRoleAsync(db, UserRole.SchoolAdmin, cmd.SchoolId,
@@ -167,6 +196,21 @@ namespace VidyaAI.Application.Registration.Commands
                 $"{cmd.FirstName} {cmd.LastName} requested to join as a {cmd.Role.ToString().ToLower()}.",
                 user.Id.ToString(), ct);
 
+            // Teachers should only receive student-related notifications.
+            // Notify teachers when a new student registration is submitted.
+
+            if (cmd.Role == UserRole.Student)
+            {
+                await NotificationFactory.AddForRoleAsync(
+                    db,
+                    UserRole.Teacher,
+                    cmd.SchoolId,
+                    NotificationType.ApprovalRequested,
+                    "New student awaiting approval",
+                    $"{cmd.FirstName} {cmd.LastName} requested to join as a student.",
+                    user.Id.ToString(),
+                    ct);
+            }
             await db.SaveChangesAsync(ct);
 
             var (subject, html) = EmailTemplates.MemberRegistrationReceived(

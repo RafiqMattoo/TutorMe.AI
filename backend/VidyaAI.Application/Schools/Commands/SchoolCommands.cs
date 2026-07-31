@@ -73,15 +73,37 @@ namespace VidyaAI.Application.Schools.Commands
     {
         public async Task<SchoolDto> Handle(CreateSchoolCommand cmd, CancellationToken ct)
         {
-            if (!string.IsNullOrEmpty(cmd.Email) && await db.Schools.AnyAsync(s => s.Email == cmd.Email, ct))
-                throw new ArgumentException("A school with this email already exists.");
+            // if (!string.IsNullOrEmpty(cmd.Email) && await db.Schools.AnyAsync(s => s.Email == cmd.Email, ct))
+            //     throw new ArgumentException("A school with this email already exists.");
+            if (!string.IsNullOrWhiteSpace(cmd.Email) &&
+                    await db.Schools.AnyAsync(
+                    s => s.Email != null &&
+                    s.Email.ToLower() == cmd.Email.ToLower(), ct))
+            {
+                throw new ArgumentException(
+                "School with this email already exists.");
+            }
+            if (await db.Schools.AnyAsync(
+                s => s.Name.ToLower() == cmd.Name.ToLower(), ct))
+            {
+                throw new ArgumentException(
+                    "School with this name already exists.");
+            }
 
             var school = new School
             {
-                Name = cmd.Name, Address = cmd.Address, City = cmd.City, State = cmd.State,
-                Phone = cmd.Phone, Email = cmd.Email, Type = cmd.Type, Board = cmd.Board,
-                Plan = cmd.Plan, SubscriptionStatus = SubscriptionStatus.Trial,
-                SubscriptionExpiresAt = DateTime.UtcNow.AddDays(14), IsActive = true
+                Name = cmd.Name,
+                Address = cmd.Address,
+                City = cmd.City,
+                State = cmd.State,
+                Phone = cmd.Phone,
+                Email = cmd.Email,
+                Type = cmd.Type,
+                Board = cmd.Board,
+                Plan = cmd.Plan,
+                SubscriptionStatus = SubscriptionStatus.Trial,
+                SubscriptionExpiresAt = DateTime.UtcNow.AddDays(14),
+                IsActive = true
             };
             db.Schools.Add(school);
             await db.SaveChangesAsync(ct);
@@ -105,24 +127,62 @@ namespace VidyaAI.Application.Schools.Commands
     {
         public async Task<SchoolDto> Handle(UpdateSchoolCommand cmd, CancellationToken ct)
         {
+            // Check if the school exists
             var school = await db.Schools.FindAsync([cmd.Id], ct)
                 ?? throw new KeyNotFoundException($"School {cmd.Id} not found.");
+            // Check if the email is already used by another school
+            if (!string.IsNullOrWhiteSpace(cmd.Email))
+            {
+                var emailExists = await db.Schools.AnyAsync(
+                    s => s.Id != cmd.Id &&
+                         s.Email != null &&
+                         s.Email.ToLower() == cmd.Email.ToLower(),
+                    ct);
 
-            school.Name = cmd.Name; school.Address = cmd.Address; school.City = cmd.City;
-            school.State = cmd.State; school.Phone = cmd.Phone; school.Email = cmd.Email;
-            school.LogoUrl = cmd.LogoUrl; school.Type = cmd.Type; school.Board = cmd.Board;
-            school.IsActive = cmd.IsActive; school.Plan = cmd.Plan;
+                if (emailExists)
+                {
+                    throw new ArgumentException(
+                        "School with this email already exists.");
+                }
+            }
+            // Check if the name is already used by another school
+            school.Name = cmd.Name;
+            school.Address = cmd.Address;
+            school.City = cmd.City;
+            school.State = cmd.State;
+            school.Phone = cmd.Phone;
+            school.Email = cmd.Email;
+            school.LogoUrl = cmd.LogoUrl;
+            school.Type = cmd.Type;
+            school.Board = cmd.Board;
+            school.IsActive = cmd.IsActive;
+            school.Plan = cmd.Plan;
             school.SubscriptionStatus = cmd.SubscriptionStatus;
             school.SubscriptionExpiresAt = cmd.SubscriptionExpiresAt;
+
             await db.SaveChangesAsync(ct);
 
-            return new SchoolDto(school.Id, school.Name, school.Address, school.City, school.State,
-                school.Phone, school.Email, school.LogoUrl, school.Type, school.Board,
-                school.Plan, school.SubscriptionStatus, school.SubscriptionExpiresAt,
-                school.IsActive, 0, 0, school.CreatedAt, school.ApprovalStatus);
+            return new SchoolDto(
+                school.Id,
+                school.Name,
+                school.Address,
+                school.City,
+                school.State,
+                school.Phone,
+                school.Email,
+                school.LogoUrl,
+                school.Type,
+                school.Board,
+                school.Plan,
+                school.SubscriptionStatus,
+                school.SubscriptionExpiresAt,
+                school.IsActive,
+                0,
+                0,
+                school.CreatedAt,
+                school.ApprovalStatus);
         }
     }
-
     public record DeleteSchoolCommand(Guid Id) : IRequest;
 
     public sealed class DeleteSchoolCommandHandler(IAppDbContext db)
