@@ -504,6 +504,7 @@ export interface TextFieldInputProps
   error?:
     | FieldError
     | string
+    
 
 
 
@@ -558,8 +559,15 @@ export interface TextFieldInputProps
 
 export interface RegisterSchoolFormData {
   schoolName: string;
-
   schoolRegistrationNumber?: string;
+
+  city: string;
+  state: string;
+  phone: string;
+  email: string;
+
+  type: SchoolType;
+  board: BoardType;
 
   address: {
     houseNo?: string;
@@ -569,23 +577,13 @@ export interface RegisterSchoolFormData {
   };
 
   principalName: string;
-
   establishedYear: number;
-
   website?: string;
-
-  city: string;
-  state: string;
-
-  phone: string;
-  email: string;
-
-  type: "Private" | "Government";
-  board: string;
 
   adminFirstName: string;
   adminLastName: string;
   adminEmail: string;
   adminPassword: string;
   adminPhone: string;
+  supportingDocument?: File;
 }
