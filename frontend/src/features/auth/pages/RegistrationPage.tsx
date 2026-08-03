@@ -17,10 +17,22 @@ type Tab = 'school' | 'member'
 type MemberRole = 'Student' | 'Teacher'
 
 const steps = [
-  { icon: UserRound, title: 'Register', text: 'Create a school, or join one as a teacher or student.' },
-  { icon: ShieldCheck, title: 'Admin approves', text: 'A super admin reviews schools; school admins review members.' },
-  { icon: Sparkles, title: 'Start learning', text: 'Sign in and unlock the AI study workspace.' },
-]
+  {
+    icon: UserRound,
+    title: "Register",
+    text: "Create a school, or join one as a teacher or student.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Admin approves",
+    text: "A super admin reviews schools; school admins review members.",
+  },
+  {
+    icon: Sparkles,
+    title: "Start learning",
+    text: "Sign in and unlock the AI study workspace.",
+  },
+];
 
 export default function RegistrationPage() {
   const [tab, setTab] = useState<Tab>('school')
@@ -76,10 +88,26 @@ export default function RegistrationPage() {
           className="relative hidden flex-col overflow-hidden px-10 py-10 text-white lg:flex"
           style={{ background: 'radial-gradient(circle at 20% 15%, rgba(37,99,235,0.45) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.35) 0%, transparent 40%), linear-gradient(160deg, #020617 0%, #0c1a3a 55%, #080f1e 100%)' }}
         >
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '46px 46px' }} />
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,1) 1px, transparent 1px)",
+              backgroundSize: "46px 46px",
+            }}
+          />
           <div className="relative flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-xl shadow-blue-600/50"><BookOpenCheck size={22} /></div>
-            <div><div className="text-[16px] font-bold tracking-tight">VidyaAI</div><div className="text-[11px] font-medium text-white/45">Learning Platform</div></div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-xl shadow-blue-600/50">
+              <BookOpenCheck size={22} />
+            </div>
+            <div>
+              <div className="text-[16px] font-bold tracking-tight">
+                VidyaAI
+              </div>
+              <div className="text-[11px] font-medium text-white/45">
+                Learning Platform
+              </div>
+            </div>
           </div>
          <div className="relative mt-10 max-w-md">
             <h1 className="text-[40px] font-black leading-[1.08] tracking-tight">Join the <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">smarter</span> way to learn.</h1>
@@ -87,8 +115,22 @@ export default function RegistrationPage() {
             <ul className="mt-9 space-y-5">
               {steps.map(({ icon: Icon, title, text }, index) => (
                 <li key={title} className="flex gap-3.5">
-                  <div className="flex flex-col items-center"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600/25 text-blue-300 ring-1 ring-blue-500/30"><Icon size={16} /></span>{index < steps.length - 1 && <span className="mt-1 h-7 w-px bg-white/10" />}</div>
-                  <div className="pt-1"><div className="text-[13.5px] font-bold text-white">{title}</div><div className="mt-0.5 text-[12px] leading-5 text-slate-400">{text}</div></div>
+                  <div className="flex flex-col items-center">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600/25 text-blue-300 ring-1 ring-blue-500/30">
+                      <Icon size={16} />
+                    </span>
+                    {index < steps.length - 1 && (
+                      <span className="mt-1 h-7 w-px bg-white/10" />
+                    )}
+                  </div>
+                  <div className="pt-1">
+                    <div className="text-[13.5px] font-bold text-white">
+                      {title}
+                    </div>
+                    <div className="mt-0.5 text-[12px] leading-5 text-slate-400">
+                      {text}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -110,10 +152,22 @@ export default function RegistrationPage() {
             <Link to="/login" className="mb-5 inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 lg:hidden"><ArrowLeft size={14} /> Back to sign in</Link>
             {done ? (
               <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                <CheckCircle2 className="mx-auto mb-4 text-emerald-500" size={48} />
-                <h2 className="text-2xl font-black text-slate-900">Registration received</h2>
-                <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-500">{done}</p>
-                <button onClick={() => navigate('/login')} className="btn-primary mx-auto mt-6">Back to sign in</button>
+                <CheckCircle2
+                  className="mx-auto mb-4 text-emerald-500"
+                  size={48}
+                />
+                <h2 className="text-2xl font-black text-slate-900">
+                  Registration received
+                </h2>
+                <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-500">
+                  {done}
+                </p>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="btn-primary mx-auto mt-6"
+                >
+                  Back to sign in
+                </button>
               </div>
             ) : (
               <>
@@ -141,7 +195,12 @@ export default function RegistrationPage() {
                         searchable
                         value={schoolId}
                         onChange={setSchoolId}
-                        options={(schools ?? []).map((school) => ({ value: school.id, label: school.city ? `${school.name} — ${school.city}` : school.name }))}
+                        options={(schools ?? []).map((school) => ({
+                          value: school.id,
+                          label: school.city
+                            ? `${school.name} — ${school.city}`
+                            : school.name,
+                        }))}
                       />
                       {!schools?.length && <p className="text-xs text-amber-600">No approved schools yet. Register a school first, or check back once it's approved.</p>}
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -151,8 +210,18 @@ export default function RegistrationPage() {
                           </button>
                         ))}
                       </div>
-                      {memberRole === 'Teacher' && <TeacherRegisterForm schoolId={schoolId} onSuccess={setDone} />}
-                      {memberRole === 'Student' && <StudentRegisterForm schoolId={schoolId} onSuccess={setDone} />}
+                      {memberRole === "Teacher" && (
+                        <TeacherRegisterForm
+                          schoolId={schoolId}
+                          onSuccess={setDone}
+                        />
+                      )}
+                      {memberRole === "Student" && (
+                        <StudentRegisterForm
+                          schoolId={schoolId}
+                          onSuccess={setDone}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -162,9 +231,42 @@ export default function RegistrationPage() {
         </section>
       </div>
     </div>
-  )
+  );
 }
 
-function TabButton({ active, onClick, icon: Icon, label, sub }: { active: boolean; onClick: () => void; icon: typeof SchoolIcon; label: string; sub: string }) {
-  return <button onClick={onClick} className={clsx('rounded-xl border p-3 text-left transition-all', active ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200' : 'border-slate-200 hover:bg-slate-50')}><Icon size={18} className={active ? 'text-blue-600' : 'text-slate-400'} /><div className={clsx('mt-1.5 text-[13px] font-bold', active ? 'text-blue-700' : 'text-slate-700')}>{label}</div><div className="text-[11px] text-slate-400">{sub}</div></button>
+function TabButton({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+  sub,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: typeof SchoolIcon;
+  label: string;
+  sub: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={clsx(
+        "rounded-xl border p-3 text-left transition-all",
+        active
+          ? "border-blue-500 bg-blue-50 ring-1 ring-blue-200"
+          : "border-slate-200 hover:bg-slate-50",
+      )}
+    >
+      <Icon size={18} className={active ? "text-blue-600" : "text-slate-400"} />
+      <div
+        className={clsx(
+          "mt-1.5 text-[13px] font-bold",
+          active ? "text-blue-700" : "text-slate-700",
+        )}
+      >
+        {label}
+      </div>
+      <div className="text-[11px] text-slate-400">{sub}</div>
+    </button>
+  );
 }

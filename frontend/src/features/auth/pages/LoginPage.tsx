@@ -270,6 +270,7 @@ const selectRole = (role: UserRole) => {
           placeholder="your@email.com"
           leftIcon={<Mail size={18} />}
           error={errors.email}
+          required
         />
 
         {/* Password */}
@@ -278,6 +279,7 @@ const selectRole = (role: UserRole) => {
             name="password"
             label="Password"
             type="password"
+            required
             placeholder="••••••••"
             leftIcon={
               <LockKeyhole

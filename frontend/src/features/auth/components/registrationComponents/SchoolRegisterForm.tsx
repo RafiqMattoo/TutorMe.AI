@@ -17,7 +17,7 @@ import { authApi } from "../../services";
 import { Section } from "../FormControls";
 import { stateCityData } from "@/shared/data/indiaStatesCities";
 import { useEffect } from "react";
-
+import FileUploadInput from "@/shared/components/ui/FileUploadInput";
 const boards: BoardType[] = [
   "CBSE",
   "ICSE",
@@ -125,6 +125,7 @@ export default function SchoolRegisterForm({
         label="School Name"
         placeholder="Enter school name"
         error={errors.schoolName}
+        required
       />
 
       <TextFieldInput
@@ -133,10 +134,11 @@ export default function SchoolRegisterForm({
   label="School Registration Number"
   placeholder="Enter registration number (optional)"
   error={errors.schoolRegistrationNumber}
+  required
 />
 </div>
 {/* <Section title="School Address" /> */}
-  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+  {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 <TextFieldInput
   name="address.houseNo"
   type="number"
@@ -151,6 +153,7 @@ export default function SchoolRegisterForm({
   label="Street"
   placeholder="Enter street"
   error={errors.address?.street}
+  required
 />
 </div>
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -162,6 +165,7 @@ export default function SchoolRegisterForm({
 
   placeholder="Enter area"
   error={errors.address?.area}
+  required
 />
 
 <TextFieldInput
@@ -171,18 +175,20 @@ export default function SchoolRegisterForm({
   label="Landmark"
   placeholder="Enter landmark"
   error={errors.address?.landmark}
+  required
 />
 </div>
 
 {/* <Section title="School Information" /> */}
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-<TextFieldInput
+{/* <TextFieldInput
   name="principalName"
   type="text"
   label="Principal Name"
   placeholder="Enter principal name"
   error={errors.principalName}
-/>
+  required
+/>  */}
 
 <TextFieldInput
   name="establishedYear"
@@ -190,16 +196,17 @@ export default function SchoolRegisterForm({
   type="number"
   placeholder="e.g. 1998"
   error={errors.establishedYear}
+  required
 />
 </div>
 
-<TextFieldInput
+{/* <TextFieldInput
   name="website"
   label="Website"
   type="text"
   placeholder="https://example.com"
   error={errors.website}
-/>
+/> */}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
@@ -285,6 +292,7 @@ export default function SchoolRegisterForm({
           type="number"
           placeholder="Enter phone number"
           error={errors.phone}
+          required
         />
 
         <TextFieldInput
@@ -293,18 +301,20 @@ export default function SchoolRegisterForm({
   type="email"
   placeholder="Enter school email"
   error={errors.email?.message}
+  required
 />
       </div>
 
       {/* <Section title="Admin account" /> */}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextFieldInput
           name="adminFirstName"
           label="First Name"
           type="text"
           placeholder="Enter first name"
           error={errors.adminFirstName}
+          required
         />
 
         <TextFieldInput
@@ -313,6 +323,7 @@ export default function SchoolRegisterForm({
           type="text"
           placeholder="Enter last name"
           error={errors.adminLastName}
+          required
         />
       </div>
 
@@ -322,6 +333,7 @@ export default function SchoolRegisterForm({
         type="email"
         placeholder="Enter admin email"
         error={errors.adminEmail}
+        required
       />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -331,6 +343,7 @@ export default function SchoolRegisterForm({
           type="password"
           placeholder="Enter password"
           error={errors.adminPassword}
+          required
         />
 
         <TextFieldInput
@@ -339,12 +352,19 @@ export default function SchoolRegisterForm({
           type="number"
           placeholder="Enter phone number"
           error={errors.adminPhone}
+          required
         />
-      </div>
+      </div> */}
 
       {/* <Section title="Supporting Documents" /> */}
+      <FileUploadInput
+      label="Upload Supporting Document"
+  name="supportingDocument"
+  accept=".pdf,.png,.jpg,.jpeg"
+  error={errors.supportingDocument?.message}
+/>
 
-<Controller
+{/* <Controller
   name="supportingDocument"
   control={control}
   render={({ field }) => (
@@ -404,7 +424,8 @@ export default function SchoolRegisterForm({
 
     </div>
   )}
-/>
+</> */}
+
 
       <Captcha onChange={setCaptcha} />
 

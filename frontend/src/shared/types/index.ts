@@ -431,6 +431,44 @@ export interface Video {
   authorAvatar?: string;
 likes?: number;
 }
+
+export interface FileUploadValue {
+  name: string
+  size: number
+  type: string
+  uri: string
+  file?: File | null
+}
+
+export interface FileUploadInputProps {
+  name: string
+  label?: string
+  required?: boolean
+  optional?: boolean
+  accept?: string
+  maxSizeInMB?: number
+  placeholder?: string
+  helperText?: string
+  disabled?: boolean
+  error?: FieldError | string
+  className?: string
+  value?: FileUploadValue | File | null
+  onChange?: (value: FileUploadValue | null) => void
+}
+
+export interface DatePickerInputProps {
+  name: string
+  label?: string
+  required?: boolean
+  optional?: boolean
+  placeholder?: string
+  disabled?: boolean
+  error?: FieldError | string
+  className?: string
+  value?: string | Date | null
+  onChange?: (value: string) => void
+}
+
 import type {
   InputHTMLAttributes,
   ReactNode,

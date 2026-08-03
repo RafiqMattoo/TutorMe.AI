@@ -90,8 +90,11 @@ export const registerSchoolSchema = z.object({
 
   // Document
   supportingDocument: z
-    .instanceof(File)
-    .optional(),
+  .instanceof(File)
+  .nullable()
+  .refine((file) => file !== null, {
+    message: "Please upload a supporting document.",
+  }),
 
 
   // Existing Admin fields
@@ -144,6 +147,7 @@ board: z.enum(
     .string()
     .trim()
     .min(10, "Phone number is required."),
+
 });
 
 
