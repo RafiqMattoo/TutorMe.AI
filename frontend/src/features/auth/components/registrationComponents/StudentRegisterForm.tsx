@@ -15,8 +15,8 @@ import Button from "@/shared/components/ui/customButton/button"
 
 import { studentSchema, StudentFormData } from "../../schemas/student-schema/StudentSchema"
 import {
-  gradeOptions, sectionOptions, genderOptions, bloodGroupOptions,
-  guardianRelationOptions, stateOptions, cityOptionsByState,
+
+  guardianRelationOptions, 
 } from "@/data/RegistrationData"
 
 function errorMessage(error: unknown) {
@@ -37,15 +37,15 @@ export default function StudentRegisterForm({
     mode: "onChange",
     defaultValues: {
       firstName: "", lastName: "", email: "", password: "", phone: "",
-      grade: "", section: "", rollNumber: "", admissionNumber: "", gender: "",
-      dateOfBirth: "", address: "", bloodGroup: "", guardianName: "",
-      guardianRelation: "", guardianPhone: "", parentEmail: "", state: "", city: "",
+    
+     guardianName: "",
+      guardianRelation: "", guardianPhone: "", parentEmail: "", 
     },
   })
 
   const { handleSubmit, watch, setValue, formState: { errors } } = methods
   const selectedState = watch("state")
-  const cityOptions = selectedState ? cityOptionsByState[selectedState] ?? [] : []
+  // const cityOptions = selectedState ? cityOptionsByState[selectedState] ?? [] : []
 
   const registerStudent = useMutation({
     mutationFn: (data: StudentFormData) => {
@@ -76,9 +76,9 @@ export default function StudentRegisterForm({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
 
-        <Section title="Your details" />
+        <Section title="" />
         <div className="grid grid-cols-2 gap-3">
           <TextFieldInput name="firstName" label="First Name" type="name" placeholder="First name" required error={errors.firstName} />
           <TextFieldInput name="lastName" label="Last Name" type="name" placeholder="Last name" required error={errors.lastName} />
@@ -91,7 +91,7 @@ export default function StudentRegisterForm({
           <TextFieldInput name="phone" label="Phone Number" type="phone" placeholder="Phone number" required error={errors.phone} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        {/* <div className="grid grid-cols-2 gap-3">
           <SearchableDropdown name="gender" label="Gender" options={genderOptions} placeholder="Select gender" error={errors.gender?.message} />
 
           <DatePickerInput
@@ -100,11 +100,11 @@ export default function StudentRegisterForm({
             required
             error={errors.dateOfBirth?.message}
           />
-        </div>
+        </div> */}
+{/* 
+        <TextFieldInput name="address" label="Address" type="address" placeholder="Address" required error={errors.address} /> */}
 
-        <TextFieldInput name="address" label="Address" type="address" placeholder="Address" required error={errors.address} />
-
-        <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        {/* <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <Section title="Student profile" />
 
           <div className="grid grid-cols-2 gap-3">
@@ -118,9 +118,9 @@ export default function StudentRegisterForm({
           </div>
 
           <SearchableDropdown name="bloodGroup" label="Blood Group" options={bloodGroupOptions} placeholder="Select blood group" optional error={errors.bloodGroup?.message} />
-        </div>
+        </div> */}
 
-        <Section title="Location" />
+        {/* <Section title="Location" />
         <div className="grid grid-cols-2 gap-3">
           <SearchableDropdown
             name="state" label="State" options={stateOptions} placeholder="Select state" searchable
@@ -133,28 +133,33 @@ export default function StudentRegisterForm({
             disabled={!selectedState}
             error={errors.city?.message}
           />
-        </div>
+        </div> */}
 
-        <Section title="Guardian details" />
-        <div className="grid grid-cols-2 gap-3">
+        {/* <Section title="" /> */}
+        {/* <div className="grid grid-cols-2 gap-3">
           <TextFieldInput name="guardianName" label="Guardian Name" type="name" placeholder="Guardian name" required error={errors.guardianName} />
           <SearchableDropdown name="guardianRelation" label="Guardian Relation" options={guardianRelationOptions} placeholder="Select relation" error={errors.guardianRelation?.message} />
-        </div>
+        </div> */}
+          
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <TextFieldInput name="guardianName" label="Guardian Name" type="name" placeholder="Guardian name" required error={errors.guardianName} />
+                  <SearchableDropdown name="guardianRelation" label="Guardian Relation" options={guardianRelationOptions} placeholder="Select relation" error={errors.guardianRelation?.message} />
+                </div>
 
         <div className="grid grid-cols-2 gap-3">
           <TextFieldInput name="guardianPhone" label="Guardian Phone" type="phone" placeholder="Guardian phone" required error={errors.guardianPhone} />
           <TextFieldInput name="parentEmail" label="Parent Email" type="email" placeholder="Parent email" required error={errors.parentEmail} />
         </div>
 
-        <Section title="Documents" />
+        <Section title="" />
 
-        <FileUploadInput
+        {/* <FileUploadInput
           name="profilePhoto"
           label="Profile Photo"
           accept=".jpg,.jpeg,.png"
           required
           error={errors.profilePhoto?.message as string}
-        />
+        /> */}
 
         <FileUploadInput
           name="idDocument"
