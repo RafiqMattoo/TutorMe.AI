@@ -5,55 +5,27 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import Captcha from "@/shared/components/Captcha";
-import SearchableDropdown from "@/shared/components/ui/SearchableDropdown";
+import FileUploadInput from "@/shared/components/ui/FileUploadInput";
+import TextFieldInput from "@/shared/components/ui/TextFieldInput";
 
 import { authApi } from "../../services";
 import { Section } from "../FormControls";
-import TextFieldInput from "@/shared/components/ui/TextFieldInput";
+import type { FileUploadValue } from "@/shared/types";
 
 function errorMessage(error: unknown) {
   return (error as { response?: { data?: { message?: string } } })?.response
     ?.data?.message;
 }
 
-const genderOptions = [
-  { value: "Male", label: "Male" },
-  { value: "Female", label: "Female" },
-  { value: "Other", label: "Other" },
-];
-const subjectOptions = [
-  { value: "Mathematics", label: "Mathematics" },
-  { value: "Science", label: "Science" },
-  { value: "English", label: "English" },
-  { value: "Computer", label: "Computer" },
-  { value: "Social Studies", label: "Social Studies" },
-  { value: "Physics", label: "Physics" },
-  { value: "Chemistry", label: "Chemistry" },
-  { value: "Biology", label: "Biology" },
-  { value: "Hindi", label: "Hindi" },
-  { value: "Urdu", label: "Urdu" },
-  { value: "Other", label: "Other" },
-];
-const qualificationOptions = [
-  { value: "B.Ed", label: "B.Ed" },
-  { value: "M.Ed", label: "M.Ed" },
-  { value: "B.Sc", label: "B.Sc" },
-  { value: "M.Sc", label: "M.Sc" },
-  { value: "B.A", label: "B.A" },
-  { value: "M.A", label: "M.A" },
-  { value: "B.Com", label: "B.Com" },
-  { value: "M.Com", label: "M.Com" },
-  { value: "Ph.D", label: "Ph.D" },
-  { value: "Other", label: "Other" },
-];
-const teachingExperienceOptions = [
-  { value: "Fresher", label: "Fresher" },
-  { value: "1 Year", label: "1 Year" },
-  { value: "2 Years", label: "2 Years" },
-  { value: "3 Years", label: "3 Years" },
-  { value: "5 Years", label: "5 Years" },
-  { value: "10+ Years", label: "10+ Years" },
-];
+type TeacherRegisterFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  qualification: string;
+  experience: string;
+  profilePhoto: FileUploadValue | null;
+  document: FileUploadValue | null;
+};
 
 export default function TeacherRegisterForm({
   schoolId,
@@ -62,67 +34,57 @@ export default function TeacherRegisterForm({
   schoolId: string;
   onSuccess: (message: string) => void;
 }) {
-  const methods = useForm({
+  const [captcha, setCaptcha] = useState<string | undefined>();
+
+  const methods = useForm<TeacherRegisterFormData>({
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
-      password: "",
-      phone: "",
-      subject: "",
-      employeeId: "",
       qualification: "",
-      teachingExperience: "",
-      gender: "",
-      dateOfBirth: "",
-      address: "",
-      teacherId: "",
+      experience: "",
+      profilePhoto: null,
+      document: null,
     },
   });
 
   const { handleSubmit } = methods;
 
-  const [captcha, setCaptcha] = useState<string | undefined>();
-
-  const [teacher, setTeacher] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    phone: "",
-    subject: "",
-    employeeId: "",
-    qualification: "",
-    teachingExperience: "",
-    gender: "",
-    dateOfBirth: "",
-    address: "",
-    teacherId: "",
-    profilePhoto: null as File | null,
-  });
   const registerTeacher = useMutation({
-    mutationFn: (data: any) =>
+    mutationFn: (data: TeacherRegisterFormData) =>
       authApi.registerMember({
         ...data,
-        profilePhoto: teacher.profilePhoto,
+        profilePhoto: data.profilePhoto?.file ?? null,
+        document: data.document?.file ?? null,
         schoolId,
         role: "Teacher",
         captchaToken: captcha,
       }),
-    onSuccess: (response) => onSuccess(response.message),
-    onError: (error) =>
-      toast.error(errorMessage(error) ?? "Could not submit registration"),
+
+    onSuccess: (response) => {
+      onSuccess(response.message);
+    },
+
+    onError: (error) => {
+      toast.error(errorMessage(error) ?? "Could not submit registration");
+    },
   });
+
+  const onSubmit = (data: TeacherRegisterFormData) => {
+    registerTeacher.mutate(data);
+  };
+
   return (
     <FormProvider {...methods}>
-      <div className="space-y-4">
-        <Section title="Your details" />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <Section title="Your Details" />
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <TextFieldInput
             name="firstName"
             label="First Name"
             type="name"
+            placeholder="First name"
             required
           />
 
@@ -130,129 +92,90 @@ export default function TeacherRegisterForm({
             name="lastName"
             label="Last Name"
             type="name"
+            placeholder="Last name"
             required
           />
         </div>
 
-        <TextFieldInput name="email" label="Email" type="email" required />
-
-        <div className="grid grid-cols-2 gap-3">
-          <TextFieldInput
-            name="password"
-            label="Password"
-            type="password"
-            required
-          />
-
-          <TextFieldInput name="phone" label="Phone" type="phone" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <TextFieldInput name="employeeId" label="Employee ID" required />
-
-          <TextFieldInput name="teacherId" label="Teacher ID" required />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 pb-4">
-          <SearchableDropdown
-            name="subject"
-            label="Subject"
-            placeholder="Select Subject"
-            options={subjectOptions}
-            searchable
-          />
-          <SearchableDropdown
-            name="qualification"
-            label="Qualification"
-            placeholder="Select Qualification"
-            options={qualificationOptions}
-            searchable
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3 pb-4">
-          <SearchableDropdown
-            name="teachingExperience"
-            label="Teaching Experience"
-            placeholder="Select Teaching Experience"
-            options={teachingExperienceOptions}
-            searchable
-          />
-          <SearchableDropdown
-            name="gender"
-            label="Gender"
-            placeholder="Select Gender"
-            options={genderOptions}
-            searchable
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3 ">
-          <input
-            type="date"
-            className="input"
-            max={new Date().toISOString().split("T")[0]}
-            value={teacher.dateOfBirth}
-            onChange={(e) =>
-              setTeacher((t) => ({
-                ...t,
-                dateOfBirth: e.target.value,
-              }))
-            }
-          />
-
-          <input
-            type="file"
-            accept=".jpg,.jpeg,.png"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-
-              if (!file) return;
-
-              const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-
-              if (!validTypes.includes(file.type)) {
-                toast.error("Only JPG, JPEG and PNG files are allowed.");
-                return;
-              }
-
-              setTeacher((t) => ({
-                ...t,
-                profilePhoto: file,
-              }));
-            }}
-          />
-          {teacher.profilePhoto && (
-            <img
-              src={URL.createObjectURL(teacher.profilePhoto)}
-              alt="Preview"
-              className="mt-3 h-24 w-24 rounded-full object-cover"
-            />
-          )}
-        </div>
-
-        <textarea
-          rows={4}
-          className="input"
-          placeholder="Address"
-          value={teacher.address}
-          onChange={(e) =>
-            setTeacher((t) => ({ ...t, address: e.target.value }))
-          }
+        <TextFieldInput
+          name="email"
+          label="Email"
+          type="email"
+          placeholder="Email"
+          required
         />
 
-        <Captcha onChange={setCaptcha} />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <TextFieldInput
+            name="qualification"
+            label="Qualification"
+            type="text"
+            placeholder="Qualification (Optional)"
+          />
+
+          <TextFieldInput
+            name="experience"
+            label="Experience"
+            type="text"
+            placeholder="Experience (Optional)"
+          />
+        </div>
+
+        {/* <Section title="Profile Photo" />
+
+        <FileUploadInput
+          name="profilePhoto"
+          label="Profile Photo"
+          accept="image/png,image/jpeg,image/jpg"
+          maxSizeInMB={5}
+          placeholder="Upload profile photo"
+          helperText="PNG or JPG only (max 5MB)"
+        /> */}
+
+        <Section title="Supporting Document" />
+
+        <FileUploadInput
+          name="document"
+          label="Upload Document"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          maxSizeInMB={10}
+          placeholder="Upload qualification or experience document"
+          helperText="PDF, DOC, DOCX, JPG or PNG (max 10MB)"
+        />
+
+        {/* <div>
+          <Captcha onChange={setCaptcha} />
+
+          {!captcha && (
+            <p className="mt-1 text-xs text-red-500">Please complete captcha</p>
+          )}
+        </div> */}
         <button
-          onClick={handleSubmit((data) => registerTeacher.mutate(data))}
-          disabled={registerTeacher.isPending || !schoolId}
-          className="btn-primary mt-2 w-full py-3"
+          type="submit"
+          // disabled={registerTeacher.isPending || !captcha}
+          className="
+    btn-primary
+    mt-2
+    flex
+    w-full
+    items-center
+    justify-center
+    gap-2
+    py-3
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  "
         >
           {registerTeacher.isPending ? (
             <>
-              <Loader2 size={16} className="animate-spin" /> Submitting…
+              <Loader2 size={16} className="animate-spin" />
+              Submitting...
             </>
           ) : (
-            "Register as teacher"
+            "Register as Teacher"
           )}
         </button>
-      </div>
+      </form>
     </FormProvider>
   );
 }
