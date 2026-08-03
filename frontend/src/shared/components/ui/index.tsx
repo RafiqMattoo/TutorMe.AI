@@ -2,6 +2,9 @@ import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { Loader2, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
 
+export { default as FileUploadInput } from './FileUploadInput'
+export { default as DatePickerInput } from './DatePickerInput'
+
 // ── STAT CARD ────────────────────────────────────────────────────
 const statColors: Record<string, { bg: string; icon: string; border: string }> = {
   blue:   { bg: 'bg-blue-50',    icon: 'text-blue-600',   border: 'border-blue-100'   },
