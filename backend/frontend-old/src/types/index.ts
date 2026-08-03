@@ -293,7 +293,6 @@ export interface GradingScale {
 }
 
 // ── STUDENT INFORMATION SYSTEM (A2) ───────────────────────────────
-export type Gender = 'Male' | 'Female' | 'Other'
 export type StudentCategory = 'General' | 'OBC' | 'SC' | 'ST' | 'EWS'
 export type StudentStatus = 'Active' | 'Inactive' | 'TransferredOut' | 'Graduated' | 'Alumni'
 
@@ -381,3 +380,23 @@ export interface CreateDeliveryRequest {
   quizId?: string
   flashcardSetId?: string
 }
+
+
+//ss//
+export type Gender = 'Male' | 'Female' | 'Other'
+
+export type BloodGroup =
+  | 'A+' | 'A-'
+  | 'B+' | 'B-'
+  | 'AB+' | 'AB-'
+  | 'O+' | 'O-'
+
+export type GuardianRelation = 'Father' | 'Mother' | 'Guardian'
+
+export type SectionName = 'A' | 'B' | 'C' | 'D'
+
+export type Grade =
+  | 'Nursery' | 'LKG' | 'UKG'
+  | 'Grade 1' | 'Grade 2' | 'Grade 3' | 'Grade 4' | 'Grade 5'
+  | 'Grade 6' | 'Grade 7' | 'Grade 8' | 'Grade 9' | 'Grade 10'
+  | 'Grade 11' | 'Grade 12'
