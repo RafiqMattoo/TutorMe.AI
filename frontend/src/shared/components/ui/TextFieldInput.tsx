@@ -281,7 +281,7 @@ ref
           <span
             className="
               ml-1
-              text-red-500
+              text-[var(--color-danger)]
             "
           >
             *

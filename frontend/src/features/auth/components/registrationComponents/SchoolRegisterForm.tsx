@@ -118,9 +118,10 @@ export default function SchoolRegisterForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 sm:space-y-5">
       <Section title="School details" />
-
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <TextFieldInput
         name="schoolName"
+        type="text"
         label="School Name"
         placeholder="Enter school name"
         error={errors.schoolName}
@@ -128,14 +129,17 @@ export default function SchoolRegisterForm({
 
       <TextFieldInput
   name="schoolRegistrationNumber"
+  type="number"
   label="School Registration Number"
   placeholder="Enter registration number (optional)"
   error={errors.schoolRegistrationNumber}
 />
-
-<Section title="School Address" />
+</div>
+{/* <Section title="School Address" /> */}
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 <TextFieldInput
   name="address.houseNo"
+  type="number"
   label="House No./Building No."
   placeholder="Enter house/building number"
   error={errors.address?.houseNo}
@@ -143,29 +147,38 @@ export default function SchoolRegisterForm({
 
 <TextFieldInput
   name="address.street"
+  type="text"
   label="Street"
   placeholder="Enter street"
   error={errors.address?.street}
 />
+</div>
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
 <TextFieldInput
   name="address.area"
+  type="text"
   label="Area"
+
   placeholder="Enter area"
   error={errors.address?.area}
 />
 
 <TextFieldInput
+
   name="address.landmark"
+  type="text"
   label="Landmark"
   placeholder="Enter landmark"
   error={errors.address?.landmark}
 />
+</div>
 
-<Section title="School Information" />
-
+{/* <Section title="School Information" /> */}
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 <TextFieldInput
   name="principalName"
+  type="text"
   label="Principal Name"
   placeholder="Enter principal name"
   error={errors.principalName}
@@ -178,6 +191,7 @@ export default function SchoolRegisterForm({
   placeholder="e.g. 1998"
   error={errors.establishedYear}
 />
+</div>
 
 <TextFieldInput
   name="website"
@@ -268,6 +282,7 @@ export default function SchoolRegisterForm({
         <TextFieldInput
           name="phone"
           label="School Phone"
+          type="number"
           placeholder="Enter phone number"
           error={errors.phone}
         />
@@ -281,12 +296,13 @@ export default function SchoolRegisterForm({
 />
       </div>
 
-      <Section title="Admin account" />
+      {/* <Section title="Admin account" /> */}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextFieldInput
           name="adminFirstName"
           label="First Name"
+          type="text"
           placeholder="Enter first name"
           error={errors.adminFirstName}
         />
@@ -294,6 +310,7 @@ export default function SchoolRegisterForm({
         <TextFieldInput
           name="adminLastName"
           label="Last Name"
+          type="text"
           placeholder="Enter last name"
           error={errors.adminLastName}
         />
@@ -319,12 +336,13 @@ export default function SchoolRegisterForm({
         <TextFieldInput
           name="adminPhone"
           label="Phone"
+          type="number"
           placeholder="Enter phone number"
           error={errors.adminPhone}
         />
       </div>
 
-      <Section title="Supporting Documents" />
+      {/* <Section title="Supporting Documents" /> */}
 
 <Controller
   name="supportingDocument"
@@ -391,12 +409,14 @@ export default function SchoolRegisterForm({
       <Captcha onChange={setCaptcha} />
 
       <Button
+      rounded="lg"
         type="submit"
         color="primary"
         size="lg"
         fullWidth
         loading={registerSchool.isPending}
         className="mt-2"
+        // rounded="xl"
       >
         Register school
       </Button>
