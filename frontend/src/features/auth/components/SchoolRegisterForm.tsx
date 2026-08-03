@@ -1,4 +1,3 @@
-
 // // import { useState } from 'react'
 // // import { useMutation } from '@tanstack/react-query'
 // // import { Loader2 } from 'lucide-react'
@@ -19,7 +18,6 @@
 // //     }
 // //   )?.response?.data?.message
 // // }
-
 
 // // export default function SchoolRegisterForm({
 // //   onSuccess
@@ -48,7 +46,6 @@
 
 // //   })
 
-
 // //   const registerSchool = useMutation({
 
 // //     mutationFn: () =>
@@ -66,13 +63,11 @@
 
 // //   })
 
-
 // //   return (
 
 // //     <div className="space-y-3">
 
 // //       <Section title="School details" />
-
 
 // //       <Field id="schoolName" label="School name *">
 // //         <input
@@ -88,7 +83,6 @@
 // //           }
 // //         />
 // //       </Field>
-
 
 // //       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
@@ -107,7 +101,6 @@
 // //           />
 // //         </Field>
 
-
 // //         <Field id="state" label="State">
 // //           <input
 // //             id="state"
@@ -125,9 +118,7 @@
 
 // //       </div>
 
-
 // //       <Section title="Admin account" />
-
 
 // //       <Field id="adminEmail" label="Admin email *">
 // //         <input
@@ -144,7 +135,6 @@
 // //           }
 // //         />
 // //       </Field>
-
 
 // //       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
@@ -164,7 +154,6 @@
 // //           />
 // //         </Field>
 
-
 // //         <Field id="adminPhone" label="Phone">
 // //           <input
 // //             id="adminPhone"
@@ -181,7 +170,6 @@
 // //         </Field>
 
 // //       </div>
-
 
 // //       <button
 // //         onClick={() => registerSchool.mutate()}

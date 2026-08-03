@@ -82,8 +82,9 @@ export default function RegistrationPage() {
 });
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <div className="grid min-h-screen lg:grid-cols-[0.85fr_1.15fr]">
+    <div className="h-screen bg-white text-slate-900">
+      <div className="grid h-full lg:grid-cols-[0.85fr_1.15fr]">
+        {/* Left Panel */}
         <section
           className="relative hidden flex-col overflow-hidden px-10 py-10 text-white lg:flex"
           style={{ background: 'radial-gradient(circle at 20% 15%, rgba(37,99,235,0.45) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.35) 0%, transparent 40%), linear-gradient(160deg, #020617 0%, #0c1a3a 55%, #080f1e 100%)' }}
@@ -96,10 +97,13 @@ export default function RegistrationPage() {
               backgroundSize: "46px 46px",
             }}
           />
+
+          {/* Logo */}
           <div className="relative flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-xl shadow-blue-600/50">
               <BookOpenCheck size={22} />
             </div>
+
             <div>
               <div className="text-[16px] font-bold tracking-tight">
                 VidyaAI
@@ -119,14 +123,17 @@ export default function RegistrationPage() {
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600/25 text-blue-300 ring-1 ring-blue-500/30">
                       <Icon size={16} />
                     </span>
+
                     {index < steps.length - 1 && (
                       <span className="mt-1 h-7 w-px bg-white/10" />
                     )}
                   </div>
+
                   <div className="pt-1">
                     <div className="text-[13.5px] font-bold text-white">
                       {title}
                     </div>
+
                     <div className="mt-0.5 text-[12px] leading-5 text-slate-400">
                       {text}
                     </div>
@@ -156,12 +163,15 @@ export default function RegistrationPage() {
                   className="mx-auto mb-4 text-emerald-500"
                   size={48}
                 />
+
                 <h2 className="text-2xl font-black text-slate-900">
                   Registration received
                 </h2>
+
                 <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-500">
                   {done}
                 </p>
+
                 <button
                   onClick={() => navigate("/login")}
                   className="btn-primary mx-auto mt-6"
@@ -210,12 +220,14 @@ export default function RegistrationPage() {
                           </button>
                         ))}
                       </div>
+
                       {memberRole === "Teacher" && (
                         <TeacherRegisterForm
                           schoolId={schoolId}
                           onSuccess={setDone}
                         />
                       )}
+
                       {memberRole === "Student" && (
                         <StudentRegisterForm
                           schoolId={schoolId}
