@@ -472,6 +472,7 @@ export interface DatePickerInputProps {
 import type {
   InputHTMLAttributes,
   ReactNode,
+  TextareaHTMLAttributes,
 } from "react"
 
 import type {
@@ -485,16 +486,7 @@ export type TextFieldInputType =
   | "password"
   | "phone"
   | "number"
-  | "age"
-  | "pincode"
-  | "year"
-  | "bankaccount"
-  | "gst"
-  | "pan"
-  | "ifsc"
-  | "username"
-  | "name"
-  | "address"
+  | "textarea"
 
 
 
@@ -505,6 +497,12 @@ export interface TextFieldInputProps
     | "type"
     | "value"
     | "onChange"
+  >,
+  Omit<
+    TextareaHTMLAttributes<HTMLTextAreaElement>,
+    "name"
+    | "value"
+    | "onChange"
   > {
 
 
@@ -513,7 +511,20 @@ export interface TextFieldInputProps
    */
   name: string
 
+  /**
+   * Controlled value for standalone usage
+   */
+  value?: string
 
+  /**
+   * Controlled change handler for standalone usage
+   */
+  onChange?: (value: string) => void
+
+  /**
+   * Uncontrolled default value
+   */
+  defaultValue?: string
 
   /**
    * Field label
@@ -534,7 +545,10 @@ export interface TextFieldInputProps
    */
   required?: boolean
 
-
+  /**
+   * Mark the field as optional so the required marker is suppressed
+   */
+  optional?: boolean
 
   /**
    * React Hook Form validation error
