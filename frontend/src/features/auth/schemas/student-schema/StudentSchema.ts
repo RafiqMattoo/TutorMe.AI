@@ -4,24 +4,38 @@ const MAX_FILE_SIZE_MB = 5
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"]
 const DOC_EXTENSIONS = ["jpg", "jpeg", "png", "pdf"]
 
-function hasAllowedExtension(file: File, allowed: string[]) {
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? ""
+function hasAllowedExtension(fileName: string, allowed: string[]) {
+  const ext = fileName.split(".").pop()?.toLowerCase() ?? ""
   return allowed.includes(ext)
 }
 
-const imageFileSchema = z
-  .instanceof(File, { message: "Profile photo is required" })
-  .refine((file) => hasAllowedExtension(file, IMAGE_EXTENSIONS), { message: "Only JPG, JPEG, PNG files are allowed" })
-  .refine((file) => file.size <= MAX_FILE_SIZE_MB * 1024 * 1024, { message: `File must be under ${MAX_FILE_SIZE_MB}MB` })
+// FileUploadInput's value shape is { name, size, type, uri, file }, not a raw File
+const fileUploadValueSchema = z.object({
+  name: z.string(),
+  size: z.number(),
+  type: z.string(),
+  uri: z.string(),
+  file: z.instanceof(File),
+})
 
-const optionalDocumentSchema = z
-  .instanceof(File)
-  .refine((file) => hasAllowedExtension(file, DOC_EXTENSIONS), { message: "Only PDF, JPG, JPEG, PNG files are allowed" })
-  .refine((file) => file.size <= MAX_FILE_SIZE_MB * 1024 * 1024, { message: `File must be under ${MAX_FILE_SIZE_MB}MB` })
+const profilePhotoSchema = fileUploadValueSchema
+  .refine((val) => hasAllowedExtension(val.name, IMAGE_EXTENSIONS), {
+    message: "Only JPG, JPEG, PNG files are allowed",
+  })
+  .refine((val) => val.size <= MAX_FILE_SIZE_MB * 1024 * 1024, {
+    message: `File must be under ${MAX_FILE_SIZE_MB}MB`,
+  })
+
+const idDocumentSchema = fileUploadValueSchema
+  .refine((val) => hasAllowedExtension(val.name, DOC_EXTENSIONS), {
+    message: "Only PDF, JPG, JPEG, PNG files are allowed",
+  })
+  .refine((val) => val.size <= MAX_FILE_SIZE_MB * 1024 * 1024, {
+    message: `File must be under ${MAX_FILE_SIZE_MB}MB`,
+  })
   .optional()
 
 export const studentSchema = z.object({
-  schoolId: z.string().min(1, "Please select a school"),
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
   email: z.string().email("Please enter a valid email"),
@@ -58,8 +72,8 @@ export const studentSchema = z.object({
   state: z.string().min(1, "Please select a state"),
   city: z.string().min(1, "Please select a city"),
 
-  profilePhoto: imageFileSchema,
-  idDocument: optionalDocumentSchema,
+  profilePhoto: profilePhotoSchema,
+  idDocument: idDocumentSchema,
 })
 
 export type StudentFormData = z.infer<typeof studentSchema>

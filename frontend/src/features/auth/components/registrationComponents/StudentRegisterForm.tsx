@@ -9,14 +9,15 @@ import { authApi } from "../../services"
 import { Section } from "../FormControls"
 import TextFieldInput from "@/shared/components/ui/TextFieldInput"
 import SearchableDropdown from "@/shared/components/ui/SearchableDropdown"
-
-import { studentSchema, StudentFormData } from "../../schemas/student-schema/StudentSchema"
-import { gradeOptions, sectionOptions, genderOptions, bloodGroupOptions, guardianRelationOptions, stateOptions, cityOptionsByState,} from "@/data/RegistrationData"
-
+import DatePickerInput from "@/shared/components/ui/DatePickerInput"
+import FileUploadInput from "@/shared/components/ui/FileUploadInput"
 import Button from "@/shared/components/ui/customButton/button"
 
-
-
+import { studentSchema, StudentFormData } from "../../schemas/student-schema/StudentSchema"
+import {
+  gradeOptions, sectionOptions, genderOptions, bloodGroupOptions,
+  guardianRelationOptions, stateOptions, cityOptionsByState,
+} from "@/data/RegistrationData"
 
 function errorMessage(error: unknown) {
   return (error as { response?: { data?: { message?: string } } })?.response?.data?.message
@@ -52,8 +53,13 @@ export default function StudentRegisterForm({
 
       Object.entries(data).forEach(([key, val]) => {
         if (val === undefined || val === null || val === "") return
-        if (val instanceof File) formData.append(key, val)
-        else formData.append(key, String(val))
+
+        // FileUploadInput values look like { name, size, type, uri, file }
+        if (val && typeof val === "object" && "file" in val) {
+          formData.append(key, (val as { file: File }).file)
+        } else {
+          formData.append(key, String(val))
+        }
       })
 
       formData.append("schoolId", schoolId)
@@ -88,19 +94,12 @@ export default function StudentRegisterForm({
         <div className="grid grid-cols-2 gap-3">
           <SearchableDropdown name="gender" label="Gender" options={genderOptions} placeholder="Select gender" error={errors.gender?.message} />
 
-          {/* TODO: replace with shared DatePicker once ready */}
-          <div className="w-full">
-            <label className="mb-2 block text-sm font-medium text-[var(--color-text)]">
-              Date of Birth<span className="ml-1 text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              max={new Date().toISOString().split("T")[0]}
-              className="input h-11 w-full rounded-xl border border-[var(--color-border)] px-4 text-sm"
-              {...methods.register("dateOfBirth")}
-            />
-            <p className="mt-1 min-h-[16px] text-xs text-[var(--color-danger)]">{errors.dateOfBirth?.message}</p>
-          </div>
+          <DatePickerInput
+            name="dateOfBirth"
+            label="Date of Birth"
+            required
+            error={errors.dateOfBirth?.message}
+          />
         </div>
 
         <TextFieldInput name="address" label="Address" type="address" placeholder="Address" required error={errors.address} />
@@ -149,50 +148,34 @@ export default function StudentRegisterForm({
 
         <Section title="Documents" />
 
-              {/* TODO: replace both with shared FileUpload component once ready */}
-              {/* <div className="w-full">
-                <label className="mb-2 block text-sm font-medium text-[var(--color-text)]">
-                  Profile Photo<span className="ml-1 text-red-500">*</span>
-                </label>
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png"
-                  className="input h-11 w-full rounded-xl border border-[var(--color-border)] px-4 text-sm"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) methods.setValue("profilePhoto", file, { shouldValidate: true })
-                  }}
-                />
-                <p className="mt-1 min-h-[16px] text-xs text-[var(--color-danger)]">{errors.profilePhoto?.message as string}</p>
-              </div>
+        <FileUploadInput
+          name="profilePhoto"
+          label="Profile Photo"
+          accept=".jpg,.jpeg,.png"
+          required
+          error={errors.profilePhoto?.message as string}
+        />
 
-              <div className="w-full">
-                <label className="mb-2 block text-sm font-medium text-[var(--color-text)]">
-                  Student ID Card / Birth Certificate (optional)
-                </label>
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  className="input h-11 w-full rounded-xl border border-[var(--color-border)] px-4 text-sm"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) methods.setValue("idDocument", file, { shouldValidate: true })
-                  }}
-                />
-              </div> */}
+        <FileUploadInput
+          name="idDocument"
+          label="Student ID Card / Birth Certificate"
+          optional
+          accept=".pdf,.jpg,.jpeg,.png"
+          error={errors.idDocument?.message as string}
+        />
 
-                <Captcha onChange={setCaptcha} />
+        <Captcha onChange={setCaptcha} />
 
-                   <Button
-                  type="submit"
-                  color="primary"
-                  fullWidth
-                  loading={registerStudent.isPending}
-                  disabled={!schoolId}
-                  className="mt-2"
-                >
-                  Signup
-                </Button>
+        <Button
+          type="submit"
+          color="primary"
+          fullWidth
+          loading={registerStudent.isPending}
+          disabled={!schoolId}
+          className="mt-2"
+        >
+          Signup
+        </Button>
 
       </form>
     </FormProvider>
