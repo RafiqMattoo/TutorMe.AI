@@ -542,6 +542,7 @@ export interface TextFieldInputProps
   error?:
     | FieldError
     | string
+    
 
 
 
@@ -592,4 +593,35 @@ export interface TextFieldInputProps
    */
   readOnly?: boolean
 
+}
+
+export interface RegisterSchoolFormData {
+  schoolName: string;
+  schoolRegistrationNumber?: string;
+
+  city: string;
+  state: string;
+  phone: string;
+  email: string;
+
+  type: SchoolType;
+  board: BoardType;
+
+  address: {
+    houseNo?: string;
+    street: string;
+    area: string;
+    landmark: string;
+  };
+
+  principalName: string;
+  establishedYear: number;
+  website?: string;
+
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  adminPassword: string;
+  adminPhone: string;
+  supportingDocument?: File;
 }

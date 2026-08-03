@@ -28,6 +28,7 @@ import {
   type LoginFormData,
 } from "../schemas/login-schema/loginSchema.ts";
 import TextFieldInput from "@/shared/components/ui/TextFieldInput.tsx"
+import Button from "@/shared/components/ui/customButton/button.tsx"
 const demoPassword = "Admin@123";
 
 const featureList = [
@@ -269,6 +270,7 @@ const selectRole = (role: UserRole) => {
           placeholder="your@email.com"
           leftIcon={<Mail size={18} />}
           error={errors.email}
+          required
         />
 
         {/* Password */}
@@ -277,6 +279,7 @@ const selectRole = (role: UserRole) => {
             name="password"
             label="Password"
             type="password"
+            required
             placeholder="••••••••"
             leftIcon={
               <LockKeyhole
@@ -298,26 +301,24 @@ const selectRole = (role: UserRole) => {
         </div>
 
         {/* Submit */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn-primary mt-2 flex w-full items-center justify-center gap-2 py-3 text-sm"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2
-                size={17}
-                className="animate-spin"
-              />
-              Signing in...
-            </>
-          ) : (
-            <>
-              Sign in
-              <ArrowRight size={16} />
-            </>
-          )}
-        </button>
+      <Button
+  type="submit"
+  fullWidth
+  loading={isSubmitting}
+  className="mt-1.5"
+  leftIcon={
+    isSubmitting && ( 
+
+    <Loader2
+      size={17}
+      className="animate-spin"
+    />)
+  }
+ 
+  rightIcon={<ArrowRight size={16} />}
+>
+  Sign in
+</Button>
       </form>
     </FormProvider>
 

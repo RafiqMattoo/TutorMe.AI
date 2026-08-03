@@ -1,26 +1,20 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  BookOpenCheck,
-  CheckCircle2,
-  GraduationCap,
-  School as SchoolIcon,
-  ShieldCheck,
-  Sparkles,
-  UserRound,
-} from "lucide-react";
-import clsx from "clsx";
-import { authApi } from "../services";
-import SearchableDropdown from "@/shared/components/ui/SearchableDropdown";
-import { Section } from "../components/FormControls";
-import SchoolRegisterForm from "../components/registrationComponents/SchoolRegisterForm";
-import TeacherRegisterForm from "../components/registrationComponents/TeacherRegisterForm";
-import StudentRegisterForm from "../components/registrationComponents/StudentRegisterForm";
-
-type Tab = "school" | "member";
-type MemberRole = "Student" | "Teacher";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { ArrowLeft, BookOpenCheck, CheckCircle2, GraduationCap, School as SchoolIcon, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
+import clsx from 'clsx'
+import { authApi } from '../services'
+import SearchableDropdown from '@/shared/components/ui/SearchableDropdown'
+import { Section } from '../components/FormControls'
+import SchoolRegisterForm from '../components/registrationComponents/SchoolRegisterForm'
+import TeacherRegisterForm from '../components/registrationComponents/TeacherRegisterForm'
+import StudentRegisterForm from '../components/registrationComponents/StudentRegisterForm'
+import { FormProvider, useForm } from "react-hook-form";
+import { registerSchoolSchema } from "../schemas/register-schema/registerSchoolSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { RegisterSchoolFormData } from "@/shared/types";
+type Tab = 'school' | 'member'
+type MemberRole = 'Student' | 'Teacher'
 
 const steps = [
   {
@@ -40,26 +34,59 @@ const steps = [
   },
 ];
 
-export default function RegisterPage() {
-  const [tab, setTab] = useState<Tab>("school");
-  const [memberRole, setMemberRole] = useState<MemberRole>("Student");
-  const [schoolId, setSchoolId] = useState("");
-  const [done, setDone] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const { data: schools } = useQuery({
-    queryKey: ["public-schools"],
-    queryFn: authApi.publicSchools,
-  });
+export default function RegistrationPage() {
+  const [tab, setTab] = useState<Tab>('school')
+  const [memberRole, setMemberRole] = useState<MemberRole>('Student')
+  const [schoolId, setSchoolId] = useState('')
+  const [done, setDone] = useState<string | null>(null)
+  const [captcha, setCaptcha] = useState<string | undefined>()
+  const navigate = useNavigate()
+  const { data: schools } = useQuery({ queryKey: ['public-schools'], queryFn: authApi.publicSchools })
+
+ const schoolMethods = useForm<RegisterSchoolFormData>({
+  resolver: zodResolver(registerSchoolSchema) as any,
+
+  defaultValues: {
+    schoolName: "",
+    schoolRegistrationNumber: "",
+
+    city: "",
+    state: "",
+
+    phone: "",
+    email: "",
+
+    type: undefined,
+    board: undefined,
+
+    address: {
+      houseNo: "",
+      street: "",
+      area: "",
+      landmark: "",
+    },
+
+    principalName: "",
+    establishedYear: undefined,
+    website: "",
+
+    // ✅ Add this
+    supportingDocument: undefined,
+
+    adminFirstName: "",
+    adminLastName: "",
+    adminEmail: "",
+    adminPassword: "",
+    adminPhone: "",
+  },
+});
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <div className="grid min-h-screen lg:grid-cols-[0.85fr_1.15fr]">
         <section
-          className="relative hidden flex-col justify-between overflow-hidden px-10 py-10 text-white lg:flex"
-          style={{
-            background:
-              "radial-gradient(circle at 20% 15%, rgba(37,99,235,0.45) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.35) 0%, transparent 40%), linear-gradient(160deg, #020617 0%, #0c1a3a 55%, #080f1e 100%)",
-          }}
+          className="relative hidden flex-col overflow-hidden px-10 py-10 text-white lg:flex"
+          style={{ background: 'radial-gradient(circle at 20% 15%, rgba(37,99,235,0.45) 0%, transparent 45%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.35) 0%, transparent 40%), linear-gradient(160deg, #020617 0%, #0c1a3a 55%, #080f1e 100%)' }}
         >
           <div
             className="absolute inset-0 opacity-[0.04]"
@@ -82,18 +109,9 @@ export default function RegisterPage() {
               </div>
             </div>
           </div>
-          <div className="relative max-w-md">
-            <h1 className="text-[40px] font-black leading-[1.08] tracking-tight">
-              Join the{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                smarter
-              </span>{" "}
-              way to learn.
-            </h1>
-            <p className="mt-4 text-sm leading-7 text-slate-400">
-              Register your school or join an existing one. Every sign-up is
-              reviewed by an admin before access is granted.
-            </p>
+         <div className="relative mt-10 max-w-md">
+            <h1 className="text-[40px] font-black leading-[1.08] tracking-tight">Join the <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">smarter</span> way to learn.</h1>
+            <p className="mt-4 text-sm leading-7 text-slate-400">Register your school or join an existing one. Every sign-up is reviewed by an admin before access is granted.</p>
             <ul className="mt-9 space-y-5">
               {steps.map(({ icon: Icon, title, text }, index) => (
                 <li key={title} className="flex gap-3.5">
@@ -117,25 +135,21 @@ export default function RegisterPage() {
               ))}
             </ul>
           </div>
-          <div className="relative text-[12px] text-white/40">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-semibold text-blue-300 hover:text-blue-200"
-            >
-              Sign in
-            </Link>
-          </div>
+      <div className="relative mt-auto flex items-center gap-1 text-sm text-white/60">
+  <span>Already have an account?</span>
+
+  <Link
+    to="/login"
+    className="font-semibold text-blue-300 transition-colors hover:text-blue-200"
+  >
+    Sign In
+  </Link>
+</div>
         </section>
 
-        <section className="flex items-start justify-center overflow-y-auto px-5 py-8 sm:px-10">
-          <div className="w-full max-w-lg">
-            <Link
-              to="/login"
-              className="mb-5 inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 lg:hidden"
-            >
-              <ArrowLeft size={14} /> Back to sign in
-            </Link>
+        <section className="flex items-start justify-center overflow-y-auto px-4 py-6 sm:px-8 lg:px-10">
+          <div className="w-full max-w-3xl">
+            <Link to="/login" className="mb-5 inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 lg:hidden"><ArrowLeft size={14} /> Back to sign in</Link>
             {done ? (
               <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                 <CheckCircle2
@@ -157,35 +171,24 @@ export default function RegisterPage() {
               </div>
             ) : (
               <>
-                <h2 className="text-[26px] font-black tracking-tight text-slate-900">
-                  Create your account
-                </h2>
-                <p className="mt-1.5 text-sm text-slate-500">
-                  Choose how you'd like to get started.
-                </p>
-                <div className="mt-5 grid grid-cols-2 gap-2">
-                  <TabButton
-                    active={tab === "school"}
-                    onClick={() => setTab("school")}
-                    icon={SchoolIcon}
-                    label="Register a school"
-                    sub="You'll be the school admin"
-                  />
-                  <TabButton
-                    active={tab === "member"}
-                    onClick={() => setTab("member")}
-                    icon={UserRound}
-                    label="Join a school"
-                    sub="As a teacher or student"
-                  />
+                <h2 className="text-[26px] font-black tracking-tight text-slate-900">Create your account</h2>
+                <p className="mt-1.5 text-sm text-slate-500">Choose how you'd like to get started.</p>
+                <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <TabButton active={tab === 'school'} onClick={() => setTab('school')} icon={SchoolIcon} label="Register a school" sub="You'll be the school admin" />
+                  <TabButton active={tab === 'member'} onClick={() => setTab('member')} icon={UserRound} label="Join a school" sub="As a teacher or student" />
                 </div>
-
-                <div className="mt-6">
-                  {tab === "school" ? (
-                    <SchoolRegisterForm onSuccess={setDone} />
-                  ) : (
-                    <div className="space-y-4">
-                      <Section title="Your school" />
+<div className="mt-6">
+  {tab === "school" ? (
+    <FormProvider {...schoolMethods}>
+      <SchoolRegisterForm
+        onSuccess={setDone}
+        captcha={captcha}
+        setCaptcha={setCaptcha}
+      />
+    </FormProvider>
+  ) : (
+    <div className="space-y-4">
+      <Section title="Your school" />
                       <SearchableDropdown
                         label="School"
                         placeholder="Select your school"
@@ -199,40 +202,13 @@ export default function RegisterPage() {
                             : school.name,
                         }))}
                       />
-                      {!schools?.length && (
-                        <p className="text-xs text-amber-600">
-                          No approved schools yet. Register a school first, or
-                          check back once it's approved.
-                        </p>
-                      )}
-                      <div className="grid grid-cols-2 gap-2">
-                        {(["Student", "Teacher"] as MemberRole[]).map(
-                          (role) => (
-                            <button
-                              key={role}
-                              onClick={() => setMemberRole(role)}
-                              className={clsx(
-                                "rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors",
-                                memberRole === role
-                                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                                  : "border-slate-200 text-slate-500 hover:bg-slate-50",
-                              )}
-                            >
-                              {role === "Student" ? (
-                                <GraduationCap
-                                  size={15}
-                                  className="mr-1.5 inline"
-                                />
-                              ) : (
-                                <BookOpenCheck
-                                  size={15}
-                                  className="mr-1.5 inline"
-                                />
-                              )}
-                              {role}
-                            </button>
-                          ),
-                        )}
+                      {!schools?.length && <p className="text-xs text-amber-600">No approved schools yet. Register a school first, or check back once it's approved.</p>}
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {(['Student', 'Teacher'] as MemberRole[]).map((role) => (
+                          <button key={role} onClick={() => setMemberRole(role)} className={clsx('rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors', memberRole === role ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50')}>
+                            {role === 'Student' ? <GraduationCap size={15} className="mr-1.5 inline" /> : <BookOpenCheck size={15} className="mr-1.5 inline" />}{role}
+                          </button>
+                        ))}
                       </div>
                       {memberRole === "Teacher" && (
                         <TeacherRegisterForm
