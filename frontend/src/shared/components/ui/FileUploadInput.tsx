@@ -1,3 +1,4 @@
+
 // import { useEffect, useRef, useState } from 'react'
 // import { Controller, useFormContext } from 'react-hook-form'
 // import { Download, ExternalLink, Eye, FileText, UploadCloud, X } from 'lucide-react'
@@ -91,24 +92,26 @@
 //   const handleValueChange = (nextValue: FileUploadValue | null, fieldChange?: (value: File | null) => void) => {
 //     setValidationMessage(null)
 //     setLocalValue(nextValue)
-//     fieldChange?.(nextValue)
+//     fieldChange?.(nextValue?.file ?? null)
 //     onChange?.(nextValue)
 //   }
 
-//   const handleFileSelection = (
-//     file: File | null,
-//     fieldChange?: (value: File | null) => void,
-//   ) => {
-//     if (!file) return
-
-//     if (maxSizeInMB && file.size > maxSizeInMB * 1024 * 1024) {
-//       setValidationMessage(`File must be smaller than ${maxSizeInMB}MB.`)
-//       return
-//     }
-
-//     const nextValue = buildValue(file)
-//     handleValueChange(nextValue, fieldChange)
+//  const handleFileSelection = (
+//   file: File | null,
+//   fieldChange?: (value: File | null) => void,
+// ) => {
+//   if (!file) {
+//     fieldChange?.(null);
+//     return;
 //   }
+
+//   if (maxSizeInMB && file.size > maxSizeInMB * 1024 * 1024) {
+//     setValidationMessage(`File must be smaller than ${maxSizeInMB}MB.`);
+//     return;
+//   }
+
+//   fieldChange?.(file);
+// };
 
 //   const clearSelection = (fieldChange?: (value: File | null) => void) => {
 //     handleValueChange(null, fieldChange)
@@ -338,7 +341,9 @@
 //     }
 //   })
 // }
-import { useEffect, useRef, useState } from 'react'
+
+
+  import { useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Download, ExternalLink, Eye, FileText, UploadCloud, X } from 'lucide-react'
 import clsx from 'clsx'
@@ -382,6 +387,34 @@ const normalizeValue = (value: FileUploadValue | File | null | undefined): FileU
 }
 
 const isImageType = (type: string) => /image\/(png|jpe?g|gif|webp|bmp)/i.test(type)
+
+const BLOCKED_MIME_PREFIXES = ['audio/', 'video/']
+const BLOCKED_EXTENSIONS = [
+  '.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac', '.wma',
+  '.mp4', '.mov', '.avi', '.mkv', '.webm', '.wmv', '.flv', '.m4v',
+]
+
+const isFileTypeAllowed = (file: File, acceptString?: string): boolean => {
+  const fileName = file.name.toLowerCase()
+  const fileType = file.type.toLowerCase()
+  const fileExt = `.${fileName.split('.').pop() ?? ''}`
+
+  if (BLOCKED_MIME_PREFIXES.some((prefix) => fileType.startsWith(prefix))) return false
+  if (BLOCKED_EXTENSIONS.includes(fileExt)) return false
+
+  if (!acceptString) return true
+
+  const acceptList = acceptString
+    .split(',')
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean)
+
+  return acceptList.some((accepted) => {
+    if (accepted.startsWith('.')) return fileExt === accepted
+    if (accepted.endsWith('/*')) return fileType.startsWith(accepted.slice(0, -1))
+    return fileType === accepted
+  })
+}
 
 export default function FileUploadInput({
   name,
@@ -435,22 +468,32 @@ export default function FileUploadInput({
     onChange?.(nextValue)
   }
 
- const handleFileSelection = (
-  file: File | null,
-  fieldChange?: (value: File | null) => void,
-) => {
-  if (!file) {
-    fieldChange?.(null);
-    return;
-  }
+  const handleFileSelection = (
+    file: File | null,
+    fieldChange?: (value: File | null) => void,
+  ) => {
+    if (!file) {
+      fieldChange?.(null)
+      return
+    }
 
-  if (maxSizeInMB && file.size > maxSizeInMB * 1024 * 1024) {
-    setValidationMessage(`File must be smaller than ${maxSizeInMB}MB.`);
-    return;
-  }
+    if (!isFileTypeAllowed(file, accept)) {
+      setValidationMessage(
+        accept
+          ? `Invalid file type. Accepted formats: ${accept}`
+          : 'Audio and video files are not allowed.',
+      )
+      return
+    }
 
-  fieldChange?.(file);
-};
+    if (maxSizeInMB && file.size > maxSizeInMB * 1024 * 1024) {
+      setValidationMessage(`File must be smaller than ${maxSizeInMB}MB.`)
+      return
+    }
+
+    setValidationMessage(null)
+    fieldChange?.(file)
+  }
 
   const clearSelection = (fieldChange?: (value: File | null) => void) => {
     handleValueChange(null, fieldChange)
@@ -465,6 +508,19 @@ export default function FileUploadInput({
     if (cleanType.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp)$/i.test(cleanName)) return 'image'
     if (cleanType === 'application/pdf' || /\.pdf$/i.test(cleanName)) return 'pdf'
     return 'document'
+  }
+
+  const openPreviewFile = (file: FileUploadValue) => {
+    window.open(file.uri, '_blank', 'noopener,noreferrer')
+  }
+
+  const downloadPreviewFile = (file: FileUploadValue) => {
+    const link = document.createElement('a')
+    link.href = file.uri
+    link.download = file.name
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const renderUploadArea = (
@@ -613,21 +669,20 @@ export default function FileUploadInput({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <a
-                    href={previewFile.uri}
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openPreviewFile(previewFile)}
                     className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                   >
                     <ExternalLink size={14} /> Open
-                  </a>
-                  <a
-                    href={previewFile.uri}
-                    download={previewFile.name}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => downloadPreviewFile(previewFile)}
                     className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                   >
                     <Download size={14} /> Download
-                  </a>
+                  </button>
                   <button
                     type="button"
                     onClick={() => setPreviewFile(null)}
@@ -675,8 +730,9 @@ export default function FileUploadInput({
   }
 
   return renderUploadArea(localValue, (nextValue) => {
+    // nextValue here is a File | null from the uncontrolled input callback
     if (value === undefined) {
-      handleValueChange(nextValue)
+      handleFileSelection(nextValue)
     }
   })
 }

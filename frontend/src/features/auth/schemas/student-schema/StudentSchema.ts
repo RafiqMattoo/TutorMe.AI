@@ -42,6 +42,7 @@ const idDocumentSchema = fileUploadValueSchema
     message: "Please upload the student ID card or birth certificate",
   })
 
+  
 export const studentSchema = z.object({
   firstName: z
   .string()

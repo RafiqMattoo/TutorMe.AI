@@ -34,7 +34,7 @@ export default function StudentRegisterForm({
   const [captcha, setCaptcha] = useState<string>();
 
   const methods = useForm<StudentFormData>({
-    resolver: zodResolver(studentSchema),
+    resolver: zodResolver(studentSchema) as unknown as Resolver<StudentFormData>,
     mode: "onChange",
     defaultValues: {
       firstName: "",
