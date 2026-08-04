@@ -121,7 +121,7 @@ export default function SchoolRegisterForm({
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <TextFieldInput
         name="schoolName"
-        type="text"
+        type="name"
         label="School Name"
         placeholder="Enter school name"
         error={errors.schoolName}
@@ -129,14 +129,14 @@ export default function SchoolRegisterForm({
       />
 
       <TextFieldInput
-        name="schoolRegistrationNumber"
-        type="number"
-        label="School Registration Number"
-        placeholder="Enter registration number (optional)"
-        error={errors.schoolRegistrationNumber}
-        required
-      />
-      </div>
+  name="schoolRegistrationNumber"
+  type="number"
+  label="School Registration Number"
+  placeholder="Enter registration number"
+  error={errors.schoolRegistrationNumber}
+  required
+/>
+</div>
 {/* <Section title="School Address" /> */}
   {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 <TextFieldInput
