@@ -13,6 +13,8 @@ public class School : BaseEntity
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public string? LogoUrl { get; set; }
+    // Optional uploaded registration document (URL returned by storage service)
+    public string? DocumentUrl { get; set; }
     public SchoolType Type { get; set; } = SchoolType.Private;
     public BoardType Board { get; set; } = BoardType.CBSE;
     public SubscriptionPlan Plan { get; set; } = SubscriptionPlan.Free;

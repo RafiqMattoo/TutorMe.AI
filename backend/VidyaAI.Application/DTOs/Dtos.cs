@@ -15,7 +15,6 @@ public record LogoutRequest(string RefreshToken);
 public record RegisterSchoolRequest(
     string SchoolName, string? City, string? State, string? Phone, string? Email,
     SchoolType Type, BoardType Board,
-    string AdminFirstName, string AdminLastName, string AdminEmail, string AdminPassword, string? AdminPhone,
     string? CaptchaToken = null);
 
 public record RegisterMemberRequest(
