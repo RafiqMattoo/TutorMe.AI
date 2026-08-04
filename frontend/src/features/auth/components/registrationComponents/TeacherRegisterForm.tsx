@@ -11,6 +11,8 @@ import TextFieldInput from "@/shared/components/ui/TextFieldInput";
 import { authApi } from "../../services";
 import { Section } from "../FormControls";
 import type { FileUploadValue } from "@/shared/types";
+import { registerTeacherSchema } from "../../schemas/teacher-schema/registerTeacherSchemas";
+import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 
 function errorMessage(error: unknown) {
   return (error as { response?: { data?: { message?: string } } })?.response
@@ -37,18 +39,18 @@ export default function TeacherRegisterForm({
   const [captcha, setCaptcha] = useState<string | undefined>();
 
   const methods = useForm<TeacherRegisterFormData>({
+    resolver: zodResolver(registerTeacherSchema),
+    mode: "onChange",
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       qualification: "",
       experience: "",
-      profilePhoto: null,
-      document: null,
+      document: undefined,
+      // profilePhoto: undefined,
     },
   });
-
-  const { handleSubmit } = methods;
 
   const registerTeacher = useMutation({
     mutationFn: (data: TeacherRegisterFormData) =>
@@ -73,6 +75,10 @@ export default function TeacherRegisterForm({
   const onSubmit = (data: TeacherRegisterFormData) => {
     registerTeacher.mutate(data);
   };
+  const {
+  handleSubmit,
+  formState: { errors },
+} = methods;
 
   return (
     <FormProvider {...methods}>
@@ -86,6 +92,7 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="First name"
             required
+             error={errors.firstName}
           />
 
           <TextFieldInput
@@ -94,6 +101,7 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="Last name"
             required
+             error={errors.lastName}
           />
         </div>
 
@@ -103,21 +111,26 @@ export default function TeacherRegisterForm({
           type="email"
           placeholder="Email"
           required
+          error={errors.email}
         />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <TextFieldInput
             name="qualification"
+            required
             label="Qualification"
             type="text"
-            placeholder="Qualification (Optional)"
+            placeholder="Qualification"
+            error={errors.qualification}
           />
 
           <TextFieldInput
             name="experience"
             label="Experience"
             type="text"
-            placeholder="Experience (Optional)"
+            placeholder="Experience"
+            error={errors.experience}
+            required
           />
         </div>
 
@@ -132,11 +145,11 @@ export default function TeacherRegisterForm({
           helperText="PNG or JPG only (max 5MB)"
         /> */}
 
-        <Section title="Supporting Document" />
+        {/* <Section title="Supporting Document" /> */}
 
         <FileUploadInput
           name="document"
-          label="Upload Document"
+          label="Qualification / Experience Document"
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
           maxSizeInMB={10}
           placeholder="Upload qualification or experience document"

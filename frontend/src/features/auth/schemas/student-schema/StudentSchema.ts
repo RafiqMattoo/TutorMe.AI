@@ -27,51 +27,121 @@ const profilePhotoSchema = fileUploadValueSchema
   })
 
 const idDocumentSchema = fileUploadValueSchema
-  .refine((val) => hasAllowedExtension(val.name, DOC_EXTENSIONS), {
+.refine((val) => hasAllowedExtension(val.name, DOC_EXTENSIONS), {
     message: "Only PDF, JPG, JPEG, PNG files are allowed",
+ 
   })
+ 
   .refine((val) => val.size <= MAX_FILE_SIZE_MB * 1024 * 1024, {
     message: `File must be under ${MAX_FILE_SIZE_MB}MB`,
+ 
   })
+    .nullable()
   .optional()
+   .refine((val) => val !== null && val !== undefined, {
+    message: "Please upload the student ID card or birth certificate",
+  })
 
 export const studentSchema = z.object({
-  firstName: z.string().min(2, "First name is required"),
-  lastName: z.string().min(2, "Last name is required"),
-  email: z.string().email("Please enter a valid email"),
+  firstName: z
+  .string()
+  .trim()
+  .min(1, "First name is required.")
+  .min(2, "First name must be at least 2 characters."),
 
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Must contain at least one number")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character"),
+lastName: z
+  .string()
+  .trim()
+  .min(1, "Last name is required.")
+  .min(2, "Last name must be at least 2 characters."),
 
-  phone: z.string().min(10, "Enter a valid phone number"),
+email: z
+  .string()
+  .trim()
+  .min(1, "Email is required.")
+  .email("Please enter a valid email address."),
 
-  grade: z.string().min(1, "Please select a grade"),
-  section: z.string().min(1, "Please select a section"),
-  rollNumber: z.string().min(1, "Roll number is required"),
-  admissionNumber: z.string().min(1, "Admission number is required"),
-  gender: z.string().min(1, "Please select a gender"),
+password: z
+  .string()
+  .min(1, "Password is required.")
+  .min(8, "Password must be at least 8 characters.")
+  .regex(/[A-Z]/, "Must contain at least one uppercase letter.")
+  .regex(/[a-z]/, "Must contain at least one lowercase letter.")
+  .regex(/[0-9]/, "Must contain at least one number.")
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character."),
 
-  dateOfBirth: z
-    .string()
-    .min(1, "Date of birth is required")
-    .refine((date) => new Date(date) <= new Date(), { message: "Date of birth cannot be in the future" }),
+phone: z
+  .string()
+  .trim()
+  .min(1, "Phone number is required.")
+  .min(10, "Enter a valid phone number."),
 
-  address: z.string().min(5, "Address is required"),
-  bloodGroup: z.string().optional(),
+grade: z
+  .string()
+  .min(1, "Please select a grade."),
 
-  guardianName: z.string().min(2, "Guardian name is required"),
-  guardianRelation: z.string().min(1, "Please select guardian relation"),
-  guardianPhone: z.string().min(10, "Enter a valid guardian phone number"),
-  parentEmail: z.string().email("Please enter a valid parent email"),
+section: z
+  .string()
+  .min(1, "Please select a section."),
 
-  state: z.string().min(1, "Please select a state"),
-  city: z.string().min(1, "Please select a city"),
+rollNumber: z
+  .string()
+  .trim()
+  .min(1, "Roll number is required."),
 
+admissionNumber: z
+  .string()
+  .trim()
+  .min(1, "Admission number is required."),
+
+gender: z
+  .string()
+  .min(1, "Please select a gender."),
+
+dateOfBirth: z
+  .string()
+  .min(1, "Date of birth is required.")
+  .refine((date) => new Date(date) <= new Date(), {
+    message: "Date of birth cannot be in the future.",
+  }),
+
+address: z
+  .string()
+  .trim()
+  .min(1, "Address is required.")
+  .min(5, "Address must be at least 5 characters."),
+
+bloodGroup: z.string().optional(),
+
+guardianName: z
+  .string()
+  .trim()
+  .min(1, "Guardian name is required.")
+  .min(2, "Guardian name must be at least 2 characters."),
+
+guardianRelation: z
+  .string()
+  .min(1, "Please select guardian relation."),
+
+guardianPhone: z
+ .string()
+  .trim()
+  .min(1, "Phone number is required.")
+  .regex(/^[0-9]{10,15}$/, "Please enter a valid phone number."),
+
+parentEmail: z
+  .string()
+  .trim()
+  .min(1, "Parent email is required.")
+  .email("Please enter a valid parent email address."),
+
+state: z
+  .string()
+  .min(1, "Please select a state."),
+
+city: z
+  .string()
+  .min(1, "Please select a city."),
   profilePhoto: profilePhotoSchema,
   idDocument: idDocumentSchema,
 })
