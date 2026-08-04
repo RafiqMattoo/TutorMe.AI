@@ -79,6 +79,7 @@ export default function TeacherRegisterForm({
     mutationFn: (data: TeacherRegisterFormData) =>
       authApi.registerMember({
         ...data,
+        profilePhoto: data.profilePhoto?.file ?? null,
         document: data.document?.file ?? null,
         schoolId,
         role: "Teacher",

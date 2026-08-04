@@ -1,94 +1,143 @@
-import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import { FormProvider, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import toast from "react-hot-toast"
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 
-import Captcha from "@/shared/components/Captcha"
-import { authApi } from "../../services"
-import { Section } from "../FormControls"
-import TextFieldInput from "@/shared/components/ui/TextFieldInput"
-import SearchableDropdown from "@/shared/components/ui/SearchableDropdown"
-import DatePickerInput from "@/shared/components/ui/DatePickerInput"
-import FileUploadInput from "@/shared/components/ui/FileUploadInput"
-import Button from "@/shared/components/ui/customButton/button"
+import Captcha from "@/shared/components/Captcha";
+import { authApi } from "../../services";
+import { Section } from "../FormControls";
+import TextFieldInput from "@/shared/components/ui/TextFieldInput";
+import SearchableDropdown from "@/shared/components/ui/SearchableDropdown";
+import DatePickerInput from "@/shared/components/ui/DatePickerInput";
+import FileUploadInput from "@/shared/components/ui/FileUploadInput";
+import Button from "@/shared/components/ui/customButton/button";
 
-import { studentSchema, StudentFormData } from "../../schemas/student-schema/StudentSchema"
 import {
-
-  guardianRelationOptions, 
-} from "@/data/RegistrationData"
+  studentSchema,
+  StudentFormData,
+} from "../../schemas/student-schema/StudentSchema";
+import { guardianRelationOptions } from "@/data/RegistrationData";
 
 function errorMessage(error: unknown) {
-  return (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+  return (error as { response?: { data?: { message?: string } } })?.response
+    ?.data?.message;
 }
 
 export default function StudentRegisterForm({
   schoolId,
   onSuccess,
 }: {
-  schoolId: string
-  onSuccess: (message: string) => void
+  schoolId: string;
+  onSuccess: (message: string) => void;
 }) {
-  const [captcha, setCaptcha] = useState<string>()
+  const [captcha, setCaptcha] = useState<string>();
 
   const methods = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     mode: "onChange",
     defaultValues: {
-      firstName: "", lastName: "", email: "", password: "", phone: "",
-    
-     guardianName: "",
-      guardianRelation: "", guardianPhone: "", parentEmail: "", 
-    },
-  })
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      phone: "",
 
-  const { handleSubmit, watch, setValue, formState: { errors } } = methods
-  const selectedState = watch("state")
+      guardianName: "",
+      guardianRelation: "",
+      guardianPhone: "",
+      parentEmail: "",
+    },
+  });
+
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
+  const selectedState = watch("state");
   // const cityOptions = selectedState ? cityOptionsByState[selectedState] ?? [] : []
 
   const registerStudent = useMutation({
     mutationFn: (data: StudentFormData) => {
-      const formData = new FormData()
+      const formData = new FormData();
 
       Object.entries(data).forEach(([key, val]) => {
-        if (val === undefined || val === null || val === "") return
+        if (val === undefined || val === null || val === "") return;
 
         // FileUploadInput values look like { name, size, type, uri, file }
         if (val && typeof val === "object" && "file" in val) {
-          formData.append(key, (val as { file: File }).file)
+          formData.append(key, (val as { file: File }).file);
         } else {
-          formData.append(key, String(val))
+          formData.append(key, String(val));
         }
-      })
+      });
 
-      formData.append("schoolId", schoolId)
-      formData.append("role", "Student")
-      if (captcha) formData.append("captchaToken", captcha)
+      formData.append("schoolId", schoolId);
+      formData.append("role", "Student");
+      if (captcha) formData.append("captchaToken", captcha);
 
-      return authApi.registerMember(formData as unknown as Record<string, unknown>)
+      return authApi.registerMember(
+        formData as unknown as Record<string, unknown>,
+      );
     },
     onSuccess: (response) => onSuccess(response.message),
-    onError: (error) => toast.error(errorMessage(error) ?? "Could not submit registration"),
-  })
+    onError: (error) =>
+      toast.error(errorMessage(error) ?? "Could not submit registration"),
+  });
 
-  const onSubmit = (data: StudentFormData) => registerStudent.mutate(data)
+  const onSubmit = (data: StudentFormData) => registerStudent.mutate(data);
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
-
         <Section title="" />
         <div className="grid grid-cols-2 gap-3">
-          <TextFieldInput name="firstName" label="First Name" type="name" placeholder="First name" required error={errors.firstName} />
-          <TextFieldInput name="lastName" label="Last Name" type="name" placeholder="Last name" required error={errors.lastName} />
+          <TextFieldInput
+            name="firstName"
+            label="First Name"
+            type="name"
+            placeholder="First name"
+            required
+            error={errors.firstName}
+          />
+          <TextFieldInput
+            name="lastName"
+            label="Last Name"
+            type="name"
+            placeholder="Last name"
+            required
+            error={errors.lastName}
+          />
         </div>
 
-        <TextFieldInput name="email" label="Email" type="email" placeholder="Email" required error={errors.email} />
+        <TextFieldInput
+          name="email"
+          label="Email"
+          type="email"
+          placeholder="Email"
+          required
+          error={errors.email}
+        />
 
         <div className="grid grid-cols-2 gap-3">
-          <TextFieldInput name="password" label="Password" type="password" placeholder="Password" required error={errors.password} />
-          <TextFieldInput name="phone" label="Phone Number" type="phone" placeholder="Phone number" required error={errors.phone} />
+          <TextFieldInput
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Password"
+            required
+            error={errors.password}
+          />
+          <TextFieldInput
+            name="phone"
+            label="Phone Number"
+            type="phone"
+            placeholder="Phone number"
+            required
+            error={errors.phone}
+          />
         </div>
 
         {/* <div className="grid grid-cols-2 gap-3">
@@ -101,7 +150,7 @@ export default function StudentRegisterForm({
             error={errors.dateOfBirth?.message}
           />
         </div> */}
-{/* 
+        {/* 
         <TextFieldInput name="address" label="Address" type="address" placeholder="Address" required error={errors.address} /> */}
 
         {/* <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -140,15 +189,42 @@ export default function StudentRegisterForm({
           <TextFieldInput name="guardianName" label="Guardian Name" type="name" placeholder="Guardian name" required error={errors.guardianName} />
           <SearchableDropdown name="guardianRelation" label="Guardian Relation" options={guardianRelationOptions} placeholder="Select relation" error={errors.guardianRelation?.message} />
         </div> */}
-          
-                <div className="grid grid-cols-2 gap-3 mt-3">
-                  <TextFieldInput name="guardianName" label="Guardian Name" type="name" placeholder="Guardian name" required error={errors.guardianName} />
-                  <SearchableDropdown name="guardianRelation" label="Guardian Relation" options={guardianRelationOptions} placeholder="Select relation" error={errors.guardianRelation?.message} />
-                </div>
+
+        <div className="grid grid-cols-2 gap-3 mt-3">
+          <TextFieldInput
+            name="guardianName"
+            label="Guardian Name"
+            type="name"
+            placeholder="Guardian name"
+            required
+            error={errors.guardianName}
+          />
+          <SearchableDropdown
+            name="guardianRelation"
+            label="Guardian Relation"
+            options={guardianRelationOptions}
+            placeholder="Select relation"
+            error={errors.guardianRelation?.message}
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <TextFieldInput name="guardianPhone" label="Guardian Phone" type="phone" placeholder="Guardian phone" required error={errors.guardianPhone} />
-          <TextFieldInput name="parentEmail" label="Parent Email" type="email" placeholder="Parent email" required error={errors.parentEmail} />
+          <TextFieldInput
+            name="guardianPhone"
+            label="Guardian Phone"
+            type="phone"
+            placeholder="Guardian phone"
+            required
+            error={errors.guardianPhone}
+          />
+          <TextFieldInput
+            name="parentEmail"
+            label="Parent Email"
+            type="email"
+            placeholder="Parent email"
+            required
+            error={errors.parentEmail}
+          />
         </div>
 
         <Section title="" />
@@ -181,8 +257,7 @@ export default function StudentRegisterForm({
         >
           Signup
         </Button>
-
       </form>
     </FormProvider>
-  )
+  );
 }
