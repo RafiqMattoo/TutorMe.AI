@@ -79,6 +79,7 @@ const selectRole = (role: UserRole) => {
       const res = await authApi.login(data.email, data.password);
       login(res);
       toast.success(`Welcome back, ${res.user.firstName}!`);
+      
       navigate("/dashboard");
     } catch (err: unknown) {
       const msg = (
