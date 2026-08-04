@@ -73,7 +73,7 @@ namespace VidyaAI.API.Controllers
 
             return Ok(await Sender.Send(new RegisterSchoolCommand(
                 req.SchoolName, req.City, req.State, req.Phone, req.Email, req.Type, req.Board,
-                req.AdminFirstName, req.AdminLastName, req.AdminEmail, req.AdminPassword, req.AdminPhone, docUrl, req.CaptchaToken), ct));
+                docUrl, req.CaptchaToken), ct));
         }
 
         [HttpPost("register/member")]
