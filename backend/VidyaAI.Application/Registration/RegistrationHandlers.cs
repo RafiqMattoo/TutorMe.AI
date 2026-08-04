@@ -35,6 +35,7 @@ namespace VidyaAI.Application.Registration.Commands
         string SchoolName, string? City, string? State, string? Phone, string? Email,
         SchoolType Type, BoardType Board,
         string AdminFirstName, string AdminLastName, string AdminEmail, string AdminPassword, string? AdminPhone,
+        string? DocumentUrl = null,
         string? CaptchaToken = null)
         : IRequest<RegisterResponse>;
 
@@ -67,6 +68,7 @@ namespace VidyaAI.Application.Registration.Commands
             {
                 Name = cmd.SchoolName, City = cmd.City, State = cmd.State,
                 Phone = cmd.Phone, Email = cmd.Email, Type = cmd.Type, Board = cmd.Board,
+                DocumentUrl = cmd.DocumentUrl,
                 Plan = SubscriptionPlan.Free, SubscriptionStatus = SubscriptionStatus.Trial,
                 IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
             };

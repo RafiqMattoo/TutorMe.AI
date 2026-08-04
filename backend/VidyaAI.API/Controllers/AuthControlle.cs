@@ -62,10 +62,19 @@ namespace VidyaAI.API.Controllers
             => Ok(await Sender.Send(new GetPublicSchoolsQuery(), ct));
 
         [HttpPost("register/school")]
-        public async Task<IActionResult> RegisterSchool([FromBody] RegisterSchoolRequest req, CancellationToken ct)
-            => Ok(await Sender.Send(new RegisterSchoolCommand(
+        public async Task<IActionResult> RegisterSchool([FromForm] RegisterSchoolRequest req, IFormFile? document, [FromServices] VidyaAI.Application.Common.Interfaces.IStorageService storage, CancellationToken ct)
+        {
+            string? docUrl = null;
+            if (document is not null && document.Length > 0)
+            {
+                await using var stream = document.OpenReadStream();
+                docUrl = await storage.UploadAsync(stream, document.FileName, document.ContentType ?? "application/octet-stream", ct);
+            }
+
+            return Ok(await Sender.Send(new RegisterSchoolCommand(
                 req.SchoolName, req.City, req.State, req.Phone, req.Email, req.Type, req.Board,
-                req.AdminFirstName, req.AdminLastName, req.AdminEmail, req.AdminPassword, req.AdminPhone, req.CaptchaToken), ct));
+                req.AdminFirstName, req.AdminLastName, req.AdminEmail, req.AdminPassword, req.AdminPhone, docUrl, req.CaptchaToken), ct));
+        }
 
         [HttpPost("register/member")]
         public async Task<IActionResult> RegisterMember([FromBody] RegisterMemberRequest req, CancellationToken ct)
