@@ -110,14 +110,15 @@ export default function TeacherRegisterForm({
             name="qualification"
             label="Qualification"
             type="text"
-            placeholder="Qualification (Optional)"
+            placeholder="Qualification"
+            required
           />
 
           <TextFieldInput
             name="experience"
             label="Experience"
             type="text"
-            placeholder="Experience (Optional)"
+            placeholder="Experiene"
           />
         </div>
 
