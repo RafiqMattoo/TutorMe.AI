@@ -29,12 +29,20 @@ const profilePhotoSchema = fileUploadValueSchema
 const idDocumentSchema = fileUploadValueSchema
   .refine((val) => hasAllowedExtension(val.name, DOC_EXTENSIONS), {
     message: "Only PDF, JPG, JPEG, PNG files are allowed",
+
   })
+
   .refine((val) => val.size <= MAX_FILE_SIZE_MB * 1024 * 1024, {
     message: `File must be under ${MAX_FILE_SIZE_MB}MB`,
+  
   })
+    .nullable()
   .optional()
+   .refine((val) => val !== null && val !== undefined, {
+    message: "Please upload the student ID card or birth certificate",
+  })
 
+  
 export const studentSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
@@ -58,7 +66,7 @@ export const studentSchema = z.object({
 
   dateOfBirth: z
     .string()
-    .min(1, "Date of birth is required")
+    .min(1, "please select a date of birth")
     .refine((date) => new Date(date) <= new Date(), { message: "Date of birth cannot be in the future" }),
 
   address: z.string().min(5, "Address is required"),

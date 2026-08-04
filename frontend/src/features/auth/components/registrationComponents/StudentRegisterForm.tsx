@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
-import { FormProvider, useForm } from "react-hook-form"
+import { FormProvider, SubmitHandler, useForm, Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import toast from "react-hot-toast"
 
@@ -33,7 +33,7 @@ export default function StudentRegisterForm({
   const [captcha, setCaptcha] = useState<string>()
 
   const methods = useForm<StudentFormData>({
-    resolver: zodResolver(studentSchema),
+    resolver: zodResolver(studentSchema) as unknown as Resolver<StudentFormData>,
     mode: "onChange",
     defaultValues: {
       firstName: "", lastName: "", email: "", password: "", phone: "",
