@@ -11,8 +11,30 @@ import TextFieldInput from "@/shared/components/ui/TextFieldInput";
 import { authApi } from "../../services";
 import { Section } from "../FormControls";
 import type { FileUploadValue } from "@/shared/types";
-import { registerTeacherSchema } from "../../schemas/teacher-schema/registerTeacherSchemas";
-import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
+import SearchableDropdown from "@/shared/components/ui/SearchableDropdown";
+const qualificationOptions = [
+  { label: "B.Ed", value: "B.Ed" },
+  { label: "M.Ed", value: "M.Ed" },
+  {
+    label: "BSc Degree Guide 2025 — Online BSc Courses & Programs",
+    value: "BSc Degree Guide 2025 — Online BSc Courses & Programs",
+  },
+  { label: "M.Sc", value: "M.Sc" },
+  { label: "B.A", value: "B.A" },
+  { label: "M.A", value: "M.A" },
+  { label: "B.Com", value: "B.Com" },
+  { label: "M.Com", value: "M.Com" },
+  { label: "Ph.D", value: "Ph.D" },
+  { label: "Other", value: "Other" },
+];
+const experienceOptions = [
+  { label: "Fresher", value: "Fresher" },
+  { label: "1 Year", value: "1 Year" },
+  { label: "2 Years", value: "2 Years" },
+  { label: "3 Years", value: "3 Years" },
+  { label: "5 Years", value: "5 Years" },
+  { label: "10+ Years", value: "10+ Years" },
+];
 
 function errorMessage(error: unknown) {
   return (error as { response?: { data?: { message?: string } } })?.response
@@ -25,8 +47,8 @@ type TeacherRegisterFormData = {
   email: string;
   qualification: string;
   experience: string;
-  profilePhoto: FileUploadValue | null;
   document: FileUploadValue | null;
+  otherQualification: string;
 };
 
 export default function TeacherRegisterForm({
@@ -39,18 +61,19 @@ export default function TeacherRegisterForm({
   const [captcha, setCaptcha] = useState<string | undefined>();
 
   const methods = useForm<TeacherRegisterFormData>({
-    resolver: zodResolver(registerTeacherSchema),
-    mode: "onChange",
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       qualification: "",
       experience: "",
-      document: undefined,
-      // profilePhoto: undefined,
+      document: null,
+      otherQualification: "",
     },
   });
+
+  const { handleSubmit } = methods;
+  const selectedQualification = methods.watch("qualification");
 
   const registerTeacher = useMutation({
     mutationFn: (data: TeacherRegisterFormData) =>
@@ -75,10 +98,6 @@ export default function TeacherRegisterForm({
   const onSubmit = (data: TeacherRegisterFormData) => {
     registerTeacher.mutate(data);
   };
-  const {
-  handleSubmit,
-  formState: { errors },
-} = methods;
 
   return (
     <FormProvider {...methods}>
@@ -92,7 +111,6 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="First name"
             required
-             error={errors.firstName}
           />
 
           <TextFieldInput
@@ -101,7 +119,6 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="Last name"
             required
-             error={errors.lastName}
           />
         </div>
 
@@ -111,26 +128,36 @@ export default function TeacherRegisterForm({
           type="email"
           placeholder="Email"
           required
-          error={errors.email}
         />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <TextFieldInput
-            name="qualification"
-            required
-            label="Qualification"
-            type="text"
-            placeholder="Qualification"
-            error={errors.qualification}
-          />
+          <div>
+            <SearchableDropdown
+              name="qualification"
+              label="Qualification"
+              placeholder="Select Qualification"
+              options={qualificationOptions}
+              searchable={false}
+            />
 
-          <TextFieldInput
+            {selectedQualification === "Other" && (
+              <div className="mt-3">
+                <TextFieldInput
+                  name="otherQualification"
+                  label="Other Qualification"
+                  placeholder="Write your qualification"
+                  required
+                />
+              </div>
+            )}
+          </div>
+
+          <SearchableDropdown
             name="experience"
-            label="Experience"
-            type="text"
-            placeholder="Experience"
-            error={errors.experience}
-            required
+            label="Teaching Experience"
+            placeholder="Select Teaching Experience"
+            options={experienceOptions}
+            searchable={false}
           />
         </div>
 
@@ -145,11 +172,9 @@ export default function TeacherRegisterForm({
           helperText="PNG or JPG only (max 5MB)"
         /> */}
 
-        {/* <Section title="Supporting Document" /> */}
-
         <FileUploadInput
           name="document"
-          label="Qualification / Experience Document"
+          label="Upload Document"
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
           maxSizeInMB={10}
           placeholder="Upload qualification or experience document"
