@@ -80,17 +80,12 @@ const sanitizeInput = (
         .slice(0, 11)
 
 
-    case "email":
-      return text
-        .replace(
-          /[^a-zA-Z0-9@._-]/g,
-          ""
-        )
-        .replace(
-          /@(?=.*@)/g,
-          ""
-        )
-        .slice(0, 32)
+   case "email":
+  return text
+    .replace(/[^a-zA-Z0-9@._-]/g, "")
+    .replace(/@(?=.*@)/g, "")
+    .slice(0, 32)
+    .toLowerCase();
 
 
     case "username":
