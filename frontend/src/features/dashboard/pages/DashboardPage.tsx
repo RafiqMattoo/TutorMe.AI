@@ -44,11 +44,18 @@ export default function DashboardPage() {
         <section className="overflow-hidden rounded-lg bg-slate-950 text-white shadow-2xl shadow-slate-300">
           <div className="grid gap-6 p-6 lg:grid-cols-[1fr_22rem] lg:p-8">
             <div>
-              <div className="text-xs font-bold uppercase text-teal-200">Today in StudyFetch</div>
-              <h2 className="mt-3 max-w-3xl text-3xl font-black leading-tight tracking-normal lg:text-5xl">
-                {user?.firstName}, your {profile?.label ?? 'workspace'} is ready.
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">{profile?.description}</p>
+             <div className="text-xs font-bold uppercase tracking-[0.24em] text-teal-200">
+  Welcome back
+</div>
+
+<h2 className="mt-3 max-w-3xl text-3xl font-black leading-tight tracking-normal lg:text-5xl">
+  {user?.firstName}, let's pick up where you left off.
+</h2>
+
+<p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
+  Stay on top of activity, track meaningful progress, and keep your learning
+  community moving forward with confidence.
+</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-white/10 p-4">
