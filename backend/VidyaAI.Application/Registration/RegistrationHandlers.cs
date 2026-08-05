@@ -34,6 +34,8 @@ namespace VidyaAI.Application.Registration.Commands
     public record RegisterSchoolCommand(
         string SchoolName, string? City, string? State, string? Phone, string? Email,
         SchoolType Type, BoardType Board,
+        string Password,
+        int? EstablishmentYear = null, string? RegistrationNumber = null,
         string? DocumentUrl = null,
         string? CaptchaToken = null)
         : IRequest<RegisterResponse>;
@@ -44,6 +46,11 @@ namespace VidyaAI.Application.Registration.Commands
         {
             RuleFor(x => x.SchoolName).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Email).EmailAddress().When(x => !string.IsNullOrWhiteSpace(x.Email));
+            RuleFor(x => x.EstablishmentYear).InclusiveBetween(1800, DateTime.UtcNow.Year).When(x => x.EstablishmentYear.HasValue);
+            RuleFor(x => x.RegistrationNumber).MaximumLength(200).When(x => !string.IsNullOrWhiteSpace(x.RegistrationNumber));
+            RuleFor(x => x.Password).NotEmpty().MinimumLength(6)
+                .Matches("[A-Z]").WithMessage("Password must contain an uppercase letter.")
+                .Matches("[0-9]").WithMessage("Password must contain a digit.");
         }
     }
 
@@ -55,15 +62,40 @@ namespace VidyaAI.Application.Registration.Commands
             if (!await captcha.VerifyAsync(cmd.CaptchaToken, ct))
                 throw new ArgumentException("Captcha verification failed. Please try again.");
 
+            // Ensure email uniqueness for admin account
+            if (!string.IsNullOrWhiteSpace(cmd.Email) && await db.Users.AnyAsync(u => u.Email == cmd.Email, ct))
+                throw new ArgumentException("An account with this email already exists.");
+
             var school = new School
             {
                 Name = cmd.SchoolName, City = cmd.City, State = cmd.State,
                 Phone = cmd.Phone, Email = cmd.Email, Type = cmd.Type, Board = cmd.Board,
+                EstablishedYear = cmd.EstablishmentYear,
+                RegistrationNumber = cmd.RegistrationNumber,
                 DocumentUrl = cmd.DocumentUrl,
                 Plan = SubscriptionPlan.Free, SubscriptionStatus = SubscriptionStatus.Trial,
                 IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
             };
             db.Schools.Add(school);
+
+            // Create a pending SchoolAdmin account tied to this school so the school
+            // contact can sign in after approval.
+            if (!string.IsNullOrWhiteSpace(cmd.Email) && !string.IsNullOrWhiteSpace(cmd.Password))
+            {
+                var adminUser = new User
+                {
+                    FirstName = "Admin",
+                    LastName = school.Name,
+                    Email = cmd.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.Password),
+                    Phone = cmd.Phone,
+                    Role = UserRole.SchoolAdmin,
+                    School = school,
+                    IsActive = false,
+                    ApprovalStatus = ApprovalStatus.Pending,
+                };
+                db.Users.Add(adminUser);
+            }
 
             await NotificationFactory.AddForRoleAsync(db, UserRole.SuperAdmin, null,
                 NotificationType.ApprovalRequested, "New school awaiting approval",
@@ -90,6 +122,7 @@ namespace VidyaAI.Application.Registration.Commands
         Guid SchoolId, UserRole Role,
         string FirstName, string LastName, string Email, string Password, string? Phone,
         string? GradeLevel, string? RollNumber, DateTime? DateOfBirth, string? GuardianName, string? GuardianPhone,
+        string? QualificationDocumentUrl = null, string? ExperienceDocumentUrl = null, string? BirthCertificateUrl = null,
         string? CaptchaToken = null)
         : IRequest<RegisterResponse>;
 
@@ -142,6 +175,9 @@ namespace VidyaAI.Application.Registration.Commands
                 DateOfBirth = cmd.DateOfBirth,
                 GuardianName = cmd.GuardianName,
                 GuardianPhone = cmd.GuardianPhone,
+                QualificationDocumentUrl = cmd.QualificationDocumentUrl,
+                ExperienceDocumentUrl = cmd.ExperienceDocumentUrl,
+                BirthCertificateUrl = cmd.BirthCertificateUrl,
             };
             db.Users.Add(user);
 

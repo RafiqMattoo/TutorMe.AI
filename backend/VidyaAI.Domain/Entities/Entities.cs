@@ -15,6 +15,9 @@ public class School : BaseEntity
     public string? LogoUrl { get; set; }
     // Optional uploaded registration document (URL returned by storage service)
     public string? DocumentUrl { get; set; }
+    // Optional establishment year and official registration number
+    public int? EstablishedYear { get; set; }
+    public string? RegistrationNumber { get; set; }
     public SchoolType Type { get; set; } = SchoolType.Private;
     public BoardType Board { get; set; } = BoardType.CBSE;
     public SubscriptionPlan Plan { get; set; } = SubscriptionPlan.Free;
@@ -39,6 +42,11 @@ public class User : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? AvatarUrl { get; set; }
+    // Uploaded documents for teacher verification
+    public string? QualificationDocumentUrl { get; set; }
+    public string? ExperienceDocumentUrl { get; set; }
+    // Optional birth certificate uploaded for student verification
+    public string? BirthCertificateUrl { get; set; }
     public UserRole Role { get; set; } = UserRole.Student;
     public bool IsActive { get; set; } = true;
     public bool EmailVerified { get; set; } = false;

@@ -6,6 +6,7 @@ using VidyaAI.Application.Auth.Commands;
 using VidyaAI.Application.Registration.Commands;
 using VidyaAI.Application.Registration.Queries;
 using VidyaAI.Application.DTOs;
+using VidyaAI.Domain.Enums;
 namespace VidyaAI.API.Controllers
 {
     [Route("api/auth")]
@@ -36,6 +37,7 @@ namespace VidyaAI.API.Controllers
 
             return Ok(await Sender.Send(new RegisterSchoolCommand(
                 req.SchoolName, req.City, req.State, req.Phone, req.Email, req.Type, req.Board,
+                req.Password, req.EstablishmentYear, req.RegistrationNumber,
                 docUrl, req.CaptchaToken), ct));
         }
 
@@ -43,7 +45,46 @@ namespace VidyaAI.API.Controllers
         public async Task<IActionResult> RegisterMember([FromBody] RegisterMemberRequest req, CancellationToken ct)
             => Ok(await Sender.Send(new RegisterMemberCommand(
                 req.SchoolId, req.Role, req.FirstName, req.LastName, req.Email, req.Password, req.Phone,
-                req.GradeLevel, req.RollNumber, req.DateOfBirth, req.GuardianName, req.GuardianPhone, req.CaptchaToken), ct));
+                req.GradeLevel, req.RollNumber, req.DateOfBirth, req.GuardianName, req.GuardianPhone,
+                null, null, null, req.CaptchaToken), ct));
+
+        // Separate endpoints so frontend calls role-specific APIs instead of a single role-driven endpoint
+        [HttpPost("register/teacher")]
+        public async Task<IActionResult> RegisterTeacher([FromForm] RegisterTeacherRequest req, IFormFile? qualification, IFormFile? experience, [FromServices] VidyaAI.Application.Common.Interfaces.IStorageService storage, CancellationToken ct)
+        {
+            string? qualUrl = null;
+            string? expUrl = null;
+            if (qualification is not null && qualification.Length > 0)
+            {
+                await using var s = qualification.OpenReadStream();
+                qualUrl = await storage.UploadAsync(s, qualification.FileName, qualification.ContentType ?? "application/octet-stream", ct);
+            }
+            if (experience is not null && experience.Length > 0)
+            {
+                await using var s2 = experience.OpenReadStream();
+                expUrl = await storage.UploadAsync(s2, experience.FileName, experience.ContentType ?? "application/octet-stream", ct);
+            }
+
+            return Ok(await Sender.Send(new RegisterMemberCommand(
+                req.SchoolId, UserRole.Teacher, req.FirstName, req.LastName, req.Email, req.Password, req.Phone,
+                null, null, req.DateOfBirth, null, null, qualUrl, expUrl, null, req.CaptchaToken), ct));
+        }
+
+        [HttpPost("register/student")]
+        public async Task<IActionResult> RegisterStudent([FromForm] RegisterStudentRequest req, IFormFile? birthCertificate, [FromServices] VidyaAI.Application.Common.Interfaces.IStorageService storage, CancellationToken ct)
+        {
+            string? birthUrl = null;
+            if (birthCertificate is not null && birthCertificate.Length > 0)
+            {
+                await using var s = birthCertificate.OpenReadStream();
+                birthUrl = await storage.UploadAsync(s, birthCertificate.FileName, birthCertificate.ContentType ?? "application/octet-stream", ct);
+            }
+
+            return Ok(await Sender.Send(new RegisterMemberCommand(
+                req.SchoolId, UserRole.Student, req.FirstName, req.LastName, req.Email, req.Password, req.Phone,
+                req.GradeLevel, req.RollNumber, req.DateOfBirth, req.GuardianName, req.GuardianPhone,
+                null, null, birthUrl, req.CaptchaToken), ct));
+        }
 
         // [HttpPost("logout"), Authorize]
         // public async Task<IActionResult> Logout(CancellationToken ct)

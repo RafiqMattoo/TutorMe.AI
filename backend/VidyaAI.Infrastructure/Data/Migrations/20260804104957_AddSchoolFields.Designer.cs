@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VidyaAI.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VidyaAI.Infrastructure.Data;
 namespace VidyaAI.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260804104957_AddSchoolFields")]
+    partial class AddSchoolFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,7 +307,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1928),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9236),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Technology",
@@ -313,7 +316,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1967),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9241),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Science",
@@ -322,7 +325,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1976),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9244),
                             IsActive = true,
                             IsDeleted = false,
                             Name = "General Knowledge",
@@ -1566,7 +1569,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3890),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9889),
                             Description = "Global platform owner with full operational control.",
                             DisplayName = "Super Admin",
                             IsActive = true,
@@ -1577,7 +1580,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3920),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9894),
                             Description = "Manages one school, its users, content, and operations.",
                             DisplayName = "School Admin",
                             IsActive = true,
@@ -1588,7 +1591,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3933),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9898),
                             Description = "Creates learning content and supports study workflows.",
                             DisplayName = "Teacher",
                             IsActive = true,
@@ -1599,7 +1602,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3943),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9903),
                             Description = "Learner workspace for study materials and practice.",
                             DisplayName = "Student",
                             IsActive = true,
@@ -1610,7 +1613,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("30000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3952),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9907),
                             Description = "Guardian view into school learning content.",
                             DisplayName = "Parent",
                             IsActive = true,
@@ -1676,7 +1679,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2539),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9518),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "SuperAdmin",
@@ -1690,7 +1693,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2635),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9539),
                             IsDeleted = false,
                             Module = "Schools",
                             Role = "SuperAdmin",
@@ -1704,7 +1707,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2672),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9552),
                             IsDeleted = false,
                             Module = "Users",
                             Role = "SuperAdmin",
@@ -1718,7 +1721,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2708),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9560),
                             IsDeleted = false,
                             Module = "Roles",
                             Role = "SuperAdmin",
@@ -1732,7 +1735,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2731),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9568),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "SuperAdmin",
@@ -1746,7 +1749,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2773),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9577),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "SuperAdmin",
@@ -1760,7 +1763,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2798),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9596),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "SchoolAdmin",
@@ -1774,7 +1777,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = true,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2820),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9605),
                             IsDeleted = false,
                             Module = "Users",
                             Role = "SchoolAdmin",
@@ -1788,7 +1791,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2844),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9613),
                             IsDeleted = false,
                             Module = "Roles",
                             Role = "SchoolAdmin",
@@ -1802,7 +1805,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2918),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9624),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "SchoolAdmin",
@@ -1816,7 +1819,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(2987),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9636),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "SchoolAdmin",
@@ -1830,7 +1833,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3052),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9644),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Teacher",
@@ -1844,7 +1847,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = true,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3120),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9652),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Teacher",
@@ -1858,7 +1861,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3194),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9660),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Teacher",
@@ -1872,7 +1875,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3260),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9668),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Student",
@@ -1886,7 +1889,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3295),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9675),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Student",
@@ -1900,7 +1903,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3318),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9683),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Student",
@@ -1914,7 +1917,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3345),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9693),
                             IsDeleted = false,
                             Module = "Dashboard",
                             Role = "Parent",
@@ -1928,7 +1931,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3371),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9703),
                             IsDeleted = false,
                             Module = "Articles",
                             Role = "Parent",
@@ -1942,7 +1945,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             CanDelete = false,
                             CanEdit = false,
                             CanView = true,
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(3395),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9711),
                             IsDeleted = false,
                             Module = "Categories",
                             Role = "Parent",
@@ -2039,14 +2042,14 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                             ApprovalStatus = "Approved",
                             Board = "CBSE",
                             City = "Srinagar",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(193),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(8751),
                             Email = "demo@codestrix.com",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "CodeStrix Demo School",
                             Plan = "Pro",
                             State = "J&K",
-                            SubscriptionExpiresAt = new DateTime(2027, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(132),
+                            SubscriptionExpiresAt = new DateTime(2027, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(8723),
                             SubscriptionStatus = "Active",
                             Type = "Private"
                         });
@@ -2807,9 +2810,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("text");
 
-                    b.Property<string>("BirthCertificateUrl")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -2823,9 +2823,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
 
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("ExperienceDocumentUrl")
-                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -2865,9 +2862,6 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("text");
 
-                    b.Property<string>("QualificationDocumentUrl")
-                        .HasColumnType("text");
-
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");
 
@@ -2902,7 +2896,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             ApprovalStatus = "Approved",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1521),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9132),
                             Email = "admin@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Super",
@@ -2917,7 +2911,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000006"),
                             ApprovalStatus = "Approved",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1553),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9141),
                             Email = "schooladmin@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Aaliya",
@@ -2932,7 +2926,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000007"),
                             ApprovalStatus = "Approved",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1581),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9162),
                             Email = "teacher@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Rohan",
@@ -2947,7 +2941,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000008"),
                             ApprovalStatus = "Approved",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1608),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9168),
                             Email = "student@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Zoya",
@@ -2962,7 +2956,7 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000009"),
                             ApprovalStatus = "Approved",
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(1634),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 141, DateTimeKind.Utc).AddTicks(9173),
                             Email = "parent@vidyaai.com",
                             EmailVerified = true,
                             FirstName = "Imran",
@@ -3054,8 +3048,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6114),
-                            EnrolledAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6112),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(359),
+                            EnrolledAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(358),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "SuperAdmin",
@@ -3066,8 +3060,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6248),
-                            EnrolledAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6247),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(387),
+                            EnrolledAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(386),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "SchoolAdmin",
@@ -3078,8 +3072,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6276),
-                            EnrolledAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6275),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(397),
+                            EnrolledAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(397),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Teacher",
@@ -3090,8 +3084,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6302),
-                            EnrolledAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6301),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(405),
+                            EnrolledAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(405),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Student",
@@ -3102,8 +3096,8 @@ namespace VidyaAI.Infrastructure.Data.Migrations
                         new
                         {
                             Id = new Guid("20000000-0000-0000-0000-000000000005"),
-                            CreatedAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6342),
-                            EnrolledAt = new DateTime(2026, 8, 5, 5, 19, 40, 89, DateTimeKind.Utc).AddTicks(6341),
+                            CreatedAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(413),
+                            EnrolledAt = new DateTime(2026, 8, 4, 10, 49, 55, 142, DateTimeKind.Utc).AddTicks(413),
                             IsDeleted = false,
                             IsPrimary = true,
                             Role = "Parent",
