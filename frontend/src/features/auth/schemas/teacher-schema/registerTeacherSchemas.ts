@@ -2,6 +2,13 @@ import { z } from "zod";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+const passwordSchema = z
+  .string()
+  .min(1, "Password is required.")
+  .min(8, "Password must be at least 8 characters.");
+
+const fileUploadSchema = z.instanceof(File).optional();
+
 const ACCEPTED_FILE_TYPES = [
   "application/pdf",
   "application/msword",
@@ -59,18 +66,42 @@ experience: z
   //     "Only JPG and PNG images are allowed."
   //   ),
 
-  document: z
-    .instanceof(File, {
-      message: "Please upload a qualification or experience document.",
-    })
-    .refine(
-      (file) => file.size <= MAX_FILE_SIZE,
-      "File size must not exceed 10MB."
-    )
-    .refine(
-      (file) => ACCEPTED_FILE_TYPES.includes(file.type),
-      "Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed."
-    ),
+document: z
+  .instanceof(File, {
+    message: "Please upload a qualification document.",
+  })
+  .refine(
+    (file) => file.size <= MAX_FILE_SIZE,
+    "File size must not exceed 10MB."
+  )
+  .refine(
+    (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+    "Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed."
+  ),
+experienceDocument: z
+  .instanceof(File)
+  .nullable()
+  .optional()
+  .refine(
+    (file) => !file || file.size <= MAX_FILE_SIZE,
+    "File size must not exceed 10MB."
+  )
+  .refine(
+    (file) => !file || ACCEPTED_FILE_TYPES.includes(file.type),
+    "Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed."
+  ),
+
+    phone: z
+  .string()
+  .min(1, "Phone number is required")
+  .regex(/^[6-9]\d{9}$/, "Enter a valid phone number"),
+
+password: passwordSchema,
+
+dateOfBirth: z
+  .string()
+  .min(1, "Date of birth is required"),
+
 });
 
 export type RegisterTeacherFormData = z.infer<
