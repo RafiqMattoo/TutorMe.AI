@@ -92,11 +92,45 @@ export default function SchoolRegisterForm({
 
   // ✅ Keep your existing mutation code here
   const registerSchool = useMutation({
-    mutationFn: (data: RegisterSchoolFormData) =>
-      authApi.registerSchool({
-        ...data,
-        captchaToken: captcha,
-      }),
+    mutationFn: (data: RegisterSchoolFormData) => {
+      const formData = new FormData();
+
+      formData.append("SchoolName", data.schoolName.trim());
+      formData.append("City", data.city?.trim() ?? "");
+      formData.append("State", data.state?.trim() ?? "");
+      formData.append("Phone", data.phone?.trim() ?? "");
+      formData.append("Email", data.email?.trim() ?? "");
+
+      if (data.type) {
+        formData.append("Type", data.type);
+      }
+
+      if (data.board) {
+        formData.append("Board", data.board);
+      }
+
+      if (data.password?.trim()) {
+        formData.append("Password", data.password.trim());
+      }
+
+      if (data.establishedYear != null) {
+        formData.append("EstablishmentYear", String(data.establishedYear));
+      }
+
+      if (data.schoolRegistrationNumber?.trim()) {
+        formData.append("RegistrationNumber", data.schoolRegistrationNumber.trim());
+      }
+
+      if (captcha) {
+        formData.append("CaptchaToken", captcha);
+      }
+
+      if (data.supportingDocument instanceof File) {
+        formData.append("document", data.supportingDocument);
+      }
+
+      return authApi.registerSchool(formData);
+    },
 
     onSuccess: (response) => {
       onSuccess(response.message);
@@ -121,7 +155,7 @@ export default function SchoolRegisterForm({
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <TextFieldInput
         name="schoolName"
-        type="name"
+        type="text"
         label="School Name"
         placeholder="Enter school name"
         error={errors.schoolName}
@@ -296,13 +330,24 @@ export default function SchoolRegisterForm({
         />
 
         <TextFieldInput
-  name="email"
-  label="School Email"
-  type="email"
-  placeholder="Enter school email"
-  error={errors.email?.message}
-  required
-/>
+          name="email"
+          label="School Email"
+          type="email"
+          placeholder="Enter school email"
+          error={errors.email?.message}
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <TextFieldInput
+          name="password"
+          label="Password"
+          type="password"
+          placeholder="Enter password"
+          error={errors.password}
+          required
+        />
       </div>
 
       {/* <Section title="Admin account" /> */}

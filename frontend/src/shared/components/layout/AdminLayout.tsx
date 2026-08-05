@@ -58,7 +58,7 @@ const navGroups = [
     items: [
       { to: "/schools", icon: School, label: "Schools" },
       { to: "/approvals", icon: ClipboardCheck, label: "Approvals" },
-      // { to: "/users", icon: Users, label: "Users" },
+      { to: "/users", icon: Users, label: "Users" },
       { to: "/roles", icon: ShieldCheck, label: "Roles" },
       { to: "/enrollments", icon: Link2, label: "Enrollments" },
       { to: "/academics", icon: GraduationCap, label: "Academics" },

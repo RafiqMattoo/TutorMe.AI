@@ -26,7 +26,7 @@ export interface PublicSchool { id: string; name: string; city?: string; state?:
 export interface PendingSchool {
   id: string; name: string; city?: string; state?: string
   type: SchoolType; board: BoardType
-  adminName?: string; adminEmail?: string; createdAt: string
+  adminName?: string; adminEmail?: string; supportingDocument?: string; createdAt: string
 }
 
 export interface PendingMember {
@@ -638,4 +638,5 @@ export interface RegisterSchoolFormData {
   adminPassword: string;
   adminPhone: string;
   supportingDocument?: File;
+  password?: string;
 }

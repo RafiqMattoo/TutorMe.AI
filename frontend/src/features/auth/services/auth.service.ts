@@ -10,8 +10,10 @@ export const authApi = {
   me: () => axiosInstance.get('/auth/me').then(r => r.data),
   // Public self-registration (no auth required).
   publicSchools: () => axiosInstance.get<PublicSchool[]>('/auth/schools').then(r => r.data),
-  registerSchool: (data: object) =>
-    axiosInstance.post<{ message: string }>('/auth/register/school', data).then(r => r.data),
+  registerSchool: (data: FormData | object) =>
+    axiosInstance.post<{ message: string }>('/auth/register/school', data, {
+      headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    }).then(r => r.data),
   registerMember: (data: object) =>
     axiosInstance.post<{ message: string }>('/auth/register/member', data).then(r => r.data),
 }
