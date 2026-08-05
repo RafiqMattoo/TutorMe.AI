@@ -6,8 +6,8 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { deliveriesApi } from '../services'
-import { PageHeader } from '@/shared/components/ui'
-import type { Delivery } from '@/shared/types'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import type { Delivery } from '../../../shared/types/index.ts'
 
 // The browser's local calendar date as YYYY-MM-DD, so "today" matches the
 // student's timezone (the server defaults to UTC otherwise).

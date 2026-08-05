@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Clapperboard, Loader2, Pause, Play, RotateCcw, SkipBack, SkipForward, Sparkles } from 'lucide-react'
 import { materialsApi, narrationApi } from '../services'
-import { PageHeader } from '@/shared/components/ui'
-import type { NarrationSegment } from '@/shared/types'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import type { NarrationSegment } from '../../../shared/types/index.ts'
 import clsx from 'clsx'
 
 // Animated "explainer video": the local LLM rewrites each section into a simple

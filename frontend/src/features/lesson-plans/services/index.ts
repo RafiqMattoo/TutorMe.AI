@@ -1,2 +1,2 @@
 export * from './lesson-plans.service'
-export { materialsApi } from '@/features/materials/services'
+export { materialsApi } from '../../materials/services/index.ts'

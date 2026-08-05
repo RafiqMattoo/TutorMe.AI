@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { QuizDifficulty, QuizSummary, Quiz, QuizAttemptResult } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { QuizDifficulty, QuizSummary, Quiz, QuizAttemptResult } from '../../../shared/types/index.ts'
 
 // ── QUIZZES ───────────────────────────────────────────────────────
 

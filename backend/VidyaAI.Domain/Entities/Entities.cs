@@ -13,6 +13,8 @@ public class School : BaseEntity
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public string? LogoUrl { get; set; }
+    // Optional uploaded registration document (URL returned by storage service)
+    public string? DocumentUrl { get; set; }
     public SchoolType Type { get; set; } = SchoolType.Private;
     public BoardType Board { get; set; } = BoardType.CBSE;
     public SubscriptionPlan Plan { get; set; } = SubscriptionPlan.Free;
@@ -47,6 +49,9 @@ public class User : BaseEntity
     public DateTime? RefreshTokenExpiry { get; set; }
     public DateTime? LastLoginAt { get; set; }
 
+    // User's TOTP secret used for multi-factor authentication.
+    public TotpSecret? TotpSecret { get; set; }
+
     // ── Student profile (prominent when a school enrolls a student) ──
     public string? GradeLevel { get; set; }      // e.g. "Class 8" / "Grade 10"
     public string? RollNumber { get; set; }
@@ -62,7 +67,81 @@ public class User : BaseEntity
     public ICollection<Like> Likes { get; set; } = [];
     public ICollection<UserPreference> Preferences { get; set; } = [];
     public ICollection<UserSchoolEnrollment> Enrollments { get; set; } = [];
+    // Authentication sessions for this user.
+    // A user can have multiple active login sessions
+    // (e.g. laptop, mobile, tablet).
+    public ICollection<Session> Sessions { get; set; } = [];
+    // Linked external authentication providers
+    public ICollection<ExternalLogin> ExternalLogins { get; set; } = [];
+    public ICollection<OneTimeToken> OneTimeTokens { get; set; } = new List<OneTimeToken>();
+    // Backup codes for account recovery.
+    public ICollection<RecoveryCode> RecoveryCodes { get; set; } = [];
+    // Data export requests submitted by the user.
+    public ICollection<DataExportRequest> DataExportRequests { get; set; } = [];
+    // Login history for auditing and security.
+    public ICollection<LoginAudit> LoginAudits { get; set; } = [];
+    // Administrative actions performed by this user.
+    public ICollection<AdminAudit> AdminAudits { get; set; } = [];
 }
+
+
+// ── AUTHENTICATION SESSION ───────────────────────────────────────
+
+// Represents a login session for a user.
+// Each successful login creates a new session.
+public class Session : BaseEntity
+{
+
+
+    // Foreign key to the authenticated user.
+    // </summary>
+    public Guid UserId { get; set; }
+
+    // Navigation property to the owning user.
+    public User User { get; set; } = null!;
+
+    // Refresh token issued during login.
+    public string RefreshToken { get; set; } = string.Empty;
+
+    // Expiration date/time of the refresh token.
+    public DateTime RefreshTokenExpiry { get; set; }
+
+    // Optional device name (Windows, iPhone, Android, etc.).
+    public string? DeviceName { get; set; }
+
+    // IP address from which the user logged in.
+    public string? IpAddress { get; set; }
+
+    // Browser or application information.
+    public string? UserAgent { get; set; }
+
+    // Indicates whether this session has been revoked.
+    public bool IsRevoked { get; set; } = false;
+
+    // Date and time when the session was revoked.
+    // Null means the session is still active.
+    public DateTime? RevokedAt { get; set; }
+}
+
+// ── EXTERNAL LOGIN ───────────────────────────────────────
+public class ExternalLogin : BaseEntity
+{
+    // Foreign key to the user
+    public Guid UserId { get; set; }
+
+    // Navigation property
+    public User User { get; set; } = null!;
+
+    // Authentication provider (Google, Microsoft, Apple)
+    public string Provider { get; set; } = string.Empty;
+
+    // Unique identifier returned by the provider
+    public string ProviderUserId { get; set; } = string.Empty;
+
+    // Email returned by the provider
+    public string? ProviderEmail { get; set; }
+}
+
 
 public class UserSchoolEnrollment : BaseEntity
 {
@@ -103,7 +182,7 @@ public class Article : BaseEntity
 {
     public string Title { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public string? Summary { get; set; }           // AI generated
+    public string? Summary { get; set; }
     public string? AiSummary { get; set; }         // AI generated summary
     public string? CoverImageUrl { get; set; }
     public string? YoutubeUrl { get; set; }

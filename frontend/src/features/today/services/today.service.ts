@@ -1,1 +1,1 @@
-export { deliveriesApi } from '@/features/deliveries/services'
+export { deliveriesApi } from '../../deliveries/services/index.ts'

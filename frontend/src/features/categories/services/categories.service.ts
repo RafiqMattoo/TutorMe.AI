@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { Category } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { Category } from '../../../shared/types/index.ts'
 
 // ── CATEGORIES ────────────────────────────────────────────────────
 

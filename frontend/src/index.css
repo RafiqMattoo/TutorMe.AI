@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "./styles/global.css";
 
 @tailwind base;
 @tailwind components;
@@ -6,17 +6,27 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    @apply antialiased;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  * { @apply box-border; }
-  ::-webkit-scrollbar { @apply w-1.5 h-1.5; }
-  ::-webkit-scrollbar-track { @apply bg-transparent; }
-  ::-webkit-scrollbar-thumb { @apply rounded-full bg-slate-300 hover:bg-slate-400; }
+  * {
+    @apply box-border;
+  }
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-300 hover:bg-slate-400;
+  }
 }
 
 @layer components {
-
   /* ── BUTTONS ─────────────────────────────────────────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2
@@ -70,12 +80,24 @@
   }
 
   /* ── BADGES ──────────────────────────────────────────────────── */
-  .badge-green  { @apply inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200/80; }
-  .badge-yellow { @apply inline-flex items-center gap-1 rounded-full bg-amber-50  px-2.5 py-0.5 text-xs font-semibold text-amber-700  ring-1 ring-amber-200/80;   }
-  .badge-red    { @apply inline-flex items-center gap-1 rounded-full bg-red-50    px-2.5 py-0.5 text-xs font-semibold text-red-600    ring-1 ring-red-200/80;    }
-  .badge-blue   { @apply inline-flex items-center gap-1 rounded-full bg-blue-50   px-2.5 py-0.5 text-xs font-semibold text-blue-700   ring-1 ring-blue-200/80;   }
-  .badge-gray   { @apply inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600  ring-1 ring-slate-200/80;  }
-  .badge-purple { @apply inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200/80; }
+  .badge-green {
+    @apply inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200/80;
+  }
+  .badge-yellow {
+    @apply inline-flex items-center gap-1 rounded-full bg-amber-50  px-2.5 py-0.5 text-xs font-semibold text-amber-700  ring-1 ring-amber-200/80;
+  }
+  .badge-red {
+    @apply inline-flex items-center gap-1 rounded-full bg-red-50    px-2.5 py-0.5 text-xs font-semibold text-red-600    ring-1 ring-red-200/80;
+  }
+  .badge-blue {
+    @apply inline-flex items-center gap-1 rounded-full bg-blue-50   px-2.5 py-0.5 text-xs font-semibold text-blue-700   ring-1 ring-blue-200/80;
+  }
+  .badge-gray {
+    @apply inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600  ring-1 ring-slate-200/80;
+  }
+  .badge-purple {
+    @apply inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200/80;
+  }
 
   /* ── SIDEBAR NAV ─────────────────────────────────────────────── */
   .nav-item {
@@ -99,4 +121,10 @@
   .table-row {
     @apply border-b border-slate-50 transition-colors hover:bg-blue-50/30;
   }
+
+  /* html,body#root
+  {
+height: 100%;
+overflow: hidden;
+  } */
 }

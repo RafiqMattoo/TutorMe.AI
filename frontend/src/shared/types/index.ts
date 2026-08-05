@@ -381,3 +381,247 @@ export interface CreateDeliveryRequest {
   quizId?: string
   flashcardSetId?: string
 }
+
+// export interface Video {
+//   id: string;
+//   title: string;
+//   author: string;
+//   thumbnail: string;
+//   views: string;
+//   createdAt: string;
+// }
+
+export interface VideoCardProps {
+  video: Video;
+}
+
+export interface VideoPlayerProps {
+  video: Video;
+}
+export interface VideoInfoProps {
+  video: Video;
+}
+
+export interface DescriptionCardProps {
+  video: Video;
+}
+export interface KeepWatchingProps {
+  video: Video;
+}
+export interface MasterTopicProps {
+  video: Video;
+}
+export interface VideoDescriptionPageProps {
+  video: Video;
+}
+export interface VideosPageProps {
+  videos: Video[];
+}
+
+export interface Video {
+  id: string;
+  title: string;
+  author: string;
+  thumbnail: string;
+  createdAt: string;
+  views: string;
+  description: string;
+  duration: string;
+  videoUrl?: string;
+  authorAvatar?: string;
+likes?: number;
+}
+
+export interface FileUploadValue {
+  name: string
+  size: number
+  type: string
+  uri: string
+  file?: File | null
+}
+
+export interface FileUploadInputProps {
+  name: string
+  label?: string
+  required?: boolean
+  optional?: boolean
+  accept?: string
+  maxSizeInMB?: number
+  placeholder?: string
+  helperText?: string
+  disabled?: boolean
+  error?: FieldError | string
+  className?: string
+  value?: FileUploadValue | File | null
+  onChange?: (value: FileUploadValue | null) => void
+}
+
+export interface DatePickerInputProps {
+  name: string
+  label?: string
+  required?: boolean
+  optional?: boolean
+  placeholder?: string
+  disabled?: boolean
+  error?: FieldError | string
+  className?: string
+  value?: string | Date | null
+  onChange?: (value: string) => void
+}
+
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+} from "react"
+
+import type {
+  FieldError,
+} from "react-hook-form"
+
+
+export type TextFieldInputType =
+  | "text"
+  | "email"
+  | "password"
+  | "phone"
+  | "number"
+  | "age"
+  | "pincode"
+  | "year"
+  | "bankaccount"
+  | "gst"
+  | "pan"
+  | "ifsc"
+  | "username"
+  | "name"
+  | "address"
+
+
+
+export interface TextFieldInputProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "name"
+    | "type"
+    | "value"
+    | "onChange"
+  > {
+
+
+  /**
+   * React Hook Form field name
+   */
+  name: string
+
+
+
+  /**
+   * Field label
+   */
+  label?: string
+
+
+
+  /**
+   * Input behavior type
+   */
+  type?: TextFieldInputType
+
+
+
+  /**
+   * Show required indicator
+   */
+  required?: boolean
+
+
+
+  /**
+   * React Hook Form validation error
+   */
+  error?:
+    | FieldError
+    | string
+    
+
+
+
+  /**
+   * Left side icon
+   */
+  leftIcon?: ReactNode
+
+
+
+  /**
+   * Right side icon
+   */
+  rightIcon?: ReactNode
+
+
+
+  /**
+   * Shows clear button when value exists
+   */
+  clearable?: boolean
+
+
+
+  /**
+   * Phone prefix
+   */
+  countryCode?: string
+
+
+
+  /**
+   * Custom class overrides
+   */
+  className?: string
+
+
+
+  /**
+   * Disable input
+   */
+  disabled?: boolean
+
+
+
+  /**
+   * Read only input
+   */
+  readOnly?: boolean
+
+}
+
+export interface RegisterSchoolFormData {
+  schoolName: string;
+  schoolRegistrationNumber?: string;
+
+  city: string;
+  state: string;
+  phone: string;
+  email: string;
+
+  type: SchoolType;
+  board: BoardType;
+
+  address: {
+    houseNo?: string;
+    street: string;
+    area: string;
+    landmark: string;
+  };
+
+  principalName: string;
+  establishedYear: number;
+  website?: string;
+
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  adminPassword: string;
+  adminPhone: string;
+  supportingDocument?: File;
+}

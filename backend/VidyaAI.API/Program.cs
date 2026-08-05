@@ -23,6 +23,11 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         npg => npg.MigrationsAssembly("VidyaAI.Infrastructure")));
 
+
+        builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddHttpClient<IVideoService, VideoService>();
+        builder.Services.AddHttpClient<IVideoService, VideoService>();
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(VidyaAI.Application.Auth.Commands.LoginCommand).Assembly);

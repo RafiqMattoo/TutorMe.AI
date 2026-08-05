@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, BookOpen, Headphones, Loader2, Pause, Play, RefreshCw, SkipBack, SkipForward, Sparkles, Square, Volume2 } from 'lucide-react'
 import { materialsApi, narrationApi } from '../services'
-import { PageHeader } from '@/shared/components/ui'
-import type { NarrationSegment } from '@/shared/types'
+import { PageHeader } from '../../../shared/components/ui/index.tsx'
+import type { NarrationSegment } from '../../../shared/types/index.ts'
 import clsx from 'clsx'
 
 // Side-by-side reader: left = chunks of the document, right = a player.

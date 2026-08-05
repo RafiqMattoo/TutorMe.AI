@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { AppNotification } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { AppNotification } from '../../../shared/types/index.ts'
 
 // ── NOTIFICATIONS ─────────────────────────────────────────────────
 

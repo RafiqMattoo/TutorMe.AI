@@ -29,12 +29,12 @@ namespace VidyaAI.Application.Registration.Queries
 namespace VidyaAI.Application.Registration.Commands
 {
     // ── REGISTER A SCHOOL (anonymous) ─────────────────────────────
-    // Creates a Pending school plus its first SchoolAdmin (also Pending). Neither
-    // can sign in until a SuperAdmin approves the school. SuperAdmins are notified.
+    // Creates a Pending school. No admin account is created here; a SuperAdmin
+    // reviews and can then create/approve an admin. SuperAdmins are notified.
     public record RegisterSchoolCommand(
         string SchoolName, string? City, string? State, string? Phone, string? Email,
         SchoolType Type, BoardType Board,
-        string AdminFirstName, string AdminLastName, string AdminEmail, string AdminPassword, string? AdminPhone,
+        string? DocumentUrl = null,
         string? CaptchaToken = null)
         : IRequest<RegisterResponse>;
 
@@ -43,12 +43,7 @@ namespace VidyaAI.Application.Registration.Commands
         public RegisterSchoolCommandValidator()
         {
             RuleFor(x => x.SchoolName).NotEmpty().MaximumLength(200);
-            RuleFor(x => x.AdminFirstName).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.AdminLastName).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.AdminEmail).NotEmpty().EmailAddress();
-            RuleFor(x => x.AdminPassword).NotEmpty().MinimumLength(6)
-                .Matches(@"[A-Z]").WithMessage("Password must contain an uppercase letter.")
-                .Matches(@"[0-9]").WithMessage("Password must contain a digit.");
+            RuleFor(x => x.Email).EmailAddress().When(x => !string.IsNullOrWhiteSpace(x.Email));
         }
     }
 
@@ -60,32 +55,15 @@ namespace VidyaAI.Application.Registration.Commands
             if (!await captcha.VerifyAsync(cmd.CaptchaToken, ct))
                 throw new ArgumentException("Captcha verification failed. Please try again.");
 
-            if (await db.Users.AnyAsync(u => u.Email == cmd.AdminEmail, ct))
-                throw new ArgumentException("An account with this email already exists.");
-
             var school = new School
             {
                 Name = cmd.SchoolName, City = cmd.City, State = cmd.State,
                 Phone = cmd.Phone, Email = cmd.Email, Type = cmd.Type, Board = cmd.Board,
+                DocumentUrl = cmd.DocumentUrl,
                 Plan = SubscriptionPlan.Free, SubscriptionStatus = SubscriptionStatus.Trial,
                 IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
             };
             db.Schools.Add(school);
-
-            var admin = new User
-            {
-                FirstName = cmd.AdminFirstName, LastName = cmd.AdminLastName, Email = cmd.AdminEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.AdminPassword),
-                Phone = cmd.AdminPhone, Role = UserRole.SchoolAdmin, SchoolId = school.Id,
-                IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
-            };
-            db.Users.Add(admin);
-
-            db.UserSchoolEnrollments.Add(new UserSchoolEnrollment
-            {
-                UserId = admin.Id, SchoolId = school.Id, Role = UserRole.SchoolAdmin,
-                Status = EnrollmentStatus.Pending, IsPrimary = true,
-            });
 
             await NotificationFactory.AddForRoleAsync(db, UserRole.SuperAdmin, null,
                 NotificationType.ApprovalRequested, "New school awaiting approval",
@@ -93,12 +71,15 @@ namespace VidyaAI.Application.Registration.Commands
 
             await db.SaveChangesAsync(ct);
 
-            var (subject, html) = EmailTemplates.SchoolRegistrationReceived(
-                $"{cmd.AdminFirstName} {cmd.AdminLastName}", cmd.SchoolName);
-            await email.SendAsync(cmd.AdminEmail, subject, html, ct); // best-effort (never throws)
+            // Send notification email to the school's contact email if provided.
+            if (!string.IsNullOrWhiteSpace(cmd.Email))
+            {
+                var (subject, html) = EmailTemplates.SchoolRegistrationReceived(null, cmd.SchoolName);
+                await email.SendAsync(cmd.Email, subject, html, ct); // best-effort
+            }
 
             return new RegisterResponse(
-                "Your school has been registered and is pending approval. You'll be able to sign in once an administrator approves it.");
+                "Your school has been registered and is pending approval. An administrator will review it shortly.");
         }
     }
 
@@ -147,19 +128,30 @@ namespace VidyaAI.Application.Registration.Commands
 
             var user = new User
             {
-                FirstName = cmd.FirstName, LastName = cmd.LastName, Email = cmd.Email,
+                FirstName = cmd.FirstName,
+                LastName = cmd.LastName,
+                Email = cmd.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(cmd.Password),
-                Phone = cmd.Phone, Role = cmd.Role, SchoolId = cmd.SchoolId,
-                IsActive = false, ApprovalStatus = ApprovalStatus.Pending,
-                GradeLevel = cmd.GradeLevel, RollNumber = cmd.RollNumber, DateOfBirth = cmd.DateOfBirth,
-                GuardianName = cmd.GuardianName, GuardianPhone = cmd.GuardianPhone,
+                Phone = cmd.Phone,
+                Role = cmd.Role,
+                SchoolId = cmd.SchoolId,
+                IsActive = false,
+                ApprovalStatus = ApprovalStatus.Pending,
+                GradeLevel = cmd.GradeLevel,
+                RollNumber = cmd.RollNumber,
+                DateOfBirth = cmd.DateOfBirth,
+                GuardianName = cmd.GuardianName,
+                GuardianPhone = cmd.GuardianPhone,
             };
             db.Users.Add(user);
 
             db.UserSchoolEnrollments.Add(new UserSchoolEnrollment
             {
-                UserId = user.Id, SchoolId = cmd.SchoolId, Role = cmd.Role,
-                Status = EnrollmentStatus.Pending, IsPrimary = true,
+                UserId = user.Id,
+                SchoolId = cmd.SchoolId,
+                Role = cmd.Role,
+                Status = EnrollmentStatus.Pending,
+                IsPrimary = true,
             });
 
             await NotificationFactory.AddForRoleAsync(db, UserRole.SchoolAdmin, cmd.SchoolId,
@@ -167,6 +159,21 @@ namespace VidyaAI.Application.Registration.Commands
                 $"{cmd.FirstName} {cmd.LastName} requested to join as a {cmd.Role.ToString().ToLower()}.",
                 user.Id.ToString(), ct);
 
+            // Teachers should only receive student-related notifications.
+            // Notify teachers when a new student registration is submitted.
+
+            if (cmd.Role == UserRole.Student)
+            {
+                await NotificationFactory.AddForRoleAsync(
+                    db,
+                    UserRole.Teacher,
+                    cmd.SchoolId,
+                    NotificationType.ApprovalRequested,
+                    "New student awaiting approval",
+                    $"{cmd.FirstName} {cmd.LastName} requested to join as a student.",
+                    user.Id.ToString(),
+                    ct);
+            }
             await db.SaveChangesAsync(ct);
 
             var (subject, html) = EmailTemplates.MemberRegistrationReceived(

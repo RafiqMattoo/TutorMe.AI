@@ -8,7 +8,7 @@ import {
   getStudents,
   updateStudent,
 } from '../services'
-import type { StudentStatus } from '@/shared/types'
+import type { StudentStatus } from '../../../shared/types/index.ts'
 
 type StudentListParams = {
   page?: number

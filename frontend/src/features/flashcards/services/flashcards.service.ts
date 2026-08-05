@@ -1,5 +1,5 @@
-import { axiosInstance } from '@/api/axiosInstance'
-import type { FlashcardSetSummary, FlashcardSet } from '@/shared/types'
+import { axiosInstance } from '../../../api/axiosInstance.ts'
+import type { FlashcardSetSummary, FlashcardSet } from '../../../shared/types/index.ts'
 
 // ── FLASHCARDS ────────────────────────────────────────────────────
 

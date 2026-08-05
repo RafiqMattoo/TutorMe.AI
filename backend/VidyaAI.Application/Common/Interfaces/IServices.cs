@@ -5,6 +5,21 @@ namespace VidyaAI.Application.Common.Interfaces;
 
 public interface IAppDbContext
 {
+    DbSet<Session> Sessions { get; }
+    DbSet<ExternalLogin> ExternalLogins { get; }
+    //---Add the OneTimeTokens DbSet to the IAppDbContext interface----
+    DbSet<OneTimeToken> OneTimeTokens { get; }
+    // Stores the user's two-factor authentication secret.
+    DbSet<TotpSecret> TotpSecrets { get; }
+    // Backup codes for account recovery.
+    DbSet<RecoveryCode> RecoveryCodes { get; }
+    // Tracks GDPR/data export requests submitted by users.
+    DbSet<DataExportRequest> DataExportRequests { get; }
+    // Login history for auditing and security.
+    DbSet<LoginAudit> LoginAudits { get; }
+    // Records administrative actions performed in the system.
+    DbSet<AdminAudit> AdminAudits { get; }
+
     DbSet<School> Schools { get; }
     DbSet<User> Users { get; }
     DbSet<Article> Articles { get; }
@@ -41,6 +56,9 @@ public interface IAppDbContext
     DbSet<GradeBand> GradeBands { get; }
     // Student Information System (A2)
     DbSet<Student> Students { get; }
+    DbSet<Exam> Exams { get; }
+    DbSet<ExamSubject> ExamSubjects { get; }
+    DbSet<StudentExamResult> StudentExamResults { get; }
     // Transport (D4)
     DbSet<TransportVehicle> TransportVehicles { get; }
     DbSet<TransportRoute> TransportRoutes { get; }
@@ -50,15 +68,7 @@ public interface IAppDbContext
 }
 
 // Current user context (from JWT)
-public interface ICurrentUser
-{
-    Guid UserId { get; }
-    string Email { get; }
-    string Role { get; }
-    Guid? SchoolId { get; }
-    bool IsAuthenticated { get; }
-    bool IsInRole(string role);
-}
+
 
 // Cache abstraction over Redis
 public interface ICacheService
@@ -174,7 +184,7 @@ public sealed record TtsVoice(string Id, string Name, string Language);
 // (Tts:Provider) — the default is local macOS `say`.
 public interface ITtsService
 {
-    // Lists voices the engine offers (for a voice picker).
+    // Lists voices the engine offers (for a voice pick er).
     IReadOnlyList<TtsVoice> GetVoices();
 
     // Synthesizes all segments and stitches them into one audio file, returning the

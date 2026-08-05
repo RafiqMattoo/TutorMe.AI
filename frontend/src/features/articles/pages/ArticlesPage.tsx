@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Eye, Heart, MessageSquare, Plus, Send, Trash2, XCircle, Edit2 } from 'lucide-react'
 import { articlesApi } from '../services'
-import { EmptyState, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '@/shared/components/ui'
+import { EmptyState, PageHeader, Pagination, SearchBar, StatusBadge, Table } from '../../../shared/components/ui/index.tsx'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
-import type { ArticleStatus } from '@/shared/types'
+import type { ArticleStatus } from '../../../shared/types/index.ts'
 import clsx from 'clsx'
 
 const STATUS_FILTERS: { label: string; value: ArticleStatus | '' }[] = [
