@@ -217,6 +217,7 @@ import type { FileUploadValue } from "@/shared/types";
 import { authApi } from "../../services";
 import { Section } from "../FormControls";
 import Button from "@/shared/components/ui/customButton/button";
+import DatePickerInput from "@/shared/components/ui/DatePickerInput";
 
 import { registerTeacherSchema } from "../../schemas/teacher-schema/registerTeacherSchemas";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
@@ -254,9 +255,17 @@ type TeacherRegisterFormData = {
   firstName: string;
   lastName: string;
   email: string;
+
+  phone: string;
+  password: string;
+  dateOfBirth: string;
+
   qualification: string;
   experience: string;
+
   document: FileUploadValue | null;
+  experienceDocument?: FileUploadValue | null;
+
   profilePhoto?: FileUploadValue | null;
   otherQualification: string;
 };
@@ -273,16 +282,24 @@ export default function TeacherRegisterForm({
   const methods = useForm<TeacherRegisterFormData>({
     resolver: zodResolver(registerTeacherSchema),
     mode: "onChange", // or "onSubmit"
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      qualification: "",
-      experience: "",
-      document: undefined,
-      profilePhoto: undefined,
-      otherQualification: "",
-    },
+defaultValues: {
+  firstName: "",
+  lastName: "",
+  email: "",
+
+  phone: "",
+  password: "",
+  dateOfBirth: "",
+
+  qualification: "",
+  experience: "",
+
+  document: undefined,
+  experienceDocument: undefined,
+
+  profilePhoto: undefined,
+  otherQualification: "",
+},
   });
 
   const {
@@ -341,7 +358,7 @@ export default function TeacherRegisterForm({
             error={errors.lastName}
           />
         </div>
-
+ <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextFieldInput
           name="email"
           label="Email"
@@ -350,6 +367,34 @@ export default function TeacherRegisterForm({
           required
           error={errors.email}
         />
+           <TextFieldInput
+  name="password"
+  label="Password"
+  type="password"
+  placeholder="Password"
+  required
+  error={errors.password}
+/>
+ </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <TextFieldInput
+  name="phone"
+  type="phone"
+  label="Phone Number"
+  placeholder="Phone Number"
+  required
+  error={errors.phone}
+/>
+
+<DatePickerInput
+  name="dateOfBirth"
+  label="Date of Birth"
+  required
+  error={errors.dateOfBirth}
+/>
+</div>
+
+
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
@@ -401,15 +446,27 @@ export default function TeacherRegisterForm({
 
         {/* Qualification Document */}
         <FileUploadInput
-          name="document"
-          label="Upload Document"
+  name="document"
+  label="Upload Qualification Document"
+  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+  maxSizeInMB={10}
+  placeholder="Upload qualification document"
+  helperText="Upload your qualification certificate (PDF, DOC, DOCX, JPG, or PNG, max 10MB)"
+  required
+  error={errors.document?.message as string}
+/>
+{/* Experience Document  */}
+        <FileUploadInput
+          name="experienceDocument"
+          label="Upload Experience Document"
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
           maxSizeInMB={10}
-          placeholder="Upload qualification or experience document"
+          placeholder="Upload experience document"
           helperText="PDF, DOC, DOCX, JPG or PNG (max 10MB)"
-          required
-          error={errors.document?.message as string}
+          error={errors.experienceDocument?.message as string}
         />
+
+        
 
         {/* CAPTCHA */}
         {/*
