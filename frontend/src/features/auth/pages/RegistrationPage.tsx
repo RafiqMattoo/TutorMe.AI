@@ -36,7 +36,7 @@ const steps = [
 
 export default function RegistrationPage() {
   const [tab, setTab] = useState<Tab>('school')
-  const [memberRole, setMemberRole] = useState<MemberRole>('Student')
+  const [memberRole, setMemberRole] = useState<MemberRole>('Teacher')
   const [schoolId, setSchoolId] = useState('')
   const [done, setDone] = useState<string | null>(null)
   const [captcha, setCaptcha] = useState<string | undefined>()
@@ -214,7 +214,7 @@ export default function RegistrationPage() {
                       />
                       {!schools?.length && <p className="text-xs text-amber-600">No approved schools yet. Register a school first, or check back once it's approved.</p>}
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        {(['Student', 'Teacher'] as MemberRole[]).map((role) => (
+                        {(['Teacher', 'Student'] as MemberRole[]).map((role) => (
                           <button key={role} onClick={() => setMemberRole(role)} className={clsx('rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors', memberRole === role ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50')}>
                             {role === 'Student' ? <GraduationCap size={15} className="mr-1.5 inline" /> : <BookOpenCheck size={15} className="mr-1.5 inline" />}{role}
                           </button>

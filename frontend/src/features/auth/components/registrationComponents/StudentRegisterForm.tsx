@@ -92,7 +92,7 @@ export default function StudentRegisterForm({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
-        <Section title="" />
+   
         <div className="grid grid-cols-2 gap-3">
           <TextFieldInput
             name="firstName"

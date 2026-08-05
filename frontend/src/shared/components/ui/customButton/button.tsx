@@ -32,6 +32,7 @@ interface ButtonProps
 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  loadingIcon?: React.ReactNode;
 
   rounded?: "sm" | "md" | "lg" | "full";
 }
