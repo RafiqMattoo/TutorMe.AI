@@ -218,6 +218,8 @@ import { authApi } from "../../services";
 import { Section } from "../FormControls";
 import Button from "@/shared/components/ui/customButton/button";
 
+import { registerTeacherSchema } from "../../schemas/teacher-schema/registerTeacherSchemas";
+import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 const qualificationOptions = [
   { label: "B.Ed", value: "B.Ed" },
   { label: "M.Ed", value: "M.Ed" },
@@ -255,6 +257,7 @@ type TeacherRegisterFormData = {
   qualification: string;
   experience: string;
   document: FileUploadValue | null;
+  profilePhoto?: FileUploadValue | null;
   otherQualification: string;
 };
 
@@ -268,18 +271,27 @@ export default function TeacherRegisterForm({
   const [captcha, setCaptcha] = useState<string | undefined>();
 
   const methods = useForm<TeacherRegisterFormData>({
+    resolver: zodResolver(registerTeacherSchema),
+    mode: "onChange", // or "onSubmit"
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       qualification: "",
       experience: "",
-      document: null,
+      document: undefined,
+      profilePhoto: undefined,
       otherQualification: "",
     },
   });
 
-  const { handleSubmit } = methods;
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
+
   const selectedQualification = methods.watch("qualification");
 
   const registerTeacher = useMutation({
@@ -317,6 +329,7 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="First name"
             required
+            error={errors.firstName}
           />
 
           <TextFieldInput
@@ -325,6 +338,7 @@ export default function TeacherRegisterForm({
             type="name"
             placeholder="Last name"
             required
+            error={errors.lastName}
           />
         </div>
 
@@ -334,6 +348,7 @@ export default function TeacherRegisterForm({
           type="email"
           placeholder="Email"
           required
+          error={errors.email}
         />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -344,6 +359,7 @@ export default function TeacherRegisterForm({
               placeholder="Select Qualification"
               options={qualificationOptions}
               searchable={false}
+              error={errors.qualification?.message}
             />
 
             {selectedQualification === "Other" && (
@@ -353,6 +369,7 @@ export default function TeacherRegisterForm({
                   label="Other Qualification"
                   placeholder="Write your qualification"
                   required
+                  error={errors.otherQualification}
                 />
               </div>
             )}
@@ -364,6 +381,7 @@ export default function TeacherRegisterForm({
             placeholder="Select Teaching Experience"
             options={experienceOptions}
             searchable={false}
+            error={errors.experience?.message}
           />
         </div>
 
@@ -389,6 +407,8 @@ export default function TeacherRegisterForm({
           maxSizeInMB={10}
           placeholder="Upload qualification or experience document"
           helperText="PDF, DOC, DOCX, JPG or PNG (max 10MB)"
+          required
+          error={errors.document?.message as string}
         />
 
         {/* CAPTCHA */}
