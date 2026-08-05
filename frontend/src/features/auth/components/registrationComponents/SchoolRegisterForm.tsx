@@ -289,7 +289,7 @@ export default function SchoolRegisterForm({
         <TextFieldInput
           name="phone"
           label="School Phone"
-          type="number"
+          type="phone"
           placeholder="Enter phone number"
           error={errors.phone}
           required
