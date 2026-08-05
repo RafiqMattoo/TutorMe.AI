@@ -337,7 +337,7 @@ defaultValues: {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <Section title="Your Details" />
+        
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <TextFieldInput
