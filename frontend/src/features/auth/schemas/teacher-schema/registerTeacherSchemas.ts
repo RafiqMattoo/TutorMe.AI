@@ -3,11 +3,15 @@ import { z } from "zod";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const passwordSchema = z
-  .string()
+ .string()
   .min(1, "Password is required.")
-  .min(8, "Password must be at least 8 characters.");
+  .min(8, "Password must be at least 8 characters.")
+  .regex(/[A-Z]/, "Must contain at least one uppercase letter.")
+  .regex(/[a-z]/, "Must contain at least one lowercase letter.")
+  .regex(/[0-9]/, "Must contain at least one number.")
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character.")
 
-const fileUploadSchema = z.instanceof(File).optional();
+// const fileUploadSchema = z.instanceof(File).optional();
 
 const ACCEPTED_FILE_TYPES = [
   "application/pdf",
@@ -93,14 +97,27 @@ experienceDocument: z
 
     phone: z
   .string()
-  .min(1, "Phone number is required")
-  .regex(/^[6-9]\d{9}$/, "Enter a valid phone number"),
+  .trim()
+  .min(1, "Phone number is required.")
+  .regex(/^[0-9]{10,15}$/, "Please enter a valid phone number."),
 
 password: passwordSchema,
 
 dateOfBirth: z
   .string()
-  .min(1, "Date of birth is required"),
+  .min(1, "Date of birth is required.")
+  .refine(
+    (date) => !Number.isNaN(new Date(date).getTime()),
+    {
+      message: "Please enter a valid date of birth.",
+    }
+  )
+  .refine(
+    (date) => new Date(date) <= new Date(),
+    {
+      message: "Date of birth cannot be in the future.",
+    }
+  ),
 
 });
 

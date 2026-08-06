@@ -128,9 +128,9 @@ export default function SchoolRegisterForm({
         required
       />
 
-      <TextFieldInput
+<TextFieldInput
   name="schoolRegistrationNumber"
-  type="number"
+  type="text"
   label="School Registration Number"
   placeholder="Enter registration number"
   error={errors.schoolRegistrationNumber}
@@ -193,7 +193,7 @@ export default function SchoolRegisterForm({
 <TextFieldInput
   name="establishedYear"
   label="Established Year"
-  type="number"
+  type="year"
   placeholder="e.g. 1998"
   error={errors.establishedYear}
   required
