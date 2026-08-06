@@ -17,6 +17,12 @@ export const gradeOptions: SelectOption[] = [
 //   { value: "Grade 11", label: "Grade 11" },
 //   { value: "Grade 12", label: "Grade 12" },
 ]
+export const guardianRelationOptions: SelectOption[] = [
+  { value: "Father", label: "Father" },
+  { value: "Mother", label: "Mother" },
+  { value: "Guardian", label: "Guardian" },
+]
+
 
 // export const sectionOptions: SelectOption[] = [
 //   { value: "A", label: "A" },
@@ -42,11 +48,7 @@ export const gradeOptions: SelectOption[] = [
 //   { value: "O-", label: "O-" },
 // ]
 
-export const guardianRelationOptions: SelectOption[] = [
-  { value: "Father", label: "Father" },
-  { value: "Mother", label: "Mother" },
-  { value: "Guardian", label: "Guardian" },
-]
+
 
 // export const stateOptions: SelectOption[] = [
 //   { value: "Jammu & Kashmir", label: "Jammu & Kashmir" },
@@ -99,3 +101,5 @@ export const guardianRelationOptions: SelectOption[] = [
 //   ],
 //   "Other": [{ value: "Other", label: "Other" }],
 // }
+
+

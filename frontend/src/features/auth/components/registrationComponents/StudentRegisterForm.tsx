@@ -37,7 +37,7 @@ export default function StudentRegisterForm({
     resolver: zodResolver(studentSchema) as unknown as Resolver<StudentFormData>,
     mode: "onChange",
     defaultValues: {
-      firstName: "",
+      firstName: "", 
       lastName: "",
       email: "",
       password: "",
@@ -261,3 +261,6 @@ export default function StudentRegisterForm({
     </FormProvider>
   );
 }
+
+
+
