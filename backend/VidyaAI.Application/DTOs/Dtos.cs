@@ -15,10 +15,26 @@ public record LogoutRequest(string RefreshToken);
 public record RegisterSchoolRequest(
     string SchoolName, string? City, string? State, string? Phone, string? Email,
     SchoolType Type, BoardType Board,
+    string Password,
+    int? EstablishmentYear = null, string? RegistrationNumber = null,
     string? CaptchaToken = null);
 
 public record RegisterMemberRequest(
     Guid SchoolId, UserRole Role,                 // Teacher or Student only
+    string FirstName, string LastName, string Email, string Password, string? Phone,
+    string? GradeLevel, string? RollNumber, DateTime? DateOfBirth,
+    string? GuardianName, string? GuardianPhone,
+    string? CaptchaToken = null);
+
+// Separate requests for teacher and student registration so the API is not role-driven
+public record RegisterTeacherRequest(
+    Guid SchoolId,
+    string FirstName, string LastName, string Email, string Password, string? Phone,
+    DateTime? DateOfBirth,
+    string? CaptchaToken = null);
+
+public record RegisterStudentRequest(
+    Guid SchoolId,
     string FirstName, string LastName, string Email, string Password, string? Phone,
     string? GradeLevel, string? RollNumber, DateTime? DateOfBirth,
     string? GuardianName, string? GuardianPhone,
@@ -86,7 +102,7 @@ public record SchoolDto(
 // ── APPROVALS & NOTIFICATIONS ─────────────────────────────────────
 public record PendingSchoolDto(
     Guid Id, string Name, string? City, string? State, SchoolType Type, BoardType Board,
-    string? AdminName, string? AdminEmail, DateTime CreatedAt);
+    string? AdminName, string? AdminEmail, string? SupportingDocument, DateTime CreatedAt);
 
 public record PendingMemberDto(
     Guid Id, string FirstName, string LastName, string Email, UserRole Role,

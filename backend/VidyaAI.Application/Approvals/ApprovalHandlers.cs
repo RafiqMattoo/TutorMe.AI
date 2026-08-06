@@ -31,7 +31,7 @@ namespace VidyaAI.Application.Approvals.Queries
             {
                 var a = admins.FirstOrDefault(x => x.SchoolId == s.Id);
                 return new PendingSchoolDto(s.Id, s.Name, s.City, s.State, s.Type, s.Board,
-                    a is null ? null : $"{a.FirstName} {a.LastName}", a?.Email, s.CreatedAt);
+                    a is null ? null : $"{a.FirstName} {a.LastName}", a?.Email, s.DocumentUrl, s.CreatedAt);
             }).ToList();
         }
     }
