@@ -12,8 +12,11 @@ schoolName: z
 schoolRegistrationNumber: z
   .string()
   .trim()
-  .min(1, "School registration number is required."),
-
+  .min(1, "School registration number is required.")
+  .regex(
+    /^[a-zA-Z0-9/-]+$/,
+    "Only letters, numbers, hyphens (-), and slashes (/) are allowed."
+  ),
 email: z
   .string()
   .trim()

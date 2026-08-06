@@ -127,7 +127,7 @@ guardianRelation: z
 guardianPhone: z
  .string()
   .trim()
-  .min(1, "Phone number is required.")
+  .min(1, "Guardian phone number is required.")
   .regex(/^[0-9]{10,15}$/, "Please enter a valid phone number."),
 
 parentEmail: z

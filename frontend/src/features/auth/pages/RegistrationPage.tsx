@@ -45,7 +45,8 @@ export default function RegistrationPage() {
 
  const schoolMethods = useForm<RegisterSchoolFormData>({
   resolver: zodResolver(registerSchoolSchema) as any,
-
+  mode: "onChange",          // Validate while typing
+  reValidateMode: "onChange",
   defaultValues: {
     schoolName: "",
     schoolRegistrationNumber: "",

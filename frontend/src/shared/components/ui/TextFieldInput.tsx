@@ -34,6 +34,8 @@ const sanitizeInput = (
         .replace(/\D/g, "")
         .slice(0, 10)
 
+case "registrationNumber":
+  return text.replace(/[^a-zA-Z0-9/-]/g, "");
 
     case "age":
       return text
